@@ -1,4 +1,5 @@
 ﻿using Absoft.Data;
+using Absoft.Data.Entities;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
