@@ -10,6 +10,7 @@ namespace Absoft.AutoMapper
         {
             CreateMap<UserCreationViewModel, NguoiDung>();
             CreateMap<UserUpdationViewModel, NguoiDung>();
+            CreateMap<DonViTinhViewModel, DonViTinh>();
         }
     }
 }
