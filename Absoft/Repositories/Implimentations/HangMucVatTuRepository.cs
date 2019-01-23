@@ -30,9 +30,9 @@ namespace Absoft.Repositories.Implimentations
                 .ToListAsync();
         }
 
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<HangMucVatTuViewModel> GetByIdAsync(int id)
         {
-            return (await db.HangMucVatTus.FindAsync(id)).TenHM;
+            return ( mp.Map<HangMucVatTuViewModel>(await db.HangMucVatTus.FindAsync(id)));
         }
 
         public async Task<bool> InsertAsync(HangMucVatTuViewModel mhangmucvattu)

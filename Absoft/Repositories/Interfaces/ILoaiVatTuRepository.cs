@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
-    interface ILoaiVatTuRepository
+    public interface ILoaiVatTuRepository
     {
         Task<List<LoaiVatTuViewModel>> GetAllAsync();
-        Task<string> GetNameByIdAsync(int id);
+        Task<LoaiVatTuViewModel> GetByIdAsync(int id);
         Task<List<LoaiVatTuViewModel>> GetListLoaiByMaHM(int maHM);
-        Task<bool> InsertAsync(LoaiVatTuViewModel loaivt, int maHM);
-        Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt, int maHM);
+        Task<bool> InsertAsync(LoaiVatTuViewModel loaivt);
+        Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt);
         Task<bool> DeleteAsync(int id);
         Task<bool> DeleteAllByMaHMAsync(int maHM);        
     }

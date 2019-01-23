@@ -35,10 +35,11 @@ namespace Absoft.Repositories.Implimentations
                .ToListAsync();
         }
 
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<NuocSanXuatViewModel> GetByIdAsync(int id)
         {
             var nsx = await db.NuocSanXuats.FindAsync(id);
-            return nsx.TenNuoc;
+            var mnsx = mp.Map<NuocSanXuatViewModel>(nsx);
+            return mnsx;
         }
 
         public async Task<bool> InsertAsync(NuocSanXuatViewModel mnuocsanxuat)

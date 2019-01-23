@@ -36,10 +36,10 @@ namespace Absoft.Repositories.Implimentations
                 .ToListAsync();
         }
 
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<NguonCungCapViewModel> GetByIdAsync(int id)
         {
-            var ncc = await db.NguonCungCaps.FindAsync(id);
-            return ncc.TenNguon;
+            return mp.Map< NguonCungCapViewModel > (await db.NguonCungCaps.FindAsync(id));
+            
         }
 
         public async Task<bool> InsertAsync(NguonCungCapViewModel mnguoncungcap)

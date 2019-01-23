@@ -69,12 +69,13 @@ namespace Absoft.Repositories.Implimentations
                .ProjectTo<VatTuViewModel>(mp.ConfigurationProvider)
                .ToListAsync();
         }
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<VatTuViewModel> GetByIdAsync(int id)
         {
             var vt = await db.VatTus.FindAsync(id);
-            return vt.TenVT;
+            var mvt = mp.Map<VatTuViewModel>(vt);
+            return mvt;
         }
-        public async Task<List<VatTuViewModel>> GetNameByMaDVAsync(int MADV)
+        public async Task<List<VatTuViewModel>> GetByMaDVAsync(int MADV)
         {
             return await db.VatTus
               .Where(x => x.MaDVT == MADV)

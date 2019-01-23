@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
-    interface INguonCungCapRepository
+    public interface INguonCungCapRepository
     {
         Task<List<NguonCungCapViewModel>> GetAllAsync();
-        Task<string> GetNameByIdAsync(int id);
+        Task<NguonCungCapViewModel> GetByIdAsync(int id);
         Task<bool> InsertAsync(NguonCungCapViewModel mnguoncungcap);
         Task<bool> UpdateAsync(NguonCungCapViewModel mnguoncungcap);
         Task<bool> DeleteAsync(int id);

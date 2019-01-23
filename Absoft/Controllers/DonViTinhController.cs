@@ -21,21 +21,27 @@ namespace Absoft.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var donViTinhs = await _donViTinhRepository.GetAllAsync();
-            return Ok(donViTinhs);
+            var models = await _donViTinhRepository.GetAllAsync();
+            return Ok(models);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(int id)
         {
-            var donViTinh = await _donViTinhRepository.GetById(id);
-            return Ok(donViTinh);
+            var models = await _donViTinhRepository.GetById(id);
+            return Ok(models);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(DonViTinhViewModel donViTinhViewModel)
         {
             var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
+            return Ok(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Insert(DonViTinhViewModel donViTinhViewModel)
+        {
+            var result = await _donViTinhRepository.InsertAsync(donViTinhViewModel);
             return Ok(result);
         }
     }

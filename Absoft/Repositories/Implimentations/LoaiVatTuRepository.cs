@@ -44,21 +44,21 @@ namespace Absoft.Repositories.Implimentations
                 .ToListAsync();
         }
 
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<LoaiVatTuViewModel> GetByIdAsync(int id)
         {
-            return (await db.LoaiVatTus.FindAsync(id)).TenLoai;
+            return mp.Map<LoaiVatTuViewModel>(await db.LoaiVatTus.FindAsync(id));
         }
-        public async Task<bool> InsertAsync(LoaiVatTuViewModel loaivt, int maHM)
+        public async Task<bool> InsertAsync(LoaiVatTuViewModel loaivt)
         {
             var loai = mp.Map<LoaiVatTu>(loaivt);
-            loai.MaHM = maHM;
+            loai.MaHM = loaivt.MaHM;
             await db.LoaiVatTus.AddAsync(loai);
             return await db.SaveChangesAsync() > 0;
         }
-        public async Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt, int maHM)
+        public async Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt)
         {
             var loaivattu = await db.LoaiVatTus.FindAsync(loaivt.MaLoaiVatTu);
-            loaivattu.MaHM = maHM;
+            loaivattu.MaHM = loaivt.MaHM;
             loaivattu.TenLoai = loaivt.TenLoai;
             loaivattu.GhiChu = loaivt.GhiChu;
             return (await db.SaveChangesAsync() > 0);

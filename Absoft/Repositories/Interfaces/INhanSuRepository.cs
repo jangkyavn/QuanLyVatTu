@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
-    interface INhanSuRepository 
+    public interface INhanSuRepository 
     {
         Task<List<NhanSuViewModel>> GetAllAsync();
         Task<NhanSuViewModel> GetByIdAsync(int id);

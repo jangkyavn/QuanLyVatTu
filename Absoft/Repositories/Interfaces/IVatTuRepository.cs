@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
-    interface IVatTuRepository
+    public interface IVatTuRepository
     {
         Task<List<VatTuViewModel>> GetAllAsync();
-        Task<string> GetNameByIdAsync(int id);
+        Task<VatTuViewModel> GetByIdAsync(int id);
         Task<List<VatTuViewModel>> GetByMaLoaiVTAsync(int MaloaiVT);
-        Task<List<VatTuViewModel>> GetNameByMaDVAsync(int MADV);
+        Task<List<VatTuViewModel>> GetByMaDVAsync(int MADV);
         Task<bool> InsertAsync(VatTuViewModel mvattu);
         Task<bool> UpdateAsync(VatTuViewModel mvattu);
         Task<bool> DeleteAsync(int id);
