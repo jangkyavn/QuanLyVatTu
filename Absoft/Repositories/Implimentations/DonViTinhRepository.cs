@@ -29,10 +29,10 @@ namespace Absoft.Repositories.Implimentations
                 .ToListAsync();
         }
 
-        public async Task<string> GetNameByIdAsync(int id)
+        public async Task<DonViTinhViewModel> GetById(int id)
         {
             var dvt = await db.DonViTinhs.FindAsync(id);
-            return dvt.TenDVT;
+            return mp.Map<DonViTinhViewModel>(dvt);
         }
 
         public async Task<bool> InsertAsync(DonViTinhViewModel mdonvitinh)

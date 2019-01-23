@@ -96,6 +96,15 @@ namespace Absoft
             services.AddTransient<Seed>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IDonViTinhRepository, DonViTinhRepository>();
+            services.AddScoped<IHangMucVatTuRepository, HangMucVatTuRepository>();
+            services.AddScoped<IHangSanXuatRepository, HangSanXuatRepository>();
+            services.AddScoped<IKhoVatTuRepository, KhoVatTuRepository>();
+            services.AddScoped<ILoaiVatTuRepository, LoaiVatTuRepository>();
+            services.AddScoped<INuocSanXuatRepository, NuocSanXuatRepository>();
+            services.AddScoped<INguonCungCapRepository, NguonCungCapRepository>();
+            services.AddScoped<INhanSuRepository, NhanSuRepository>();
+            services.AddScoped<IVatTuRepository, VatTuRepository>();
 
             services.AddSwaggerGen(c =>
             {

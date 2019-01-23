@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
-    interface IDonViTinhRepository
+    public interface IDonViTinhRepository
     {
         Task<List<DonViTinhViewModel>> GetAllAsync();
-        Task<string> GetNameByIdAsync(int id);
+        Task<DonViTinhViewModel> GetById(int id);
         Task<bool> InsertAsync(DonViTinhViewModel mdonvitinh);
         Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh);
         Task<bool> DeleteAsync(int id);
