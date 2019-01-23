@@ -12,5 +12,7 @@ namespace Absoft.ViewModels
         public int MaDVT { get; set; }
         public string TenVT { get; set; }
         public string GhiChu { get; set; }
+        public string TenDVT { get; set; }
+        public string TenLoaiVatTu { get; set; }
     }
 }

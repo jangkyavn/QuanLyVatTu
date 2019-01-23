@@ -31,9 +31,19 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<List<LoaiVatTuViewModel>> GetAllAsync()
         {
-            return await db.LoaiVatTus
-               .ProjectTo<LoaiVatTuViewModel>(mp.ConfigurationProvider)
-               .ToListAsync();
+            var query = from lvt in db.LoaiVatTus
+                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                        select new LoaiVatTuViewModel
+                        {
+                            MaLoaiVatTu = lvt.MaLoaiVatTu,
+                            TenLoai = lvt.TenLoai,
+                            GhiChu = lvt.GhiChu,
+                            MaHM = lvt.MaHM,
+                            TenHM = hm.TenHM
+                        };
+
+            return await query.ToListAsync();
+
         }
         // lay tat ca vat tu theo hang muc
         public async Task<List<LoaiVatTuViewModel>> GetListLoaiByMaHM(int maHM)

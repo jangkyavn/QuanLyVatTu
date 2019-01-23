@@ -58,9 +58,20 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<VatTuViewModel>> GetAllAsync()
         {
-            return await db.VatTus
-                .ProjectTo<VatTuViewModel>(mp.ConfigurationProvider)
-                .ToListAsync();
+            var query = from vt in db.VatTus
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
+                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        select new VatTuViewModel
+                        {
+                            MaVatTu= vt.MaVatTu,
+                            MaLoaiVatTu = vt.MaLoaiVatTu,
+                            MaDVT =  vt.MaDVT,
+                            TenVT = vt.TenVT,
+                            GhiChu = vt.GhiChu,
+                            TenDVT = dvt.TenDVT,
+                            TenLoaiVatTu = lvt.TenLoai
+                        };
+            return await query.ToListAsync();
         }
         public async Task<List<VatTuViewModel>> GetByMaLoaiVTAsync(int MaloaiVT)
         {
