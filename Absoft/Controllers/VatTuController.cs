@@ -29,13 +29,13 @@ namespace Absoft.Controllers
             var models = await _IVatTuRepository.GetByIdAsync(id);
             return Ok(models);
         }
-        [HttpGet("getByMaLoaiVTAsync/{id}")]
+        [HttpGet("getByMaLoaiVT/{id}")]
         public async Task<IActionResult> GetByMaLoaiVTAsync(int maLoaiVT)
         {
             var models = await _IVatTuRepository.GetByMaLoaiVTAsync(maLoaiVT);
             return Ok(models);
         }
-        [HttpGet("getByMaDVAsync/{id}")]
+        [HttpGet("getByMaDV/{id}")]
         public async Task<IActionResult> GetByMaDVAsync(int maDVT)
         {
             var models = await _IVatTuRepository.GetByMaDVAsync(maDVT);
