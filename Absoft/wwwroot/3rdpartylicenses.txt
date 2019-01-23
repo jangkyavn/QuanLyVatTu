@@ -1,3 +1,11 @@
+ngx-bootstrap/modal
+
+ngx-bootstrap/positioning
+
+ngx-bootstrap/component-loader
+
+ngx-bootstrap/utils
+
 rxjs
 Apache-2.0
                                Apache License
@@ -511,14 +519,6 @@ THE SOFTWARE.
 
 
 ngx-bootstrap/pagination
-
-ngx-bootstrap/utils
-
-ngx-bootstrap/component-loader
-
-ngx-bootstrap/positioning
-
-ngx-bootstrap/modal
 
 ng-multiselect-dropdown
 MIT
