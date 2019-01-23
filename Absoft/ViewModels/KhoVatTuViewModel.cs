@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
 {
     public class KhoVatTuViewModel
     {
-        public int MaKho { get; set; }
+        public int? MaKho { get; set; }
         public string TenKho { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }

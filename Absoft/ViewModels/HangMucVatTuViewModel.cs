@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
 {
     public class HangMucVatTuViewModel
     {
-        public int MaHM { get; set; }
+        public int? MaHM { get; set; }
         public string TenHM { get; set; }
         public string GhiChu { get; set; }
     }

@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
 {
     public class NhanSuViewModel
     {
-        public int MaNS { get; set; }
+        public int? MaNS { get; set; }
         public string HoTen { get; set; }
         public string NgaySinh { get; set; }
         public string QueQuan { get; set; }

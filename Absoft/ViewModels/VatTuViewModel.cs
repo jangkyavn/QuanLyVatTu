@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
 {
     public class VatTuViewModel
     {
-        public int MaVatTu { get; set; }
+        public int? MaVatTu { get; set; }
         public int MaLoaiVatTu { get; set; }
         public int MaDVT { get; set; }
         public string TenVT { get; set; }

@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
 {
     public class NuocSanXuatViewModel
     {
-        public int MaNuoc { get; set; }
+        public int? MaNuoc { get; set; }
         public string TenNuoc { get; set; }
     }
 }
