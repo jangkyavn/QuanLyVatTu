@@ -12,6 +12,14 @@ namespace Absoft.AutoMapper
             CreateMap<NguoiDung, UserDetailViewModel>();
             CreateMap<NguoiDung, UserSessionViewModel>();
             CreateMap<DonViTinh, DonViTinhViewModel>();
+            CreateMap<HangMucVatTu, HangMucVatTuViewModel>();
+            CreateMap<HangSanXuat, HangSanXuatViewModel>();
+            CreateMap<KhoVatTu, KhoVatTuViewModel>();
+            CreateMap <LoaiVatTu, LoaiVatTuViewModel>();
+            CreateMap<NguonCungCap, NguonCungCapViewModel>();
+            CreateMap<NuocSanXuat, NuocSanXuatViewModel>();
+            CreateMap<NhanSu, NhanSuViewModel>();
+            CreateMap<VatTu, VatTuViewModel>();
         }
     }
 }
