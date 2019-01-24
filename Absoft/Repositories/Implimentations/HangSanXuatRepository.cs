@@ -51,10 +51,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(HangSanXuatViewModel mhangsanxuat)
         {
-            var hangsanxuat = await db.HangSanXuats.FindAsync(mhangsanxuat.MaHang);
-            hangsanxuat.TenHang = mhangsanxuat.TenHang;
-            hangsanxuat.GhiChu = mhangsanxuat.GhiChu;
-
+            var hangsanxuat = mp.Map<HangSanXuat>(mhangsanxuat);
+            db.HangSanXuats.Update(hangsanxuat);        
             return (await db.SaveChangesAsync()) > 0;
             
         }

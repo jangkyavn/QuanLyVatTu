@@ -51,9 +51,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NguonCungCapViewModel mnguoncungcap)
         {
-            var ncc = await db.NguonCungCaps.FindAsync(mnguoncungcap.MaNguon);
-            ncc.TenNguon = mnguoncungcap.TenNguon;
-            ncc.GhiChu = mnguoncungcap.GhiChu;
+            var ncc = mp.Map<NguonCungCap>(mnguoncungcap);
+            db.NguonCungCaps.Update(ncc);
             return await db.SaveChangesAsync() > 0;
         }
     }

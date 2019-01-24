@@ -51,8 +51,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NuocSanXuatViewModel mnuocsanxuat)
         {
-            var nsx = await db.NuocSanXuats.FindAsync(mnuocsanxuat.MaNuoc);
-            nsx.TenNuoc = mnuocsanxuat.TenNuoc;
+            var nsx = mp.Map<NuocSanXuat>(mnuocsanxuat);
+            db.NuocSanXuats.Update(nsx);
             return await db.SaveChangesAsync() > 0;
         }
     }

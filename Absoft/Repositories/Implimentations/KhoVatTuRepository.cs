@@ -50,11 +50,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(KhoVatTuViewModel mkhovattu)
         {
-            var kvt = await db.KhoVatTus.FindAsync(mkhovattu.MaKho);
-            kvt.TenKho = mkhovattu.TenKho;
-            kvt.DiaChi = mkhovattu.DiaChi;
-            kvt.DienThoai = mkhovattu.DienThoai;
-            kvt.GhiChu = mkhovattu.GhiChu;
+            var kvt = mp.Map<KhoVatTu>(mkhovattu);
+            db.KhoVatTus.Update(kvt);
             return await db.SaveChangesAsync() > 0;
         }
     }

@@ -20,6 +20,7 @@ namespace Absoft.AutoMapper
             CreateMap<NuocSanXuat, NuocSanXuatViewModel>();
             CreateMap<NhanSu, NhanSuViewModel>();
             CreateMap<VatTu, VatTuViewModel>();
+            CreateMap<KhoHang, KhoHangViewModel>();
         }
     }
 }

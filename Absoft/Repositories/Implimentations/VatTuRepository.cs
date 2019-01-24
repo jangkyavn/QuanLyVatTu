@@ -101,10 +101,8 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> UpdateAsync(VatTuViewModel mvattu)
         {
-            var vt = await db.VatTus.FindAsync(mvattu.MaVatTu);
-            vt.TenVT = mvattu.TenVT;
-            vt.MaLoaiVatTu = mvattu.MaLoaiVatTu;
-            vt.MaDVT = mvattu.MaDVT;
+            var vt = mp.Map<VatTu>(mvattu);
+            db.VatTus.Update(vt);
             return await db.SaveChangesAsync() > 0;
         }
     }

@@ -44,9 +44,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(HangMucVatTuViewModel mhangmucvattu)
         {
-            var hangmucvattu = await db.HangMucVatTus.FindAsync(mhangmucvattu.MaHM);
-            hangmucvattu.TenHM = mhangmucvattu.TenHM;
-            hangmucvattu.GhiChu = mhangmucvattu.GhiChu;
+            var hangmuc = mp.Map<HangMucVatTu>(mhangmucvattu);
+            db.HangMucVatTus.Update(hangmuc);                        
             return await db.SaveChangesAsync() > 0;
         }
         // khong len su dung vi anh huong den ban loai vat tu

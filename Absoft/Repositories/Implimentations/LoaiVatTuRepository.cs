@@ -67,10 +67,8 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt)
         {
-            var loaivattu = await db.LoaiVatTus.FindAsync(loaivt.MaLoaiVatTu);
-            loaivattu.MaHM = loaivt.MaHM.Value;
-            loaivattu.TenLoai = loaivt.TenLoai;
-            loaivattu.GhiChu = loaivt.GhiChu;
+            var loaivattu = mp.Map<LoaiVatTu>(loaivt);
+            db.LoaiVatTus.Update(loaivattu);
             return (await db.SaveChangesAsync() > 0);
         }
         #region Khong nen su dung vi anh huong den bang vattu

@@ -51,20 +51,8 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NhanSuViewModel mnhansu)
         {
-            var ns = await db.NhanSus.FindAsync(mnhansu.MaNS);            
-            ns.HoTen = mnhansu.HoTen;
-            ns.NgaySinh = mnhansu.NgaySinh;
-            ns.QueQuan = mnhansu.QueQuan;
-            ns.DanToc = mnhansu.DanToc;
-            ns.TonGiao = mnhansu.TonGiao;
-            ns.CapBacSHSQ = mnhansu.CapBacSHSQ;
-            ns.ChucVu = mnhansu.ChucVu;
-            ns.NgayNhapNguTuyenDung = mnhansu.NgayNhapNguTuyenDung;
-            ns.XuatThan = mnhansu.XuatThan;
-            ns.BanThan = mnhansu.BanThan;
-            ns.QuaTrinhHocTap = mnhansu.QuaTrinhHocTap;
-            ns.ThanNhan = mnhansu.ThanNhan;
-            ns.GhiChu = mnhansu.GhiChu;
+            var ns = mp.Map<NhanSu>(mnhansu);
+            db.NhanSus.Update(ns);
             return await db.SaveChangesAsync() > 0;
         }       
     }

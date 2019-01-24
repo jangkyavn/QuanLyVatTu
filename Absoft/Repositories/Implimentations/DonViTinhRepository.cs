@@ -20,7 +20,7 @@ namespace Absoft.Repositories.Implimentations
         {
             db = data;
             mp = mapper;
-        }      
+        }
 
         public async Task<List<DonViTinhViewModel>> GetAllAsync()
         {
@@ -44,9 +44,9 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh)
         {
-            var dvt = await db.DonViTinhs.FindAsync(mdonvitinh.MaDVT);
-            dvt.TenDVT = mdonvitinh.TenDVT;
-            return await db.SaveChangesAsync() > 0;
+            var dvt = mp.Map<DonViTinh>(mdonvitinh);
+            db.DonViTinhs.Update(dvt);
+            return await db.SaveChangesAsync()>0;
         }
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)
