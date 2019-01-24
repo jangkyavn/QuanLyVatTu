@@ -1,4 +1,5 @@
 ﻿using Absoft.Data;
+using Absoft.Data.Entities;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -70,6 +71,24 @@ namespace Absoft.Repositories.Implimentations
                 return tongton;
             }
             else return 0;
-        }       
+        }
+        public async Task<bool> InsertAsync(KhoHangViewModel mkhohang)
+        {
+            var kh = mp.Map<KhoHang>(mkhohang);
+            await db.KhoHangs.AddAsync(kh);
+            return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> DeleteAsync(KhoHangViewModel mkhohang)
+        {
+            var kh = mp.Map<KhoHang>(mkhohang);
+            db.KhoHangs.Remove(kh);
+            return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> UpdateAsync(KhoHangViewModel mkhohang)
+        {
+            var kh = mp.Map<KhoHang>(mkhohang);
+            db.KhoHangs.Update(kh);
+            return await db.SaveChangesAsync() > 0;
+        }
     }
 }
