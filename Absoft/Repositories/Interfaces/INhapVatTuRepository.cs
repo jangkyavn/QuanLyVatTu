@@ -8,10 +8,9 @@ namespace Absoft.Repositories.Interfaces
 {
     public interface INhapVatTuRepository
     {
-        Task<List<NhapVatTuViewModel>> GetAllAsync();
-        Task<NhapVatTuViewModel> GetById(int id);
-        Task<bool> InsertAsync(NhapVatTuViewModel mdonvitinh);
-        Task<bool> UpdateAsync(NhapVatTuViewModel mdonvitinh);
+        Task<List<NhapVatTuViewModel>> GetAllAsync();        
+        Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);        
         Task<bool> DeleteAsync(int id);
+        Task<bool> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
     }
 }

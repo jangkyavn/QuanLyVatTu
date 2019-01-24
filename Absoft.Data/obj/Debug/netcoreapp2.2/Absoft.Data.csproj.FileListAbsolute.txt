@@ -18,9 +18,9 @@ D:\Project\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.pd
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\bin\Debug\netcoreapp2.2\Absoft.Data.deps.json
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\bin\Debug\netcoreapp2.2\Absoft.Data.dll
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\bin\Debug\netcoreapp2.2\Absoft.Data.pdb
-D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.csprojAssemblyReference.cache
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.csproj.CoreCompileInputs.cache
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.AssemblyInfoInputs.cache
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.AssemblyInfo.cs
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.dll
 D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.pdb
+D:\Absoft\Dự án\Absoft_QuanLyVatTu\Absoft.Data\obj\Debug\netcoreapp2.2\Absoft.Data.csprojAssemblyReference.cache

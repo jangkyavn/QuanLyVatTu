@@ -74,9 +74,18 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> InsertAsync(KhoHangViewModel mkhohang)
         {
-            var kh = mp.Map<KhoHang>(mkhohang);
-            await db.KhoHangs.AddAsync(kh);
-            return await db.SaveChangesAsync() > 0;
+            try
+            {
+                var kh = mp.Map<KhoHang>(mkhohang);
+                await db.KhoHangs.AddAsync(kh);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
         }
         public async Task<bool> DeleteAsync(KhoHangViewModel mkhohang)
         {

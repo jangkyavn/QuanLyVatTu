@@ -13,5 +13,8 @@ namespace Absoft.Repositories.Interfaces
         Task<List<KhoHangViewModel>> GetByMaPhieuNhap(int id);
         Task<List<KhoHangViewModel>> GetByMaVatTu(int id);        
         Task<int> GetTongTon(int maVT, int maKho);
+        Task<bool> UpdateAsync(KhoHangViewModel mkhohang);
+        Task<bool> DeleteAsync(KhoHangViewModel mkhohang);
+        Task<bool> InsertAsync(KhoHangViewModel mkhohang);
     }
 }
