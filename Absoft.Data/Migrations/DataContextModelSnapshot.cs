@@ -19,6 +19,49 @@ namespace Absoft.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Absoft.Data.Entities.DonViTinh", b =>
+                {
+                    b.Property<int>("MaDVT")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("TenDVT");
+
+                    b.HasKey("MaDVT");
+
+                    b.ToTable("DonViTinh");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.HangMucVatTu", b =>
+                {
+                    b.Property<int>("MaHM")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<string>("TenHM");
+
+                    b.HasKey("MaHM");
+
+                    b.ToTable("HangMucVatTu");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.HangSanXuat", b =>
+                {
+                    b.Property<int>("MaHang")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<string>("TenHang");
+
+                    b.HasKey("MaHang");
+
+                    b.ToTable("HangSanXuat");
+                });
+
             modelBuilder.Entity("Absoft.Data.Entities.KhoHang", b =>
                 {
                     b.Property<int>("MaKho");
@@ -32,6 +75,42 @@ namespace Absoft.Data.Migrations
                     b.HasKey("MaKho", "MaPhieuNhap", "MaVatTu");
 
                     b.ToTable("KhoHang");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.KhoVatTu", b =>
+                {
+                    b.Property<int>("MaKho")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DiaChi");
+
+                    b.Property<string>("DienThoai");
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<string>("TenKho");
+
+                    b.HasKey("MaKho");
+
+                    b.ToTable("KhoVatTu");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.LoaiVatTu", b =>
+                {
+                    b.Property<int>("MaLoaiVatTu")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<int>("MaHM");
+
+                    b.Property<string>("TenLoai");
+
+                    b.HasKey("MaLoaiVatTu");
+
+                    b.ToTable("LoaiVatTu");
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.NguoiDung", b =>
@@ -110,6 +189,58 @@ namespace Absoft.Data.Migrations
                     b.ToTable("NguoiDung");
                 });
 
+            modelBuilder.Entity("Absoft.Data.Entities.NguonCungCap", b =>
+                {
+                    b.Property<int>("MaNguon")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<string>("TenNguon");
+
+                    b.HasKey("MaNguon");
+
+                    b.ToTable("NguonCungCap");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.NhanSu", b =>
+                {
+                    b.Property<int>("MaNS")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BanThan");
+
+                    b.Property<string>("CapBacSHSQ");
+
+                    b.Property<string>("ChucVu");
+
+                    b.Property<string>("DanToc");
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<string>("HoTen");
+
+                    b.Property<string>("NgayNhapNguTuyenDung");
+
+                    b.Property<string>("NgaySinh");
+
+                    b.Property<string>("QuaTrinhHocTap");
+
+                    b.Property<string>("QueQuan");
+
+                    b.Property<string>("ThanNhan");
+
+                    b.Property<string>("TonGiao");
+
+                    b.Property<string>("XuatThan");
+
+                    b.HasKey("MaNS");
+
+                    b.ToTable("NhanSu");
+                });
+
             modelBuilder.Entity("Absoft.Data.Entities.NhapChiTiet", b =>
                 {
                     b.Property<int>("MaPhieuNhap");
@@ -122,9 +253,9 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("GhiChu");
 
-                    b.Property<int>("MaHang");
+                    b.Property<int?>("MaHang");
 
-                    b.Property<int>("MaNuoc");
+                    b.Property<int?>("MaNuoc");
 
                     b.Property<string>("Model");
 
@@ -167,6 +298,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("NguoiNhap");
 
+                    b.Property<bool>("Status");
+
                     b.Property<int>("TongSoLuong");
 
                     b.Property<decimal>("TongSoTien");
@@ -174,6 +307,19 @@ namespace Absoft.Data.Migrations
                     b.HasKey("MaPhieuNhap");
 
                     b.ToTable("NhapVatTu");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.NuocSanXuat", b =>
+                {
+                    b.Property<int>("MaNuoc")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("TenNuoc");
+
+                    b.HasKey("MaNuoc");
+
+                    b.ToTable("NuocSanXuat");
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.VaiTro", b =>
@@ -211,6 +357,25 @@ namespace Absoft.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("VaiTroNguoiDung");
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.VatTu", b =>
+                {
+                    b.Property<int>("MaVatTu")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<int>("MaDVT");
+
+                    b.Property<int>("MaLoaiVatTu");
+
+                    b.Property<string>("TenVT");
+
+                    b.HasKey("MaVatTu");
+
+                    b.ToTable("VatTu");
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.XuatChiTiet", b =>

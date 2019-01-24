@@ -7,8 +7,8 @@ namespace Absoft.Data.Entities
     {
         public int MaPhieuNhap { get; set; }
         public int MaVatTu { get; set; }
-        public int MaNuoc { get; set; }
-        public int MaHang { get; set; }
+        public int? MaNuoc { get; set; }
+        public int? MaHang { get; set; }
         public string Model { get; set; }
         public string Seri { get; set; }
         public string SoKhung { get; set; }
