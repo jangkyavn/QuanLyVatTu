@@ -25,16 +25,34 @@ namespace Absoft.Repositories.Implimentations
             ikhohang = IKhoHangRepository;
             ixuatchitiet = IXuatChiTietRepository;
         }       
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int maPX)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> DeleteAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
-        {
-            throw new NotImplementedException();
-        }
-
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {                    
+                    var xvt = await db.XuatVatTus.FindAsync(maPX);                  
+                    var listchitiet = db.XuatChiTiets.Where(x => x.MaPhieuXuat == maPX).ToList();
+                    foreach (var item in listchitiet)
+                    {
+                        var check = await ixuatchitiet.DeleteXuatChiTietAsync(maPX, item.MaPhieuNhap,item.MaVatTu, xvt.MaKho);
+                        if (check == false)
+                        {
+                            return false;
+                        }
+                    }
+                    db.XuatVatTus.Remove(xvt);
+                    transaction.Commit();
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                         
+                }
+            }
+            return false;
+        }   
         public async Task<List<XuatVatTuViewModel>> GetAllAsync()
         {
             var model = from xvt in db.XuatVatTus
@@ -111,19 +129,41 @@ namespace Absoft.Repositories.Implimentations
                     // insert phieu xuat chi tiet
                     foreach(var item in listxuatchitiet)
                     {
-                        var res = ixuatchitiet.InsertAsync(item,px.MaPhieuXuat);
-                        // tru so luong trong kho = 0 thi xoa trong kho
+                        // check sl >= item.soluong
+                        var slkho = await ikhohang.GetSLTon(item.MaVatTu, px.MaKho, item.MaPhieuNhap);
+                        if (slkho != 0 && slkho >= item.SoLuongXuat)
+                        {
+                            var res =await ixuatchitiet.InsertAsync(item, px.MaPhieuXuat);
+                            if (res == true)
+                            {
+                                // tru so luong trong kho = 0 thi xoa trong kho
+                                // set status = fales khong cho xoa nhapchitiet cua mat hang nay vi da xuat
+                                var mkh = new KhoHangViewModel()
+                                {
+                                    SoLuongTon = slkho - item.SoLuongXuat,
+                                    MaKho = px.MaKho,
+                                    MaPhieuNhap = item.MaPhieuNhap,
+                                    MaVatTu = item.MaVatTu  ,
+                                    Status = false                                    
+                                };
+                                var kh = mp.Map<KhoHang>(mkh);
+                                if ((slkho - item.SoLuongXuat) == 0) db.KhoHangs.Remove(kh);
+                                else db.KhoHangs.Update(kh);                                
+                            }
+                            else return 0;
+                        }
+                        else return -1; // so luog xuat vuot qua sl ton                        
                     }
                     transaction.Commit();
                     await db.SaveChangesAsync();
-                    return 1;
+                    return 1; // thành công
                 }
                 catch (Exception)
                 {
                     // TODO: Handle failure                    
                 }
             }
-            return 0;
+            return 0;// có lỗi
         }
         public async Task<int> UpdateAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
         {

@@ -20,7 +20,7 @@ namespace Absoft.Repositories.Implimentations
         {
             db = data;
             mp = mapper;
-        }     
+        }
         public async Task<List<KhoHangViewModel>> GetAllAsync()
         {
             var query = from kh in db.KhoHangs
@@ -29,11 +29,11 @@ namespace Absoft.Repositories.Implimentations
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,
-                            MaPhieuNhap=kh.MaPhieuNhap,
-                            MaVatTu= kh.MaVatTu,
-                            SoLuongTon= kh.SoLuongTon,
-                            TenKho= kvt.TenKho,
-                            TenVatTu= vt.TenVT
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = kh.MaVatTu,
+                            SoLuongTon = kh.SoLuongTon,
+                            TenKho = kvt.TenKho,
+                            TenVatTu = vt.TenVT
                         };
             return await query.ToListAsync();
         }
@@ -57,17 +57,26 @@ namespace Absoft.Repositories.Implimentations
                .Where(x => x.MaKho == id)
                .ProjectTo<KhoHangViewModel>(mp.ConfigurationProvider)
                .ToListAsync();
-        }      
+        }
         public async Task<int> GetTongTon(int maVT, int maKho)
         {
             if (maVT != 0 && maKho != 0)
             {
                 var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho).SumAsync(x => x.SoLuongTon);
                 return tongton;
-            }         
+            }
             else if (maKho == 0 && maVT != 0)
             {
                 var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT).SumAsync(x => x.SoLuongTon);
+                return tongton;
+            }
+            else return 0;
+        }
+        public async Task<int> GetSLTon(int maVT, int maKho, int maPN)
+        {
+            if (maVT != 0 && maKho != 0 && maPN != 0)
+            {
+                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho && x.MaPhieuNhap == maPN).SumAsync(x => x.SoLuongTon);
                 return tongton;
             }
             else return 0;
@@ -84,7 +93,7 @@ namespace Absoft.Repositories.Implimentations
             {
 
                 throw;
-            }           
+            }
         }
         public async Task<bool> DeleteAsync(KhoHangViewModel mkhohang)
         {
