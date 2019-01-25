@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 namespace Absoft.ViewModels
 {
     public class NhapChiTietViewModel
-    {       
+    {
+        public NhapChiTietViewModel()
+        {
+            Status = true;
+        }
         public int MaPhieuNhap { get; set; }
         public int MaVatTu { get; set; }
         public int? MaNuoc { get; set; }
@@ -23,8 +27,7 @@ namespace Absoft.ViewModels
         public string NguonGoc { get; set; }
         public int SoLuong { get; set; }
         public decimal DonGia { get; set; }
-        public string GhiChu { get; set; }
-        [DefaultValue(true)]
+        public string GhiChu { get; set; }        
         public bool Status { set; get; }
     }
 }

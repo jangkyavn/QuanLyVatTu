@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 namespace Absoft.ViewModels
 {
     public class NguonCungCapViewModel
-    {        
+    {
+        public NguonCungCapViewModel()
+        {
+            Status = true;
+        }
         public int? MaNguon { get; set; }
         public string TenNguon { get; set; }
-        public string GhiChu { get; set; }
-        [DefaultValue(true)]
+        public string GhiChu { get; set; }        
         public bool Status { set; get; }
     }
 }

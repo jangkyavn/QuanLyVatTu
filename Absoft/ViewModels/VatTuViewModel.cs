@@ -8,14 +8,17 @@ namespace Absoft.ViewModels
 {
     public class VatTuViewModel
     {
+        public VatTuViewModel()
+        {
+            Status = true;
+        }
         public int? MaVatTu { get; set; }
         public int MaLoaiVatTu { get; set; }
         public int MaDVT { get; set; }
         public string TenVT { get; set; }
         public string GhiChu { get; set; }
         public string TenDVT { get; set; }
-        public string TenLoaiVatTu { get; set; }
-        [DefaultValue(true)]
+        public string TenLoaiVatTu { get; set; }        
         public bool Status { set; get; }
     }
 }

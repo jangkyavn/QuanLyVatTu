@@ -7,6 +7,10 @@ namespace Absoft.ViewModels
 {
     public class XuatChiTietViewModel
     {
+        public XuatChiTietViewModel()
+        {
+            Status = true;
+        }
         public int MaPhieuXuat { get; set; }
         public int MaPhieuNhap { get; set; }
         public int MaVatTu { get; set; }

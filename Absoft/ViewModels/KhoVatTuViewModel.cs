@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 namespace Absoft.ViewModels
 {
     public class KhoVatTuViewModel
-    {       
+    {
+        public KhoVatTuViewModel()
+        {
+            Status = true;
+        }
         public int? MaKho { get; set; }
         public string TenKho { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
-        public string GhiChu { get; set; }
-        [DefaultValue(true)]
+        public string GhiChu { get; set; }        
         public bool Status { set; get; }
     }
 }

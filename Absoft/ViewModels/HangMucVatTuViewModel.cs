@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 namespace Absoft.ViewModels
 {
     public class HangMucVatTuViewModel
-    {       
+    {
+        public HangMucVatTuViewModel()
+        {
+            Status = true;
+        }
         public int? MaHM { get; set; }
         public string TenHM { get; set; }
-        public string GhiChu { get; set; }
-        [DefaultValue(true)]
+        public string GhiChu { get; set; }        
         public bool Status { set; get; }
     }
 }

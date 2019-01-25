@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 namespace Absoft.ViewModels
 {
     public class NhanSuViewModel
-    {     
+    {
+        public NhanSuViewModel()
+        {
+            Status = true;
+        }
         public int? MaNS { get; set; }
         public string HoTen { get; set; }
         public string NgaySinh { get; set; }
@@ -21,8 +25,7 @@ namespace Absoft.ViewModels
         public string BanThan { get; set; }
         public string QuaTrinhHocTap { get; set; }
         public string ThanNhan { get; set; }
-        public string GhiChu { get; set; }
-        [DefaultValue(true)]
+        public string GhiChu { get; set; }        
         public bool Status { set; get; }
     }
 }
