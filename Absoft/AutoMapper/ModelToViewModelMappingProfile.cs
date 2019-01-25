@@ -23,6 +23,8 @@ namespace Absoft.AutoMapper
             CreateMap<KhoHang, KhoHangViewModel>();
             CreateMap<NhapChiTiet,NhapChiTietViewModel >();
             CreateMap<NhapVatTu, NhapVatTuViewModel>();
+            CreateMap<XuatVatTu, XuatVatTuViewModel>();
+            CreateMap<XuatChiTiet, XuatChiTietViewModel>();
         }
     }
 }

@@ -84,8 +84,7 @@ namespace Absoft.Repositories.Implimentations
             {
 
                 throw;
-            }
-           
+            }           
         }
         public async Task<bool> DeleteAsync(KhoHangViewModel mkhohang)
         {
@@ -98,6 +97,21 @@ namespace Absoft.Repositories.Implimentations
             var kh = mp.Map<KhoHang>(mkhohang);
             db.KhoHangs.Update(kh);
             return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> TruSlXuat(KhoHangViewModel mkhohang)
+        {
+            try
+            {
+                var kh = mp.Map<KhoHang>(mkhohang);
+                kh.SoLuongTon -= mkhohang.SoLuongTon;
+                db.KhoHangs.Update(kh);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

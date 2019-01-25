@@ -11,5 +11,6 @@ namespace Absoft.Data.Entities
         public int SoLuongXuat { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }
+        public decimal DonGia { get; set; }
     }
 }

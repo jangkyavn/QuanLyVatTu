@@ -3,6 +3,7 @@ using Absoft.Data.Entities;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,6 @@ namespace Absoft.Repositories.Implimentations
                 }
                 catch (Exception e)
                 {
-
                     throw e;
                 }
                 await db.SaveChangesAsync();
@@ -50,17 +50,17 @@ namespace Absoft.Repositories.Implimentations
             }
             else return -1;
         }
-        public async Task<bool> DeleteNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
+        public async Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho)
         {
-            var khohang = db.KhoHangs.FirstOrDefault(x => x.MaKho == makho && x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
+            var khohang =await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
+            var mnhapchitiet = await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
             if (khohang.Status == false)
             {
                 return false;
             }
             else
-            {
-                var nct = mp.Map<NhapChiTiet>(mnhapchitiet);
-                db.NhapChiTiets.Remove(nct);
+            {                
+                db.NhapChiTiets.Remove(mnhapchitiet);
                 db.KhoHangs.Remove(khohang);
                 return await db.SaveChangesAsync() > 0;
             }

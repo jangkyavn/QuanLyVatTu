@@ -126,7 +126,7 @@ namespace Absoft.Repositories.Implimentations
                     mnhapvattu.TongSoLuong = 0;
                     mnhapvattu.TongSoTien = 0;
                     // tim ban ghi theo maphieu nhap
-                    var nvt = await db.NhapVatTus.FindAsync(mnhapvattu.MaPhieuNhap);
+                    var nvt = mp.Map<NhapVatTu>(mnhapvattu);
                     // sua cac truong tru tong tien, tong sl
                     db.NhapVatTus.Update(nvt);
                     // sua trong chi tiet
@@ -169,7 +169,7 @@ namespace Absoft.Repositories.Implimentations
                     // sua trong chi tiet
                     foreach (var item in listnhapchitiet)
                     {                        
-                        var check =  await inhapchitiet.DeleteNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value, mnhapvattu.MaKho);
+                        var check =  await inhapchitiet.DeleteNhapChiTietAsync(mnhapvattu.MaPhieuNhap.Value,item.MaVatTu ,mnhapvattu.MaKho);
                         if (check==false)
                         {
                             return false; // loi vi chi tiet da xuat, tra ve chi tiet

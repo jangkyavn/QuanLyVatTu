@@ -16,5 +16,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> UpdateAsync(KhoHangViewModel mkhohang);
         Task<bool> DeleteAsync(KhoHangViewModel mkhohang);
         Task<bool> InsertAsync(KhoHangViewModel mkhohang);
+        Task<bool> TruSlXuat(KhoHangViewModel mkhohang);
     }
 }

@@ -10,6 +10,6 @@ namespace Absoft.Repositories.Interfaces
     {       
         Task<bool> InsertAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap);
         Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho);
-        Task<bool> DeleteNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho);
+        Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho);
     }
 }
