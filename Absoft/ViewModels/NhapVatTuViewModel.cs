@@ -8,7 +8,6 @@ namespace Absoft.ViewModels
 {
     public class NhapVatTuViewModel
     {       
-
         public int? MaPhieuNhap { get; set; }
         public int MaHM { get; set; }
         public int MaKho { get; set; }
@@ -21,6 +20,6 @@ namespace Absoft.ViewModels
         public int ChietKhau { get; set; }
         public string GhiChu { get; set; }
         [DefaultValue(true)]
-        public bool Status { get; set; }   
+        public bool Status { get; set; }           
     }
 }

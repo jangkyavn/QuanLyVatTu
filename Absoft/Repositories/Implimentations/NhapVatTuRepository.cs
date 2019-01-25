@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -52,6 +53,18 @@ namespace Absoft.Repositories.Implimentations
                             Status= nvt.Status
                         };
             return await model.ToListAsync();
+        }
+        public async Task<NhapVatTuParams> GetDetailAsync(int maPN)
+        {
+            var pn = await db.NhapVatTus.FindAsync(maPN);
+            var listpnct = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maPN).ToList();
+            var mpn = mp.Map<NhapVatTuViewModel>(pn);
+            var mlistpnct = mp.Map<List<NhapChiTietViewModel>>(listpnct);
+            return new NhapVatTuParams()
+            {
+                mnhapvattu = mpn,
+                listnhapchitiet = mlistpnct
+            };
         }
         public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu,List<NhapChiTietViewModel>  listnhapchitiet)
         {           

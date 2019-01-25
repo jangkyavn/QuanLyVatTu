@@ -1,4 +1,5 @@
-﻿using Absoft.ViewModels;
+﻿using Absoft.Helpers;
+using Absoft.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DeleteAsync(int id);
         Task<int> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
         Task<bool> DeleteAsync( NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
+        Task<NhapVatTuParams> GetDetailAsync(int maPN);
     }
 }

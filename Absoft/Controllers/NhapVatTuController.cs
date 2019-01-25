@@ -51,10 +51,16 @@ namespace Absoft.Controllers
             //}
             return Ok(result);
         }
-        [HttpDelete("{RemoveChiTiet}")]
+        [HttpDelete("removeNhapchitiet")]
         public async Task<IActionResult> RemoveChiTiet(NhapChiTietParams nhapChiTiet)
         {            
             var result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(nhapChiTiet.nhapchitiet, nhapChiTiet.maphieunhap,nhapChiTiet.makho);
+            return Ok(result);
+        }
+        [HttpGet("{maPN}")]
+        public async Task<IActionResult> GetDetailAsync(int maPN)
+        {
+            var result = await _INhapVatTuRepository.GetDetailAsync(maPN);
             return Ok(result);
         }
     }
