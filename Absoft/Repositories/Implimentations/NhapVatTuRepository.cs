@@ -87,26 +87,75 @@ namespace Absoft.Repositories.Implimentations
             }
             return false;
         }
-        public async Task<bool> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)
+        public async Task<int> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)
         {
+
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
+                    mnhapvattu.TongSoLuong = 0;
+                    mnhapvattu.TongSoTien = 0;
                     // tim ban ghi theo maphieu nhap
+                    var nvt = await db.NhapVatTus.FindAsync(mnhapvattu.MaPhieuNhap);
                     // sua cac truong tru tong tien, tong sl
+                    db.NhapVatTus.Update(nvt);
                     // sua trong chi tiet
+                    foreach (var item in listnhapchitiet)
+                    {
+                        mnhapvattu.TongSoTien += item.DonGia * item.SoLuong;
+                        mnhapvattu.TongSoLuong += item.SoLuong;
+                        int sltonmoi = await inhapchitiet.UpdateNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value,mnhapvattu.MaKho);
+                        if (sltonmoi >=0)
+                        {
+                            // update vào kho hàng so luong ton moi
+                            var khohang = db.KhoHangs.Where(x=>x.MaKho ==mnhapvattu.MaKho && x.MaPhieuNhap == mnhapvattu.MaPhieuNhap && x.MaVatTu==item.MaVatTu).FirstOrDefault();
+                            khohang.SoLuongTon = sltonmoi;
+                            db.KhoHangs.Update(khohang);
+                        }
+                        else return -1;
+                    }
                     // sua trong kho
                     // cap nhap lai phieu nhap
                     transaction.Commit();
-                    return await db.SaveChangesAsync() > 0;
+                     await db.SaveChangesAsync();
+                    return 1;
                 }
                 catch (Exception)
                 {
                     // TODO: Handle failure                    
                 }
             }
-            return false;
+            return 0;
         }      
+        public async Task<bool> DeleteAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet )
+        {            
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {            
+                    // tim ban ghi theo maphieu nhap
+                    var nvt = await db.NhapVatTus.FindAsync(mnhapvattu.MaPhieuNhap);
+                    // sua cac truong tru tong tien, tong sl                  
+                    // sua trong chi tiet
+                    foreach (var item in listnhapchitiet)
+                    {                        
+                        var check =  await inhapchitiet.DeleteNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value, mnhapvattu.MaKho);
+                        if (check==false)
+                        {
+                            return false; // loi vi chi tiet da xuat, tra ve chi tiet
+                        }                         
+                    }
+                    db.NhapVatTus.Remove(nvt);
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                         
+                }
+            }
+            return false;
+        }
     }
 }

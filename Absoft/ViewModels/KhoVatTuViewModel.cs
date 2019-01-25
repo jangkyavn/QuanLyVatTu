@@ -12,5 +12,6 @@ namespace Absoft.ViewModels
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
         public string GhiChu { get; set; }
+        public bool Status { set; get; }
     }
 }

@@ -11,6 +11,7 @@ namespace Absoft.ViewModels
         public int? MaHM { get; set; }
         public string TenLoai { get; set; }
         public string GhiChu { get; set; }
-        public string TenHM { get; set; }        
+        public string TenHM { get; set; }
+        public bool Status { set; get; }
     }
 }

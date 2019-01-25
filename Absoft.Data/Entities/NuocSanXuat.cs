@@ -13,5 +13,6 @@ namespace Absoft.Data.Entities
         [Key]
         public int MaNuoc { get; set; }
         public string TenNuoc { get; set; }
+        public bool Status { set; get; }
     }
 }

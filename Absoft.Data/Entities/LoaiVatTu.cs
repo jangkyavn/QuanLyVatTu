@@ -15,5 +15,6 @@ namespace Absoft.Data.Entities
         public int MaHM { get; set; }        
         public string TenLoai { get; set; }
         public string GhiChu { get; set; }
+        public bool Status { set; get; }
     }
 }

@@ -9,5 +9,6 @@ namespace Absoft.Data.Entities
         [Key]
         public int MaDVT { get; set; }
         public string TenDVT { get; set; }
+        public bool Status { set; get; }
     }
 }

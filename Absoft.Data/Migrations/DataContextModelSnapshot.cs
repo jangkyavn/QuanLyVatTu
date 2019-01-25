@@ -15,7 +15,7 @@ namespace Absoft.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
+                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -24,6 +24,8 @@ namespace Absoft.Data.Migrations
                     b.Property<int>("MaDVT")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Status");
 
                     b.Property<string>("TenDVT");
 
@@ -40,6 +42,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("GhiChu");
 
+                    b.Property<bool>("Status");
+
                     b.Property<string>("TenHM");
 
                     b.HasKey("MaHM");
@@ -54,6 +58,8 @@ namespace Absoft.Data.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("GhiChu");
+
+                    b.Property<bool>("Status");
 
                     b.Property<string>("TenHang");
 
@@ -72,6 +78,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("SoLuongTon");
 
+                    b.Property<bool>("Status");
+
                     b.HasKey("MaKho", "MaPhieuNhap", "MaVatTu");
 
                     b.ToTable("KhoHang");
@@ -89,6 +97,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("GhiChu");
 
+                    b.Property<bool>("Status");
+
                     b.Property<string>("TenKho");
 
                     b.HasKey("MaKho");
@@ -105,6 +115,8 @@ namespace Absoft.Data.Migrations
                     b.Property<string>("GhiChu");
 
                     b.Property<int>("MaHM");
+
+                    b.Property<bool>("Status");
 
                     b.Property<string>("TenLoai");
 
@@ -197,6 +209,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("GhiChu");
 
+                    b.Property<bool>("Status");
+
                     b.Property<string>("TenNguon");
 
                     b.HasKey("MaNguon");
@@ -229,6 +243,8 @@ namespace Absoft.Data.Migrations
                     b.Property<string>("QuaTrinhHocTap");
 
                     b.Property<string>("QueQuan");
+
+                    b.Property<bool>("Status");
 
                     b.Property<string>("ThanNhan");
 
@@ -275,6 +291,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("SoMay");
 
+                    b.Property<bool>("Status");
+
                     b.HasKey("MaPhieuNhap", "MaVatTu");
 
                     b.ToTable("NhapChiTiet");
@@ -314,6 +332,8 @@ namespace Absoft.Data.Migrations
                     b.Property<int>("MaNuoc")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Status");
 
                     b.Property<string>("TenNuoc");
 
@@ -371,6 +391,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("MaLoaiVatTu");
 
+                    b.Property<bool>("Status");
+
                     b.Property<string>("TenVT");
 
                     b.HasKey("MaVatTu");
@@ -390,6 +412,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("SoLuongXuat");
 
+                    b.Property<bool>("Status");
+
                     b.HasKey("MaPhieuXuat", "MaPhieuNhap", "MaVatTu");
 
                     b.ToTable("XuatChiTiet");
@@ -408,6 +432,8 @@ namespace Absoft.Data.Migrations
                     b.Property<int>("MaNS");
 
                     b.Property<string>("NgayNhap");
+
+                    b.Property<bool>("Status");
 
                     b.Property<int>("TongSoLuong");
 

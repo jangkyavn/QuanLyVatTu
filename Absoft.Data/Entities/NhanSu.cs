@@ -25,5 +25,6 @@ namespace Absoft.Data.Entities
         public string QuaTrinhHocTap { get; set; }
         public string ThanNhan { get; set; }
         public string GhiChu { get; set; }
+        public bool Status { set; get; }
     }
 }

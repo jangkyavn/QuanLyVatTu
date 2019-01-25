@@ -16,5 +16,6 @@ namespace Absoft.Data.Entities
         public int MaDVT { get; set; }
         public string TenVT { get; set; }
         public string GhiChu { get; set; }
+        public bool Status { set; get; }
     }
 }

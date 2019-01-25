@@ -9,5 +9,6 @@ namespace Absoft.ViewModels
     {
         public int? MaNuoc { get; set; }
         public string TenNuoc { get; set; }
+        public bool Status { set; get; }
     }
 }

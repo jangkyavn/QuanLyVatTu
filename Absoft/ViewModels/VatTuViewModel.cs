@@ -14,5 +14,6 @@ namespace Absoft.ViewModels
         public string GhiChu { get; set; }
         public string TenDVT { get; set; }
         public string TenLoaiVatTu { get; set; }
+        public bool Status { set; get; }
     }
 }
