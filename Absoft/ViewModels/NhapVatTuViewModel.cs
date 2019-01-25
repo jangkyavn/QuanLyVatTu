@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Absoft.ViewModels
 {
     public class NhapVatTuViewModel
-    {
+    {       
+
         public int? MaPhieuNhap { get; set; }
         public int MaHM { get; set; }
         public int MaKho { get; set; }
@@ -16,6 +18,7 @@ namespace Absoft.ViewModels
         public int TongSoLuong { get; set; }
         public int ChietKhau { get; set; }
         public string GhiChu { get; set; }
+        [DefaultValue(true)]
         public bool Status { get; set; }   
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Absoft.ViewModels
         public string GhiChu { get; set; }
         public string TenDVT { get; set; }
         public string TenLoaiVatTu { get; set; }
+        [DefaultValue(true)]
         public bool Status { set; get; }
     }
 }
