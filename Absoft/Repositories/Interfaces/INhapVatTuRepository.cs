@@ -11,9 +11,9 @@ namespace Absoft.Repositories.Interfaces
     {
         Task<List<NhapVatTuViewModel>> GetAllAsync();        
         Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);        
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int maPN);
         Task<int> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
-        Task<bool> DeleteAsync( NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
+        //Task<bool> DeleteAsync( NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet);
         Task<NhapVatTuParams> GetDetailAsync(int maPN);
     }
 }

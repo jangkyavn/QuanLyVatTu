@@ -41,14 +41,10 @@ namespace Absoft.Controllers
             // return 0 loi update
             return Ok(result);
         }
-        [HttpDelete]
-        public async Task<IActionResult> Delete(NhapVatTuParams nhapVatTuParams)
+        [HttpDelete("{maPN}")]
+        public async Task<IActionResult> Delete(int maPN)
         {            
-            var result = await _INhapVatTuRepository.DeleteAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);         
-            //foreach(var item in nhapVatTuParams.listnhapchitiet)
-            //{
-            //    var khohang = db.KhoHangs.FirstOrDefault(x => x.MaKho == makho && x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
-            //}
+            var result = await _INhapVatTuRepository.DeleteAsync(maPN);                    
             return Ok(result);
         }
         [HttpDelete("removeNhapchitiet/{mapn}/{mavt}/{makho}")]

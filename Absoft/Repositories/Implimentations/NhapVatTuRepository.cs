@@ -27,11 +27,36 @@ namespace Absoft.Repositories.Implimentations
             ikhohang = IKhoHangRepository;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int maPN)
         {
-            throw new NotImplementedException();
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // tim ban ghi theo maphieu nhap
+                    var nvt = await db.NhapVatTus.FindAsync(maPN);
+                    // sua cac truong tru tong tien, tong sl                  
+                    // sua trong chi tiet
+                    var listnhapchitiet = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maPN).ToList();                    
+                    foreach (var item in listnhapchitiet)
+                    {
+                        var check = await inhapchitiet.DeleteNhapChiTietAsync(maPN, item.MaVatTu, nvt.MaKho);
+                        if (check == false)
+                        {
+                            return false; // loi vi chi tiet da xuat, tra ve chi tiet
+                        }
+                    }
+                    db.NhapVatTus.Remove(nvt);
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                         
+                }
+            }
+            return false;
         }
-
         public async Task<List<NhapVatTuViewModel>> GetAllAsync()
         {
             var model = from nvt in db.NhapVatTus
@@ -156,35 +181,6 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return 0;
-        }      
-        public async Task<bool> DeleteAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet )
-        {            
-            using (var transaction = db.Database.BeginTransaction())
-            {
-                try
-                {            
-                    // tim ban ghi theo maphieu nhap
-                    var nvt = await db.NhapVatTus.FindAsync(mnhapvattu.MaPhieuNhap);
-                    // sua cac truong tru tong tien, tong sl                  
-                    // sua trong chi tiet
-                    foreach (var item in listnhapchitiet)
-                    {                        
-                        var check =  await inhapchitiet.DeleteNhapChiTietAsync(mnhapvattu.MaPhieuNhap.Value,item.MaVatTu ,mnhapvattu.MaKho);
-                        if (check==false)
-                        {
-                            return false; // loi vi chi tiet da xuat, tra ve chi tiet
-                        }                         
-                    }
-                    db.NhapVatTus.Remove(nvt);
-                    await db.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception)
-                {
-                    // TODO: Handle failure                         
-                }
-            }
-            return false;
-        }
+        }            
     }
 }
