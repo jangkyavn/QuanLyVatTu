@@ -12,6 +12,8 @@ namespace Absoft.ViewModels
         public int? MaPhieuNhap { get; set; }
         public int MaHM { get; set; }
         public int MaKho { get; set; }
+        public string TenHM { get; set; }
+        public string TenKho { get; set; }
         public string NgayNhap { get; set; }
         public string NguoiNhap { get; set; }
         public decimal TongSoTien { get; set; }

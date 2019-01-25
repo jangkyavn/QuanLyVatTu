@@ -33,9 +33,25 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<List<NhapVatTuViewModel>> GetAllAsync()
         {
-            return await db.NhapVatTus
-                .ProjectTo<NhapVatTuViewModel>(mp.ConfigurationProvider)
-                .ToListAsync();
+            var model = from nvt in db.NhapVatTus
+                        join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
+                        join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                        select new NhapVatTuViewModel
+                        {
+                            MaPhieuNhap= nvt.MaPhieuNhap,
+                            MaHM = nvt.MaHM,
+                            MaKho = nvt.MaKho,
+                            TenHM= hm.TenHM,
+                            TenKho = kvt.TenKho,
+                            NgayNhap = nvt.NgayNhap,
+                            NguoiNhap = nvt.NguoiNhap,
+                            TongSoTien= nvt.TongSoTien,
+                            TongSoLuong= nvt.TongSoLuong,
+                            ChietKhau = nvt.ChietKhau,
+                            GhiChu = nvt.GhiChu,
+                            Status= nvt.Status
+                        };
+            return await model.ToListAsync();
         }
         public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu,List<NhapChiTietViewModel>  listnhapchitiet)
         {           
