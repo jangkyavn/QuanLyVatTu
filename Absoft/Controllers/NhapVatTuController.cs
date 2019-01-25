@@ -20,6 +20,12 @@ namespace Absoft.Controllers
             _INhapVatTuRepository = INhapVatTuRepository;
             _INhapChiTietRepository = INhapChiTietRepository;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var models = await _INhapVatTuRepository.GetAllAsync();
+            return Ok(models);
+        }
         [HttpPost]
         public async Task<IActionResult> Insert(NhapVatTuParams nhapVatTuParams)
         {
