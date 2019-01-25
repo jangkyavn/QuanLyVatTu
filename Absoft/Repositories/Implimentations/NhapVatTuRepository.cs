@@ -45,8 +45,9 @@ namespace Absoft.Repositories.Implimentations
                         {
                             return false; // loi vi chi tiet da xuat, tra ve chi tiet
                         }
-                    }
+                    }                  
                     db.NhapVatTus.Remove(nvt);
+                    transaction.Commit();
                     await db.SaveChangesAsync();
                     return true;
                 }

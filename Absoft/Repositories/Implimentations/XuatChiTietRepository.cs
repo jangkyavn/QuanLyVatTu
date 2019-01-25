@@ -28,7 +28,6 @@ namespace Absoft.Repositories.Implimentations
         {
             throw new NotImplementedException();
         }
-
         public Task<int> UpdateXuatChiTietAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat, int makho)
         {
             throw new NotImplementedException();

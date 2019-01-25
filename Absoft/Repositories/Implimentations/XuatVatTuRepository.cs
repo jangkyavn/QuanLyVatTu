@@ -17,11 +17,13 @@ namespace Absoft.Repositories.Implimentations
         DataContext db;
         IMapper mp;      
         IKhoHangRepository ikhohang;
-        public XuatVatTuRepository(DataContext data, IMapper mapper, IKhoHangRepository IKhoHangRepository)
+        IXuatChiTietRepository ixuatchitiet;
+        public XuatVatTuRepository(DataContext data, IMapper mapper, IKhoHangRepository IKhoHangRepository, IXuatChiTietRepository IXuatChiTietRepository)
         {
             db = data;
             mp = mapper;
             ikhohang = IKhoHangRepository;
+            ixuatchitiet = IXuatChiTietRepository;
         }       
         public async Task<bool> DeleteAsync(int id)
         {
@@ -103,7 +105,15 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                      
+                    // tao phieu xuat de lay mapx
+                    var px = mp.Map<XuatVatTu>(mxuatvt);
+                    await db.XuatVatTus.AddAsync(px);
+                    // insert phieu xuat chi tiet
+                    foreach(var item in listxuatchitiet)
+                    {
+                        var res = ixuatchitiet.InsertAsync(item,px.MaPhieuXuat);
+                        // tru so luong trong kho = 0 thi xoa trong kho
+                    }
                     transaction.Commit();
                     await db.SaveChangesAsync();
                     return 1;
