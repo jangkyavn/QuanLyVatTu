@@ -48,13 +48,16 @@ namespace Absoft.Controllers
             return Ok(result);
         }
         [HttpDelete("removeNhapchitiet/{mapn}/{mavt}/{makho}")]
-        public async Task<IActionResult> RemoveChiTiet(int mapn, int mavt, int makho)
-        {
+        public async Task<IActionResult> RemoveChiTiet(int mapn, int? mavt, int makho)
+        {            
             var result = false;
-            if (await _INhapChiTietRepository.CheckDeleteNhapChiTietAsync(mapn, mavt, makho) == true)
+            if(mavt!=null)
             {
-                result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt, makho);               
-            }
+                if (await _INhapChiTietRepository.CheckDeleteNhapChiTietAsync(mapn, mavt.Value, makho) == true)
+                {
+                    result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt.Value, makho);
+                }
+            }            
             return Ok(result); // false vat tu da xuat khong duoc xoa
         }
         [HttpGet("{maPN}")]

@@ -61,13 +61,16 @@ namespace Absoft.Controllers
             return Ok(models);
         }
         [HttpDelete("deleteXuatChiTiet/{maPX}/{maPN}/{maVT}/{maKho}")]
-        public async Task<IActionResult> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
+        public async Task<IActionResult> DeleteXuatChiTietAsync(int? maPX, int? maPN, int? maVT, int? maKho)
         {
             var models = false;
-            if (await _IXuatChiTietRepository.CheckDeleteXuatChiTietAsync(maPX, maPN, maVT, maKho) == true)
+            if(maPX !=null && maPN !=null && maVT!=null && maKho!=null)
             {
-                models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX, maPN, maVT, maKho);
-            }
+                if (await _IXuatChiTietRepository.CheckDeleteXuatChiTietAsync(maPX.Value, maPN.Value, maVT.Value, maKho.Value) == true)
+                {
+                    models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX.Value, maPN.Value, maVT.Value, maKho.Value);
+                }
+            }            
             return Ok(models);
         }
         [HttpPut]
