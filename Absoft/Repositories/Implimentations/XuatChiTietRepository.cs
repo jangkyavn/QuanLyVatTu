@@ -63,17 +63,8 @@ namespace Absoft.Repositories.Implimentations
                 try
                 {
                     var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
-                    var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
-                    //xct.SoLuongXuat = mxuatchitiet.SoLuongXuat;
-                    //xct.DonGia = mxuatchitiet.DonGia;
-                    //xct.GhiChu = mxuatchitiet.GhiChu;
-                    //db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
-                    //db.XuatChiTiets.Remove(xct);
-                    //await db.XuatChiTiets.AddAsync(xuatchitiet);              
-                    xct.SoLuongXuat = mxuatchitiet.SoLuongXuat;
-                    xct.DonGia = mxuatchitiet.DonGia;
-                    xct.GhiChu = mxuatchitiet.GhiChu;
-                    db.Entry(xct).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);                    
+                    db.Entry(xct).CurrentValues.SetValues(xuatchitiet);                                                                       
                     var rs =await db.SaveChangesAsync();
                     return soluongtonmoi;
                 }
