@@ -62,16 +62,25 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    var xct = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaPhieuXuat== maphieuxuat && x.MaVatTu==mxuatchitiet.MaVatTu);
-                    var xuatchitiet = mp.Map<XuatChiTiet>(xct);
-                    db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
+                    var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
+                    var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
+                    //xct.SoLuongXuat = mxuatchitiet.SoLuongXuat;
+                    //xct.DonGia = mxuatchitiet.DonGia;
+                    //xct.GhiChu = mxuatchitiet.GhiChu;
+                    //db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
+                    //db.XuatChiTiets.Remove(xct);
+                    //await db.XuatChiTiets.AddAsync(xuatchitiet);              
+                    xct.SoLuongXuat = mxuatchitiet.SoLuongXuat;
+                    xct.DonGia = mxuatchitiet.DonGia;
+                    xct.GhiChu = mxuatchitiet.GhiChu;
+                    db.Entry(xct).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    var rs =await db.SaveChangesAsync();
+                    return soluongtonmoi;
                 }
                 catch (Exception e)
                 {
                     throw e;
-                }
-                await db.SaveChangesAsync();
-                return soluongtonmoi;
+                }                
             }
             else return -1;
         }

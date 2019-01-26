@@ -117,6 +117,19 @@ namespace Absoft.Repositories.Implimentations
                 listxuatchitiet = mlistxuatct
             };
         }
+        public async Task<List<VatTuViewModel>> GetListVTByMaPNAsync(int maPN)
+        {
+            var vattu  =await (from nct in db.NhapChiTiets
+                         join vt in db.VatTus on nct.MaVatTu equals vt.MaVatTu
+                         where nct.MaPhieuNhap== maPN
+                         select new VatTu
+                         {
+                                MaVatTu = nct.MaVatTu,
+                                TenVT = vt.TenVT
+                         }).ToListAsync();
+            var mvattu = mp.Map<List<VatTuViewModel>>(vattu);
+            return mvattu;
+        }
         public async Task<List<int>> GetByMaKhoAsync(int maKho)
         {
             var listpn = await (from nvt in db.NhapVatTus
