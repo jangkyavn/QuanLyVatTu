@@ -49,8 +49,12 @@ namespace Absoft.Controllers
         }
         [HttpDelete("removeNhapchitiet/{mapn}/{mavt}/{makho}")]
         public async Task<IActionResult> RemoveChiTiet(int mapn, int mavt, int makho)
-        {            
-            var result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt, makho);
+        {
+            var result = false;
+            if (await _INhapChiTietRepository.CheckDeleteNhapChiTietAsync(mapn, mavt, makho) == true)
+            {
+                result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt, makho);               
+            }
             return Ok(result); // false vat tu da xuat khong duoc xoa
         }
         [HttpGet("{maPN}")]

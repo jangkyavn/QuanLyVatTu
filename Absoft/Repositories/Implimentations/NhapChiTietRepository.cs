@@ -69,6 +69,15 @@ namespace Absoft.Repositories.Implimentations
                 return await db.SaveChangesAsync() > 0;
             }
         }
+        public async Task<bool> CheckDeleteNhapChiTietAsync(int mapn, int mavt, int makho)
+        {
+            var mnhapchitiet = await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
+            if (mnhapchitiet != null)
+            {
+                return true;
+            }
+            else  return false;
+        }
         public async Task<bool> CheckStatus(int mapn, int mavt, int makho)
         {
             var khohang = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
