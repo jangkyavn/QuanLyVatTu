@@ -10,7 +10,8 @@ namespace Absoft.Repositories.Interfaces
     {
         Task<bool> InsertAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat);
         Task<int> UpdateXuatChiTietAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat, int makho);
-        Task<bool> DeleteXuatChiTietAsync(int maPX,int maPN, int maVT, int maKho);
+        Task<bool> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho);
         Task<bool> CheckDeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho);
+        Task<bool> deleteAllXuatChiTiet(int maPX, int maPN, int maVT, int maKho);
     }
 }

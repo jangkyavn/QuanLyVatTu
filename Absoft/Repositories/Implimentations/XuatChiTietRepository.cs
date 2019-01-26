@@ -46,6 +46,15 @@ namespace Absoft.Repositories.Implimentations
             db.KhoHangs.Update(kh);
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> deleteAllXuatChiTiet(int maPX, int maPN, int maVT, int maKho)
+        {
+            var list = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == maPX).ToListAsync();
+            foreach(var item in list)
+            {
+                var res = await this.DeleteXuatChiTietAsync(item.MaPhieuXuat, item.MaPhieuNhap, item.MaVatTu, maKho); 
+            }
+            return true;
+        }
         public async Task<bool> InsertAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat)
         {
             mxuatchitiet.MaPhieuXuat = maphieuxuat;

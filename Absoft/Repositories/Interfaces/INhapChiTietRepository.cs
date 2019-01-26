@@ -13,5 +13,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho);
         Task<bool> CheckStatus(int mapn, int mavt, int makho);
         Task<bool> CheckDeleteNhapChiTietAsync(int mapn, int mavt, int makho);
+        Task<bool> removeallNhapchitiet(int mapn, int makho);
     }
 }

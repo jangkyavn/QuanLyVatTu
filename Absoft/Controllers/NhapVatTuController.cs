@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Absoft.Controllers
-{   
+{
     public class NhapVatTuController : BaseController
     {
         INhapVatTuRepository _INhapVatTuRepository;
@@ -43,21 +43,27 @@ namespace Absoft.Controllers
         }
         [HttpDelete("{maPN}")]
         public async Task<IActionResult> Delete(int maPN)
-        {            
-            var result = await _INhapVatTuRepository.DeleteAsync(maPN);                    
+        {
+            var result = await _INhapVatTuRepository.DeleteAsync(maPN);
             return Ok(result);
         }
         [HttpDelete("removeNhapchitiet/{mapn}/{mavt}/{makho}")]
         public async Task<IActionResult> RemoveChiTiet(int mapn, int? mavt, int makho)
-        {            
+        {
             var result = false;
-            if(mavt!=null)
+            if (mavt != null)
             {
                 if (await _INhapChiTietRepository.CheckDeleteNhapChiTietAsync(mapn, mavt.Value, makho) == true)
                 {
                     result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt.Value, makho);
                 }
-            }            
+            }
+            return Ok(result); // false vat tu da xuat khong duoc xoa
+        }
+        [HttpDelete("removeallNhapchitiet/{mapn}/{makho}")]
+        public async Task<IActionResult> removeallNhapchitiet(int mapn, int makho)
+        {
+            var result = await _INhapChiTietRepository.removeallNhapchitiet(mapn, makho);
             return Ok(result); // false vat tu da xuat khong duoc xoa
         }
         [HttpGet("{maPN}")]
@@ -69,7 +75,7 @@ namespace Absoft.Controllers
         [HttpGet("CheckStatus/{mapn}/{mavt}/{makho}")]
         public async Task<IActionResult> CheckStatus(int mapn, int mavt, int makho)
         {
-            var result = await _INhapChiTietRepository.CheckStatus(mapn,mavt, makho);
+            var result = await _INhapChiTietRepository.CheckStatus(mapn, mavt, makho);
             // result == true cho xóa, false không cho xóa
             return Ok(result);
         }

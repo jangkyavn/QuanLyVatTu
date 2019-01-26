@@ -87,5 +87,14 @@ namespace Absoft.Repositories.Implimentations
             var khohang = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
             return (khohang.Status);            
         }
+        public async Task<bool> removeallNhapchitiet(int mapn, int makho)
+        {
+            var list = await db.NhapChiTiets.Where(x => x.MaPhieuNhap == mapn).ToListAsync();
+            foreach(var item in list)
+            {
+               var rs= await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
+            }
+            return true;
+        }
     }
 }
