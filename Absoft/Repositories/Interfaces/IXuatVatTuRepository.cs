@@ -15,5 +15,6 @@ namespace Absoft.Repositories.Interfaces
         Task<int> UpdateAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet);        
         Task<XuatVatTuParams> GetDetailAsync(int maPX);
         Task<XuatVatTuParams> GetByMaPNAsync(int maPN);
+        Task<List<int>> GetByMaKhoAsync(int maKho);
     }
 }

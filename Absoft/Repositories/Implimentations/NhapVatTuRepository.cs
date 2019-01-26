@@ -171,6 +171,8 @@ namespace Absoft.Repositories.Implimentations
                     }
                     // sua trong kho
                     // cap nhap lai phieu nhap
+                    nvt.TongSoLuong = mnhapvattu.TongSoLuong;
+                    nvt.TongSoTien = mnhapvattu.TongSoTien;                   
                     db.NhapVatTus.Update(nvt);
                     transaction.Commit();
                      await db.SaveChangesAsync();

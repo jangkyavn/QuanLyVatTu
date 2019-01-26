@@ -24,16 +24,22 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetAllAsync();
             return Ok(models);
         }
-        [HttpGet("GetByMaPNAsync")]
+        [HttpGet("GetByMaPNAsync/{maPN}")]
         public async Task<IActionResult> GetByMaPNAsync(int maPN)
         {
             var models = await _IXuatVatTuRepository.GetByMaPNAsync(maPN);
             return Ok(models);
         }
-        [HttpGet("GetDetailAsync")]
+        [HttpGet("GetDetailAsync/{maPX}")]
         public async Task<IActionResult> GetDetailAsync(int maPX)
         {
             var models = await _IXuatVatTuRepository.GetDetailAsync(maPX);
+            return Ok(models);
+        }
+        [HttpGet("{GetByMaKhoAsync}/{maKho}")]
+        public async Task<IActionResult> GetByMaKhoAsync(int maKho)
+        {
+            var models = await _IXuatVatTuRepository.GetByMaKhoAsync(maKho);
             return Ok(models);
         }
         [HttpPost]
@@ -59,6 +65,7 @@ namespace Absoft.Controllers
         {
             var models = await _IXuatVatTuRepository.UpdateAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
             return Ok(models);
-        }
+        }      
+        
     }
 }

@@ -117,6 +117,14 @@ namespace Absoft.Repositories.Implimentations
                 listxuatchitiet = mlistxuatct
             };
         }
+        public async Task<List<int>> GetByMaKhoAsync(int maKho)
+        {
+            var listpn = await (from nvt in db.NhapVatTus
+                       join kh in db.KhoHangs on nvt.MaKho equals kh.MaKho
+                       where kh.MaKho == maKho
+                       select nvt.MaPhieuNhap).ToListAsync();
+            return listpn;
+        }
         public async Task<int> InsertAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
         {
             using (var transaction = db.Database.BeginTransaction())
@@ -211,6 +219,8 @@ namespace Absoft.Repositories.Implimentations
                     }
                     // sua trong kho
                     // cap nhap lai phieu nhap
+                    xvt.TongSoLuong = mxuatvt.TongSoLuong;
+                    xvt.TongSoTien = mxuatvt.TongSoTien;                    
                     db.XuatVatTus.Update(xvt);
                     transaction.Commit();
                     await db.SaveChangesAsync();

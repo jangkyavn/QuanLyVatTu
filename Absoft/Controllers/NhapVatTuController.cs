@@ -51,12 +51,19 @@ namespace Absoft.Controllers
         public async Task<IActionResult> RemoveChiTiet(int mapn, int mavt, int makho)
         {            
             var result = await _INhapChiTietRepository.DeleteNhapChiTietAsync(mapn, mavt, makho);
-            return Ok(result);
+            return Ok(result); // false vat tu da xuat khong duoc xoa
         }
         [HttpGet("{maPN}")]
         public async Task<IActionResult> GetDetailAsync(int maPN)
         {
             var result = await _INhapVatTuRepository.GetDetailAsync(maPN);
+            return Ok(result);
+        }
+        [HttpGet("CheckStatus/{mapn}/{mavt}/{makho}")]
+        public async Task<IActionResult> CheckStatus(int mapn, int mavt, int makho)
+        {
+            var result = await _INhapChiTietRepository.CheckStatus(mapn,mavt, makho);
+            // result == true cho xóa, false không cho xóa
             return Ok(result);
         }
     }
