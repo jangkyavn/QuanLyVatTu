@@ -174,8 +174,8 @@ namespace Absoft.Repositories.Implimentations
                                         Status = false
                                     };
                                     var kh = mp.Map<KhoHang>(mkh);
-                                    if ((slkho - item.SoLuongXuat) == 0) db.KhoHangs.Remove(kh);
-                                    else db.KhoHangs.Update(kh);
+                                    //if ((slkho - item.SoLuongXuat) == 0) db.KhoHangs.Remove(kh);
+                                    db.KhoHangs.Update(kh);
                                 }
                                 else return 0;
                             }
@@ -221,12 +221,16 @@ namespace Absoft.Repositories.Implimentations
                             // update vào kho hàng so luong ton moi
                             var khohang = db.KhoHangs.FirstOrDefault(x => x.MaKho == mxuatvt.MaKho && x.MaPhieuNhap == item.MaPhieuNhap && x.MaVatTu == item.MaVatTu);
                             khohang.SoLuongTon = sltonmoi;
-                            if (sltonmoi == 0) db.KhoHangs.Remove(khohang);
-                            else if(sltonmoi== (await db.NhapChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuNhap==item.MaPhieuNhap && x.MaVatTu== item.MaVatTu)).SoLuong)
+                            //if (sltonmoi == 0) db.KhoHangs.Remove(khohang);
+                            if (sltonmoi == (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaVatTu == item.MaVatTu)).SoLuong)
                             {
                                 khohang.Status = true;
                             }
-                            else db.KhoHangs.Update(khohang);
+                            else
+                            {
+                                khohang.Status = false;
+                                db.KhoHangs.Update(khohang);
+                            }
                         }
                         else return -1;
                     }

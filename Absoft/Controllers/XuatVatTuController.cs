@@ -53,7 +53,7 @@ namespace Absoft.Controllers
         {
             var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
             return Ok(models);
-        }
+        }       
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int maPX)
         {

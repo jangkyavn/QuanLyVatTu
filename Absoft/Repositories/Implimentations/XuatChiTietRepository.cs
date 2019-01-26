@@ -46,19 +46,17 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> UpdateXuatChiTietAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat, int makho)
         {
+            var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
             // lay so luong cu 
             int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
-            int soluongxuatcu = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault().SoLuongXuat;
+            int soluongxuatcu = xct.SoLuongXuat;
             int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat;
             if (soluongtonmoi >= 0)
-            {
-
-                var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
+            {                
                 var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
                 db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
                 var rs = await db.SaveChangesAsync();
                 return soluongtonmoi;
-
             }
             else return -1;
         }
