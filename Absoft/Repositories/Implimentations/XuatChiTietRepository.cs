@@ -20,6 +20,12 @@ namespace Absoft.Repositories.Implimentations
             db = data;
             mp = mapper;
         }
+        public async Task<bool> CheckDeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
+        {
+            var xct = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaPhieuXuat == maPX && x.MaVatTu == maVT);
+            if (xct != null) return true;
+            else return false;
+        }
         public async Task<bool> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
         {
             // remove xuatchitiet

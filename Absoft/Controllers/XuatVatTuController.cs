@@ -53,7 +53,7 @@ namespace Absoft.Controllers
         {
             var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
             return Ok(models);
-        }       
+        }
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int maPX)
         {
@@ -63,7 +63,11 @@ namespace Absoft.Controllers
         [HttpDelete("deleteXuatChiTiet/{maPX}/{maPN}/{maVT}/{maKho}")]
         public async Task<IActionResult> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
         {
-            var models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX,maPN, maVT, maKho);
+            var models = false;
+            if (await _IXuatChiTietRepository.CheckDeleteXuatChiTietAsync(maPX, maPN, maVT, maKho) == true)
+            {
+                models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX, maPN, maVT, maKho);
+            }
             return Ok(models);
         }
         [HttpPut]
@@ -71,7 +75,7 @@ namespace Absoft.Controllers
         {
             var models = await _IXuatVatTuRepository.UpdateAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
             return Ok(models);
-        }      
-        
+        }
+
     }
 }

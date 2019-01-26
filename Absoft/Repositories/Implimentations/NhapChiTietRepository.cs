@@ -66,6 +66,10 @@ namespace Absoft.Repositories.Implimentations
                 nvt.TongSoTien -= mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
                 db.NhapChiTiets.Remove(mnhapchitiet);
                 db.KhoHangs.Remove(khohang);
+                // check count chi tiet pn ==0 thì xóa pn
+                //var coutchitiet = await db.NhapChiTiets.CountAsync(x=>x.MaPhieuNhap == mapn);
+                //if (coutchitiet == 0) db.NhapVatTus.Remove(await db.NhapVatTus.FindAsync(mapn));
+                //
                 return await db.SaveChangesAsync() > 0;
             }
         }
