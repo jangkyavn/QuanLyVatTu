@@ -53,14 +53,17 @@ namespace Absoft.Repositories.Implimentations
         public async Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho)
         {
             //var check =await this.CheckStatus(mapn, mavt, makho);
-            var khohang =await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
-            var mnhapchitiet = await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
+            var khohang =await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);            
             if (khohang.Status == false)
             {
                 return false;
             }
             else
-            {                
+            {
+                var mnhapchitiet = await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
+                var nvt = await db.NhapVatTus.FindAsync(mapn);
+                nvt.TongSoLuong -= mnhapchitiet.SoLuong;
+                nvt.TongSoTien -= mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
                 db.NhapChiTiets.Remove(mnhapchitiet);
                 db.KhoHangs.Remove(khohang);
                 return await db.SaveChangesAsync() > 0;

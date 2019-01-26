@@ -26,6 +26,10 @@ namespace Absoft.Repositories.Implimentations
             var xct = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaPhieuXuat == maPX && x.MaVatTu == maVT);
             int slx = xct.SoLuongXuat;
             db.XuatChiTiets.Remove(xct);
+            //tru soluongtong, tong gia trong px
+            var px = await db.XuatVatTus.FindAsync(maPX);
+            px.TongSoLuong -= xct.SoLuongXuat;
+            px.TongSoTien -= xct.SoLuongXuat * xct.DonGia;
             // cong sl nguoc lai kho
             var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
             kh.SoLuongTon += slx;
@@ -52,7 +56,7 @@ namespace Absoft.Repositories.Implimentations
             int soluongxuatcu = xct.SoLuongXuat;
             int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat;
             if (soluongtonmoi >= 0)
-            {                
+            {
                 var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
                 db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
                 var rs = await db.SaveChangesAsync();

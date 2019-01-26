@@ -132,10 +132,11 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<int>> GetByMaKhoAsync(int maKho)
         {
-            var listpn = await (from nvt in db.NhapVatTus
+            var listpn =await (from nvt in db.NhapVatTus
                        join kh in db.KhoHangs on nvt.MaKho equals kh.MaKho
                        where kh.MaKho == maKho
-                       select nvt.MaPhieuNhap).ToListAsync();
+                       group nvt by nvt.MaPhieuNhap into g
+                       select g.Key).ToListAsync();
             return listpn;
         }
         public async Task<int> InsertAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
