@@ -123,37 +123,49 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
+                    mxuatvt.TongSoLuong = 0;
+                    mxuatvt.TongSoTien = 0;
                     // tao phieu xuat de lay mapx
                     var px = mp.Map<XuatVatTu>(mxuatvt);
                     await db.XuatVatTus.AddAsync(px);
-                    // insert phieu xuat chi tiet
-                    foreach(var item in listxuatchitiet)
+                    var res1 = await db.SaveChangesAsync();
+                    if (res1 > 0)
                     {
-                        // check sl >= item.soluong
-                        var slkho = await ikhohang.GetSLTon(item.MaVatTu, px.MaKho, item.MaPhieuNhap);
-                        if (slkho != 0 && slkho >= item.SoLuongXuat)
+                        foreach (var item in listxuatchitiet)
                         {
-                            var res =await ixuatchitiet.InsertAsync(item, px.MaPhieuXuat);
-                            if (res == true)
+                            // check sl >= item.soluong
+                            var slkho = await ikhohang.GetSLTon(item.MaVatTu, px.MaKho, item.MaPhieuNhap);
+                            if (slkho != 0 && slkho >= item.SoLuongXuat)
                             {
-                                // tru so luong trong kho = 0 thi xoa trong kho
-                                // set status = fales khong cho xoa nhapchitiet cua mat hang nay vi da xuat
-                                var mkh = new KhoHangViewModel()
+                                var res = await ixuatchitiet.InsertAsync(item, px.MaPhieuXuat);
+                                if (res == true)
                                 {
-                                    SoLuongTon = slkho - item.SoLuongXuat,
-                                    MaKho = px.MaKho,
-                                    MaPhieuNhap = item.MaPhieuNhap,
-                                    MaVatTu = item.MaVatTu  ,
-                                    Status = false                                    
-                                };
-                                var kh = mp.Map<KhoHang>(mkh);
-                                if ((slkho - item.SoLuongXuat) == 0) db.KhoHangs.Remove(kh);
-                                else db.KhoHangs.Update(kh);                                
+                                    mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
+                                    mxuatvt.TongSoLuong += item.SoLuongXuat;
+                                    // tru so luong trong kho = 0 thi xoa trong kho
+                                    // set status = fales khong cho xoa nhapchitiet cua mat hang nay vi da xuat
+                                    var mkh = new KhoHangViewModel()
+                                    {
+                                        SoLuongTon = slkho - item.SoLuongXuat,
+                                        MaKho = px.MaKho,
+                                        MaPhieuNhap = item.MaPhieuNhap,
+                                        MaVatTu = item.MaVatTu,
+                                        Status = false
+                                    };
+                                    var kh = mp.Map<KhoHang>(mkh);
+                                    if ((slkho - item.SoLuongXuat) == 0) db.KhoHangs.Remove(kh);
+                                    else db.KhoHangs.Update(kh);
+                                }
+                                else return 0;
                             }
-                            else return 0;
+                            else return -1; // so luog xuat vuot qua sl ton                        
                         }
-                        else return -1; // so luog xuat vuot qua sl ton                        
                     }
+                    else return 0;
+                    // insert phieu xuat chi tiet
+                    px.TongSoLuong = mxuatvt.TongSoLuong;
+                    px.TongSoTien = mxuatvt.TongSoTien;
+                    db.XuatVatTus.Update(px);
                     transaction.Commit();
                     await db.SaveChangesAsync();
                     return 1; // thành công
@@ -167,7 +179,49 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> UpdateAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
         {
-            throw new NotImplementedException();
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    mxuatvt.TongSoLuong = 0;
+                    mxuatvt.TongSoTien = 0;
+                    // tim ban ghi theo maphieu xuat
+                    var xvt = mp.Map<XuatVatTu>(mxuatvt);
+                    // sua cac truong tru tong tien, tong sl
+                    db.XuatVatTus.Update(xvt);
+                    // sua trong chi tiet
+                    foreach (var item in listxuatchitiet)
+                    {
+                        mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
+                        mxuatvt.TongSoLuong += item.SoLuongXuat;
+                        int sltonmoi = await ixuatchitiet.UpdateXuatChiTietAsync(item, mxuatvt.MaPhieuXuat, mxuatvt.MaKho);
+                        if (sltonmoi >= 0)
+                        {
+                            // update vào kho hàng so luong ton moi
+                            var khohang = db.KhoHangs.FirstOrDefault(x => x.MaKho == mxuatvt.MaKho && x.MaPhieuNhap == item.MaPhieuNhap && x.MaVatTu == item.MaVatTu);
+                            khohang.SoLuongTon = sltonmoi;
+                            if (sltonmoi == 0) db.KhoHangs.Remove(khohang);
+                            else if(sltonmoi== (await db.NhapChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuNhap==item.MaPhieuNhap && x.MaVatTu== item.MaVatTu)).SoLuong)
+                            {
+                                khohang.Status = true;
+                            }
+                            else db.KhoHangs.Update(khohang);
+                        }
+                        else return -1;
+                    }
+                    // sua trong kho
+                    // cap nhap lai phieu nhap
+                    db.XuatVatTus.Update(xvt);
+                    transaction.Commit();
+                    await db.SaveChangesAsync();
+                    return 1;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+            }
+            return 0;
         }
     }
 }

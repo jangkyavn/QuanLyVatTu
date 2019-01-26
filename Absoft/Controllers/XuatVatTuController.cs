@@ -54,5 +54,11 @@ namespace Absoft.Controllers
             var models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX,maPN, maVT, maKho);
             return Ok(models);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(XuatVatTuParams xuatVatTuParams)
+        {
+            var models = await _IXuatVatTuRepository.UpdateAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+            return Ok(models);
+        }
     }
 }

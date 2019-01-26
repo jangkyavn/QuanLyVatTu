@@ -29,19 +29,51 @@ namespace Absoft.Repositories.Implimentations
             // cong sl nguoc lai kho
             var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
             kh.SoLuongTon += slx;
-            kh.Status = true;
+            if(kh.SoLuongTon== (await db.NhapChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuNhap==maPN && x.MaVatTu==maVT)).SoLuong)
+            {
+                kh.Status = true;
+            }            
             db.KhoHangs.Update(kh);
             return await db.SaveChangesAsync()> 0;            
         }
         public async Task<bool> InsertAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat)
         {
-            var xct = mp.Map<XuatChiTiet>(mxuatchitiet);
-            await db.XuatChiTiets.AddAsync(xct);
-            return await db.SaveChangesAsync()>0;            
+            try
+            {
+                var xct = mp.Map<XuatChiTiet>(mxuatchitiet);
+                await db.XuatChiTiets.AddAsync(xct);
+                var res = await db.SaveChangesAsync();
+                return res > 0;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+            
         }
         public async Task<int> UpdateXuatChiTietAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat, int makho)
         {
-            throw new NotImplementedException();
+            // lay so luong cu 
+            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho== makho).FirstOrDefault().SoLuongTon;
+            int soluongxuatcu = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault().SoLuongXuat;
+            int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat;
+            if (soluongtonmoi >= 0)
+            {
+                try
+                {
+                    var xct = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaPhieuXuat== maphieuxuat && x.MaVatTu==mxuatchitiet.MaVatTu);
+                    var xuatchitiet = mp.Map<XuatChiTiet>(xct);
+                    db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                await db.SaveChangesAsync();
+                return soluongtonmoi;
+            }
+            else return -1;
         }
     }
 }

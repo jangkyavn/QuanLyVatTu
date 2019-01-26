@@ -408,6 +408,8 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("MaVatTu");
 
+                    b.Property<decimal>("DonGia");
+
                     b.Property<string>("GhiChu");
 
                     b.Property<int>("SoLuongXuat");

@@ -144,7 +144,6 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)
         {
-
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
@@ -172,6 +171,7 @@ namespace Absoft.Repositories.Implimentations
                     }
                     // sua trong kho
                     // cap nhap lai phieu nhap
+                    db.NhapVatTus.Update(nvt);
                     transaction.Commit();
                      await db.SaveChangesAsync();
                     return 1;

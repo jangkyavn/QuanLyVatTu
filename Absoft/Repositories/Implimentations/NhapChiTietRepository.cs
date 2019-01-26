@@ -30,7 +30,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
         {
             // lay so luong cu 
-            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuongTon;
+            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho==makho).FirstOrDefault().SoLuongTon;
             int soluongnhapcu = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuong;
             int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
             if (soluongtonmoi >= 0)
