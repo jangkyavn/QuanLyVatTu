@@ -24,19 +24,19 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetAllAsync();
             return Ok(models);
         }
-        [HttpGet("GetByMaPNAsync/{maPN}")]
+        [HttpGet("GetByMaPN/{maPN}")]
         public async Task<IActionResult> GetByMaPNAsync(int maPN)
         {
             var models = await _IXuatVatTuRepository.GetByMaPNAsync(maPN);
             return Ok(models);
         }
-        [HttpGet("GetDetailAsync/{maPX}")]
+        [HttpGet("GetDetail/{maPX}")]
         public async Task<IActionResult> GetDetailAsync(int maPX)
         {
             var models = await _IXuatVatTuRepository.GetDetailAsync(maPX);
             return Ok(models);
         }
-        [HttpGet("{GetByMaKhoAsync}/{maKho}")]
+        [HttpGet("GetByMaKho/{maKho}")]
         public async Task<IActionResult> GetByMaKhoAsync(int maKho)
         {
             var models = await _IXuatVatTuRepository.GetByMaKhoAsync(maKho);
@@ -54,7 +54,7 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.DeleteAsync(maPX);
             return Ok(models);
         }
-        [HttpDelete("{deleteXuatChiTiet}")]
+        [HttpDelete("{deleteXuatChiTiet}/{maPX}/{maPN}/{maVT}/{maKho}")]
         public async Task<IActionResult> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
         {
             var models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX,maPN, maVT, maKho);
