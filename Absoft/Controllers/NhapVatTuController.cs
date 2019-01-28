@@ -79,5 +79,11 @@ namespace Absoft.Controllers
             // result == true cho xóa, false không cho xóa
             return Ok(result);
         }
+        [HttpGet("CheckSoLuongNhapChiTiet")]
+        public async Task<IActionResult> CheckSoLuongNhapChiTietAsync(NhapChiTietParams nhapChiTietParams)
+        {
+            var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(nhapChiTietParams.nhapchitiet, nhapChiTietParams.maphieunhap, nhapChiTietParams.makho);            
+            return Ok(result);
+        }
     }
 }

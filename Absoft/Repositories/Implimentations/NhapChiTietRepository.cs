@@ -30,30 +30,30 @@ namespace Absoft.Repositories.Implimentations
         public async Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
         {
             // lay so luong cu 
-            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho==makho).FirstOrDefault().SoLuongTon;
+            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
             int soluongnhapcu = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuong;
             int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
             if (soluongtonmoi >= 0)
             {
                 try
                 {
-                    var nct = db.NhapChiTiets.FirstOrDefault(x=>x.MaPhieuNhap==maphieunhap&&x.MaVatTu==mnhapchitiet.MaVatTu); 
+                    var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
                     var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
-                    db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);                                   
+                    db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);
                 }
                 catch (Exception e)
                 {
                     throw e;
                 }
                 await db.SaveChangesAsync();
-                return soluongtonmoi;                
+                return soluongtonmoi;
             }
             else return -1;
         }
         public async Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho)
         {
             //var check =await this.CheckStatus(mapn, mavt, makho);
-            var khohang =await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);            
+            var khohang = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
             if (khohang.Status == false)
             {
                 return false;
@@ -80,19 +80,34 @@ namespace Absoft.Repositories.Implimentations
             {
                 return true;
             }
-            else  return false;
+            else return false;
+        }
+        public async Task<bool> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
+        {
+            if (await this.CheckStatus(maphieunhap, mnhapchitiet.MaVatTu, makho) == true)
+            {
+                return true;
+            }
+            else
+            {
+                int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
+                int soluongnhapcu = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuong;
+                int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
+                if (soluongtonmoi >= 0) return true;
+                else return false;
+            }
         }
         public async Task<bool> CheckStatus(int mapn, int mavt, int makho)
         {
             var khohang = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == makho && x.MaPhieuNhap == mapn && x.MaVatTu == mavt);
-            return (khohang.Status);            
+            return (khohang.Status);
         }
         public async Task<bool> removeallNhapchitiet(int mapn, int makho)
         {
             var list = await db.NhapChiTiets.Where(x => x.MaPhieuNhap == mapn).ToListAsync();
-            foreach(var item in list)
+            foreach (var item in list)
             {
-               var rs= await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
+                var rs = await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
             }
             return true;
         }
