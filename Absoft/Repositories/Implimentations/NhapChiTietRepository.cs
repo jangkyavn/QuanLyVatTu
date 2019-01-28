@@ -83,17 +83,17 @@ namespace Absoft.Repositories.Implimentations
             }
             else return false;
         }
-        public async Task<CheckSoLuongParams> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
+        public async Task<CheckSoLuongParams> CheckSoLuongNhapChiTietAsync(int maphieunhap, int makho, int mavt, int sl)
         {
-            if (await this.CheckStatus(maphieunhap, mnhapchitiet.MaVatTu, makho) == true)
+            if (await this.CheckStatus(maphieunhap, mavt, makho) == true)
             {
                 return new CheckSoLuongParams { Status= true, SoLuong=1};
             }
             else
             {
-                int soluongtoncu =(await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
-                int soluongnhapcu =(await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefaultAsync()).SoLuong;
-                int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
+                int soluongtoncu =(await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
+                int soluongnhapcu =(await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt).FirstOrDefaultAsync()).SoLuong;
+                int soluongtonmoi = (soluongtoncu + sl) - soluongnhapcu;
                 if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
                 else return new CheckSoLuongParams { Status = false, SoLuong = soluongnhapcu - soluongtoncu };
             }
