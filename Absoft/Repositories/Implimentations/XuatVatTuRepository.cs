@@ -253,9 +253,12 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho)
         {
-            var listpn = await (from kh in db.KhoHangs
-                                group kh by kh.MaKho into kh1
-                                join vt in db.VatTus on kh1.FirstOrDefault().MaVatTu equals vt.MaVatTu
+            var query = from kh in db.KhoHangs
+                        where kh.MaKho == maKho
+                        select kh.MaVatTu;
+
+            var listpn = await (from q in query
+                                join vt in db.VatTus on q equals vt.MaVatTu
                                 select new VatTuViewModel
                                 {
                                     MaVatTu = vt.MaVatTu,
