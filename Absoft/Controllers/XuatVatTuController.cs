@@ -66,7 +66,7 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
             return Ok(models);
         }
-        [HttpDelete]
+        [HttpDelete("{maPX}")]
         public async Task<IActionResult> DeleteAsync(int maPX)
         {
             var models = await _IXuatVatTuRepository.DeleteAsync(maPX);

@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -82,19 +83,19 @@ namespace Absoft.Repositories.Implimentations
             }
             else return false;
         }
-        public async Task<bool> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
+        public async Task<CheckSoLuongParams> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
         {
             if (await this.CheckStatus(maphieunhap, mnhapchitiet.MaVatTu, makho) == true)
             {
-                return true;
+                return new CheckSoLuongParams { Status= true, SoLuong=1};
             }
             else
             {
-                int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
-                int soluongnhapcu = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuong;
+                int soluongtoncu =(await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
+                int soluongnhapcu =(await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefaultAsync()).SoLuong;
                 int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
-                if (soluongtonmoi >= 0) return true;
-                else return false;
+                if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
+                else return new CheckSoLuongParams { Status = false, SoLuong = soluongnhapcu - soluongtoncu };
             }
         }
         public async Task<bool> CheckStatus(int mapn, int mavt, int makho)

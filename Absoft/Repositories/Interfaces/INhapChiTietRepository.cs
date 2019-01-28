@@ -1,4 +1,5 @@
-﻿using Absoft.ViewModels;
+﻿using Absoft.Helpers;
+using Absoft.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> CheckStatus(int mapn, int mavt, int makho);
         Task<bool> CheckDeleteNhapChiTietAsync(int mapn, int mavt, int makho);
         Task<bool> removeallNhapchitiet(int mapn, int makho);
-        Task<bool> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho);
+        Task<CheckSoLuongParams> CheckSoLuongNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho);
     }
 }
