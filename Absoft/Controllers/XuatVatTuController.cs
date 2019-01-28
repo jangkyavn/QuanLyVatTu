@@ -48,6 +48,18 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetListVTByMaPNAsync(maPN);
             return Ok(models);
         }
+        [HttpGet("GetListVatTuByMaKho/{maKho}")]
+        public async Task<IActionResult> GetListVatTuByMaKhoAsync(int maKho)
+        {
+            var models = await _IXuatVatTuRepository.GetListVatTuByMaKhoAsync(maKho);
+            return Ok(models);
+        }
+        [HttpGet("GetListNhapChiTietByMaVT/{maVT}")]
+        public async Task<IActionResult> GetListNhapChiTietByMaVTAsync(int maVT)
+        {
+            var models = await _IXuatVatTuRepository.GetListNhapChiTietByMaVTAsync(maVT);
+            return Ok(models);
+        }
         [HttpPost]
         public async Task<IActionResult> Insert(XuatVatTuParams xuatVatTuParams)
         {
@@ -64,13 +76,13 @@ namespace Absoft.Controllers
         public async Task<IActionResult> DeleteXuatChiTietAsync(int? maPX, int? maPN, int? maVT, int? maKho)
         {
             var models = false;
-            if(maPX !=null && maPN !=null && maVT!=null && maKho!=null)
+            if (maPX != null && maPN != null && maVT != null && maKho != null)
             {
                 if (await _IXuatChiTietRepository.CheckDeleteXuatChiTietAsync(maPX.Value, maPN.Value, maVT.Value, maKho.Value) == true)
                 {
                     models = await _IXuatChiTietRepository.DeleteXuatChiTietAsync(maPX.Value, maPN.Value, maVT.Value, maKho.Value);
                 }
-            }            
+            }
             return Ok(models);
         }
         [HttpDelete("deleteAllXuatChiTiet/{maPX}/{maPN}/{maVT}/{maKho}")]

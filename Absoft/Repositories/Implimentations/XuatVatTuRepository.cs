@@ -251,5 +251,22 @@ namespace Absoft.Repositories.Implimentations
             }
             return 0;
         }
+        public async Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho)
+        {
+            var listpn = await (from kh in db.KhoHangs
+                                group kh by kh.MaKho into kh1
+                                join vt in db.VatTus on kh1.FirstOrDefault().MaVatTu equals vt.MaVatTu
+                                select new VatTuViewModel
+                                {
+                                    MaVatTu = vt.MaVatTu,
+                                    TenVT = vt.TenVT
+                                }).ToListAsync();
+            return listpn;
+        }
+        public async Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT)
+        {
+            var listnct = await db.NhapChiTiets.Where(x => x.MaVatTu == maVT).ToListAsync();
+            return mp.Map<List<NhapChiTietViewModel>>(listnct);
+        }
     }
 }
