@@ -76,13 +76,26 @@ namespace Absoft.Repositories.Implimentations
         public async Task<XuatVatTuParams> GetDetailAsync(int maPX)
         {
             var px = await db.XuatVatTus.FindAsync(maPX);
-            var listpxct = db.XuatChiTiets.Where(x => x.MaPhieuXuat == maPX).ToList();
+            var chiTietVM = from ct in db.XuatChiTiets
+                                  join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                                  where ct.MaPhieuXuat == maPX
+                                  select new XuatChiTietViewModel
+                                  {
+                                      MaPhieuXuat = ct.MaPhieuXuat,
+                                      MaPhieuNhap = ct.MaPhieuNhap,
+                                      MaVatTu = ct.MaVatTu,
+                                      TenVT = vt.TenVT,
+                                      DonGia = ct.DonGia,
+                                      SoLuongXuat = ct.SoLuongXuat,
+                                      GhiChu = ct.GhiChu,
+                                      Status = ct.Status
+                                  };
+
             var mpx = mp.Map<XuatVatTuViewModel>(px);
-            var mlistpxct = mp.Map<List<XuatChiTietViewModel>>(listpxct);
             return new XuatVatTuParams()
             {
                 mxuatvattu = mpx,
-                listxuatchitiet = mlistpxct
+                listxuatchitiet = chiTietVM.ToList()
             };
         }
         public async Task<XuatVatTuParams> GetByMaPNAsync(int maPN)

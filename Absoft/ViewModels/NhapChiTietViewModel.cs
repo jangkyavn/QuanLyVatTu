@@ -29,5 +29,7 @@ namespace Absoft.ViewModels
         public decimal DonGia { get; set; }
         public string GhiChu { get; set; }        
         public bool Status { set; get; }
+
+        public string TenVT { get; set; }
     }
 }

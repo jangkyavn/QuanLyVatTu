@@ -83,13 +83,36 @@ namespace Absoft.Repositories.Implimentations
         public async Task<NhapVatTuParams> GetDetailAsync(int maPN)
         {
             var pn = await db.NhapVatTus.FindAsync(maPN);
-            var listpnct = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maPN).ToList();
             var mpn = mp.Map<NhapVatTuViewModel>(pn);
-            var mlistpnct = mp.Map<List<NhapChiTietViewModel>>(listpnct);
+
+            var chiTietVM = from ct in db.NhapChiTiets
+                            join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                            where ct.MaPhieuNhap == maPN
+                            select new NhapChiTietViewModel
+                            {
+                                MaPhieuNhap = ct.MaPhieuNhap,
+                                MaVatTu = ct.MaVatTu,
+                                TenVT = vt.TenVT,
+                                DonGia = ct.DonGia,
+                                SoLuong = ct.SoLuong,
+                                MaHang = ct.MaHang,
+                                MaNuoc = ct.MaNuoc,
+                                Model = ct.Model,
+                                Seri = ct.Seri,
+                                SoKhung = ct.SoKhung,
+                                SoMay = ct.SoMay,
+                                SoDangKy = ct.SoDangKy,
+                                DotMua = ct.DotMua,
+                                NamSX = ct.NamSX,
+                                PhanCap = ct.PhanCap,
+                                NguonGoc = ct.NguonGoc,
+                                GhiChu = ct.GhiChu,
+                                Status = ct.Status
+                            };
             return new NhapVatTuParams()
             {
                 mnhapvattu = mpn,
-                listnhapchitiet = mlistpnct
+                listnhapchitiet = chiTietVM.ToList()
             };
         }
         public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu,List<NhapChiTietViewModel>  listnhapchitiet)
