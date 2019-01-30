@@ -31,11 +31,12 @@ namespace Absoft.Repositories.Implimentations
             // remove xuatchitiet
             var xct = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaPhieuXuat == maPX && x.MaVatTu == maVT);
             int slx = xct.SoLuongXuat;
+            decimal dgx = xct.DonGia;
             db.XuatChiTiets.Remove(xct);
             //tru soluongtong, tong gia trong px
             var px = await db.XuatVatTus.FindAsync(maPX);
-            px.TongSoLuong -= xct.SoLuongXuat;
-            px.TongSoTien -= xct.SoLuongXuat * xct.DonGia;
+            px.TongSoLuong -= slx;
+            px.TongSoTien -= slx * dgx;
             // cong sl nguoc lai kho
             var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
             kh.SoLuongTon += slx;

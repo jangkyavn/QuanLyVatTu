@@ -158,8 +158,12 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    mxuatvt.TongSoLuong = 0;
-                    mxuatvt.TongSoTien = 0;
+                    var nvt = await db.NhapVatTus.FirstOrDefaultAsync();
+                    if(nvt.TongSoLuong<=0)
+                    {
+                        mxuatvt.TongSoLuong = 0;
+                        mxuatvt.TongSoTien = 0;
+                    }                 
                     // tao phieu xuat de lay mapx
                     var px = mp.Map<XuatVatTu>(mxuatvt);
                     await db.XuatVatTus.AddAsync(px);
@@ -218,8 +222,8 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    mxuatvt.TongSoLuong = 0;
-                    mxuatvt.TongSoTien = 0;
+                    //mxuatvt.TongSoLuong = 0;
+                    //mxuatvt.TongSoTien = 0;                    
                     // tim ban ghi theo maphieu xuat
                     var xvt = mp.Map<XuatVatTu>(mxuatvt);
                     // sua cac truong tru tong tien, tong sl
@@ -227,6 +231,11 @@ namespace Absoft.Repositories.Implimentations
                     // sua trong chi tiet
                     foreach (var item in listxuatchitiet)
                     {
+                        // lấy sl cũ và trừ trong tổng
+                        var ctcu = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaPhieuXuat == item.MaPhieuXuat && x.MaVatTu == item.MaVatTu);
+                        mxuatvt.TongSoLuong -= ctcu.SoLuongXuat;
+                        mxuatvt.TongSoTien -= ctcu.DonGia * ctcu.SoLuongXuat;
+                        // thêm sl mới vào tổng
                         mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
                         mxuatvt.TongSoLuong += item.SoLuongXuat;
                         int sltonmoi = await ixuatchitiet.UpdateXuatChiTietAsync(item, mxuatvt.MaPhieuXuat, mxuatvt.MaKho);
