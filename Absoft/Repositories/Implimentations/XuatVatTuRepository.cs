@@ -15,7 +15,7 @@ namespace Absoft.Repositories.Implimentations
     public class XuatVatTuRepository : IXuatVatTuRepository
     {
         DataContext db;
-        IMapper mp;      
+        IMapper mp;
         IKhoHangRepository ikhohang;
         IXuatChiTietRepository ixuatchitiet;
         public XuatVatTuRepository(DataContext data, IMapper mapper, IKhoHangRepository IKhoHangRepository, IXuatChiTietRepository IXuatChiTietRepository)
@@ -24,18 +24,18 @@ namespace Absoft.Repositories.Implimentations
             mp = mapper;
             ikhohang = IKhoHangRepository;
             ixuatchitiet = IXuatChiTietRepository;
-        }       
+        }
         public async Task<bool> DeleteAsync(int maPX)
         {
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
-                {                    
-                    var xvt = await db.XuatVatTus.FindAsync(maPX);                  
+                {
+                    var xvt = await db.XuatVatTus.FindAsync(maPX);
                     var listchitiet = db.XuatChiTiets.Where(x => x.MaPhieuXuat == maPX).ToList();
                     foreach (var item in listchitiet)
                     {
-                        var check = await ixuatchitiet.DeleteXuatChiTietAsync(maPX, item.MaPhieuNhap,item.MaVatTu, xvt.MaKho);
+                        var check = await ixuatchitiet.DeleteXuatChiTietAsync(maPX, item.MaPhieuNhap, item.MaVatTu, xvt.MaKho);
                         if (check == false)
                         {
                             return false;
@@ -52,7 +52,7 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return false;
-        }   
+        }
         public async Task<List<XuatVatTuViewModel>> GetAllAsync()
         {
             var model = from xvt in db.XuatVatTus
@@ -77,19 +77,19 @@ namespace Absoft.Repositories.Implimentations
         {
             var px = await db.XuatVatTus.FindAsync(maPX);
             var chiTietVM = from ct in db.XuatChiTiets
-                                  join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
-                                  where ct.MaPhieuXuat == maPX
-                                  select new XuatChiTietViewModel
-                                  {
-                                      MaPhieuXuat = ct.MaPhieuXuat,
-                                      MaPhieuNhap = ct.MaPhieuNhap,
-                                      MaVatTu = ct.MaVatTu,
-                                      TenVT = vt.TenVT,
-                                      DonGia = ct.DonGia,
-                                      SoLuongXuat = ct.SoLuongXuat,
-                                      GhiChu = ct.GhiChu,
-                                      Status = ct.Status
-                                  };
+                            join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                            where ct.MaPhieuXuat == maPX
+                            select new XuatChiTietViewModel
+                            {
+                                MaPhieuXuat = ct.MaPhieuXuat,
+                                MaPhieuNhap = ct.MaPhieuNhap,
+                                MaVatTu = ct.MaVatTu,
+                                TenVT = vt.TenVT,
+                                DonGia = ct.DonGia,
+                                SoLuongXuat = ct.SoLuongXuat,
+                                GhiChu = ct.GhiChu,
+                                Status = ct.Status
+                            };
 
             var mpx = mp.Map<XuatVatTuViewModel>(px);
             return new XuatVatTuParams()
@@ -101,27 +101,27 @@ namespace Absoft.Repositories.Implimentations
         public async Task<XuatVatTuParams> GetByMaPNAsync(int maPN)
         {
             var xvts = from nvt in db.NhapVatTus
-                      where nvt.MaPhieuNhap == maPN
-                      select new XuatVatTuViewModel
-                      {
-                          MaKho= nvt.MaKho,
-                          NgayNhap=nvt.NgayNhap,
-                          TongSoLuong=nvt.TongSoLuong,
-                          TongSoTien= nvt.TongSoTien,
-                          GhiChu = nvt.GhiChu
-                      };
+                       where nvt.MaPhieuNhap == maPN
+                       select new XuatVatTuViewModel
+                       {
+                           MaKho = nvt.MaKho,
+                           NgayNhap = nvt.NgayNhap,
+                           TongSoLuong = nvt.TongSoLuong,
+                           TongSoTien = nvt.TongSoTien,
+                           GhiChu = nvt.GhiChu
+                       };
             var xvt = await xvts.FirstOrDefaultAsync();
             var xcts = from nct in db.NhapChiTiets
-                      join kh in db.KhoHangs on nct.MaPhieuNhap equals kh.MaPhieuNhap 
-                      where nct.MaPhieuNhap == maPN && kh.MaVatTu == nct.MaVatTu
-                      select new XuatChiTietViewModel
-                      {
-                          MaPhieuNhap = nct.MaPhieuNhap,
-                         MaVatTu = nct.MaVatTu,
-                         SoLuongXuat = kh.SoLuongTon,
-                         DonGia = nct.DonGia,
-                         GhiChu = nct.GhiChu
-                      };           
+                       join kh in db.KhoHangs on nct.MaPhieuNhap equals kh.MaPhieuNhap
+                       where nct.MaPhieuNhap == maPN && kh.MaVatTu == nct.MaVatTu
+                       select new XuatChiTietViewModel
+                       {
+                           MaPhieuNhap = nct.MaPhieuNhap,
+                           MaVatTu = nct.MaVatTu,
+                           SoLuongXuat = kh.SoLuongTon,
+                           DonGia = nct.DonGia,
+                           GhiChu = nct.GhiChu
+                       };
             var mxvt = mp.Map<XuatVatTuViewModel>(xvt);
             var mlistxuatct = mp.Map<List<XuatChiTietViewModel>>(xcts.ToList());
             return new XuatVatTuParams()
@@ -132,24 +132,24 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<VatTuViewModel>> GetListVTByMaPNAsync(int maPN)
         {
-            var vattu  =await (from nct in db.NhapChiTiets
-                         join vt in db.VatTus on nct.MaVatTu equals vt.MaVatTu
-                         where nct.MaPhieuNhap== maPN
-                         select new VatTu
-                         {
-                                MaVatTu = nct.MaVatTu,
-                                TenVT = vt.TenVT
-                         }).ToListAsync();
+            var vattu = await (from nct in db.NhapChiTiets
+                               join vt in db.VatTus on nct.MaVatTu equals vt.MaVatTu
+                               where nct.MaPhieuNhap == maPN
+                               select new VatTu
+                               {
+                                   MaVatTu = nct.MaVatTu,
+                                   TenVT = vt.TenVT
+                               }).ToListAsync();
             var mvattu = mp.Map<List<VatTuViewModel>>(vattu);
             return mvattu;
         }
         public async Task<List<int>> GetByMaKhoAsync(int maKho)
         {
-            var listpn =await (from nvt in db.NhapVatTus
-                       join kh in db.KhoHangs on nvt.MaKho equals kh.MaKho
-                       where kh.MaKho == maKho
-                       group nvt by nvt.MaPhieuNhap into g
-                       select g.Key).ToListAsync();
+            var listpn = await (from nvt in db.NhapVatTus
+                                join kh in db.KhoHangs on nvt.MaKho equals kh.MaKho
+                                where kh.MaKho == maKho
+                                group nvt by nvt.MaPhieuNhap into g
+                                select g.Key).ToListAsync();
             return listpn;
         }
         public async Task<int> InsertAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet)
@@ -158,12 +158,8 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    var nvt = await db.NhapVatTus.FirstOrDefaultAsync();
-                    if(nvt.TongSoLuong<=0)
-                    {
-                        mxuatvt.TongSoLuong = 0;
-                        mxuatvt.TongSoTien = 0;
-                    }                 
+                    mxuatvt.TongSoLuong = 0;
+                    mxuatvt.TongSoTien = 0;
                     // tao phieu xuat de lay mapx
                     var px = mp.Map<XuatVatTu>(mxuatvt);
                     await db.XuatVatTus.AddAsync(px);
@@ -222,22 +218,24 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    //mxuatvt.TongSoLuong = 0;
-                    //mxuatvt.TongSoTien = 0;                    
-                    // tim ban ghi theo maphieu xuat
+                    var model =await db.XuatVatTus.FindAsync(mxuatvt.MaPhieuXuat);
+                    mxuatvt.TongSoLuong = model.TongSoLuong;
+                    mxuatvt.TongSoTien = model.TongSoTien;
                     var xvt = mp.Map<XuatVatTu>(mxuatvt);
                     // sua cac truong tru tong tien, tong sl
                     db.XuatVatTus.Update(xvt);
                     // sua trong chi tiet
                     foreach (var item in listxuatchitiet)
                     {
-                        // lấy sl cũ và trừ trong tổng
+                       
                         var ctcu = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaPhieuXuat == item.MaPhieuXuat && x.MaVatTu == item.MaVatTu);
-                        mxuatvt.TongSoLuong -= ctcu.SoLuongXuat;
-                        mxuatvt.TongSoTien -= ctcu.DonGia * ctcu.SoLuongXuat;
                         // thêm sl mới vào tổng
                         mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
                         mxuatvt.TongSoLuong += item.SoLuongXuat;
+                        // lấy sl cũ và trừ trong tổng
+                        mxuatvt.TongSoLuong -= ctcu.SoLuongXuat;
+                        mxuatvt.TongSoTien -= ctcu.DonGia * ctcu.SoLuongXuat;
+                        
                         int sltonmoi = await ixuatchitiet.UpdateXuatChiTietAsync(item, mxuatvt.MaPhieuXuat, mxuatvt.MaKho);
                         if (sltonmoi >= 0)
                         {
@@ -260,7 +258,7 @@ namespace Absoft.Repositories.Implimentations
                     // sua trong kho
                     // cap nhap lai phieu nhap
                     xvt.TongSoLuong = mxuatvt.TongSoLuong;
-                    xvt.TongSoTien = mxuatvt.TongSoTien;                    
+                    xvt.TongSoTien = mxuatvt.TongSoTien;
                     db.XuatVatTus.Update(xvt);
                     transaction.Commit();
                     await db.SaveChangesAsync();

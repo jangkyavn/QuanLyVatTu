@@ -120,7 +120,7 @@ namespace Absoft.Repositories.Implimentations
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
-                {
+                {                    
                     mnhapvattu.TongSoLuong = 0;
                     mnhapvattu.TongSoTien = 0;
                     var pn = mp.Map<NhapVatTu>(mnhapvattu);
@@ -171,8 +171,9 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    mnhapvattu.TongSoLuong = 0;
-                    mnhapvattu.TongSoTien = 0;
+                    var model = await db.NhapVatTus.FindAsync(mnhapvattu.MaPhieuNhap);
+                    mnhapvattu.TongSoLuong = model.TongSoLuong;
+                    mnhapvattu.TongSoTien = model.TongSoTien;
                     // tim ban ghi theo maphieu nhap
                     var nvt = mp.Map<NhapVatTu>(mnhapvattu);
                     // sua cac truong tru tong tien, tong sl
@@ -180,8 +181,14 @@ namespace Absoft.Repositories.Implimentations
                     // sua trong chi tiet
                     foreach (var item in listnhapchitiet)
                     {
+                        // cộng vào tổng ct mới
                         mnhapvattu.TongSoTien += item.DonGia * item.SoLuong;
                         mnhapvattu.TongSoLuong += item.SoLuong;
+                        var ctu =await db.NhapChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuNhap==item.MaPhieuNhap && x.MaVatTu==item.MaVatTu);
+                        // trừ trong tổng ct cũ
+                        mnhapvattu.TongSoLuong -= ctu.SoLuong;
+                        mnhapvattu.TongSoTien -= ctu.SoLuong * ctu.DonGia;
+                        //
                         int sltonmoi = await inhapchitiet.UpdateNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value,mnhapvattu.MaKho);
                         if (sltonmoi >=0)
                         {
