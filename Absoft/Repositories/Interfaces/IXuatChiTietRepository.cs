@@ -14,6 +14,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho);
         Task<bool> CheckDeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho);
         Task<bool> deleteAllXuatChiTiet(int maPX, int maPN, int maVT, int maKho);
-        Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int maphieuxuat, int makho, int mavt, int sl);
+        Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl);
     }
 }

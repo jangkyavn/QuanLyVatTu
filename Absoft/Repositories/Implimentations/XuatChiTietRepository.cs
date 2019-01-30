@@ -51,9 +51,9 @@ namespace Absoft.Repositories.Implimentations
         public async Task<bool> deleteAllXuatChiTiet(int maPX, int maPN, int maVT, int maKho)
         {
             var list = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == maPX).ToListAsync();
-            foreach(var item in list)
+            foreach (var item in list)
             {
-                var res = await this.DeleteXuatChiTietAsync(item.MaPhieuXuat, item.MaPhieuNhap, item.MaVatTu, maKho); 
+                var res = await this.DeleteXuatChiTietAsync(item.MaPhieuXuat, item.MaPhieuNhap, item.MaVatTu, maKho);
             }
             return true;
         }
@@ -81,13 +81,11 @@ namespace Absoft.Repositories.Implimentations
             }
             else return -1;
         }
-        public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap,int maphieuxuat, int makho, int mavt, int sl)
-        {                                   
-                int soluongtoncu = (await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
-                int soluongxuatcu = (await db.XuatChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaPhieuXuat==maphieuxuat).FirstOrDefaultAsync()).SoLuongXuat;
-                int soluongtonmoi = (soluongtoncu + sl) - soluongxuatcu;
-                if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
-                else return new CheckSoLuongParams { Status = false, SoLuong = soluongxuatcu - soluongtoncu };            
+        public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl)
+        {
+            int slct = (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mvt)).SoLuong;
+            if (sl <= slct) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
+            else return new CheckSoLuongParams { Status = false, SoLuong = slct };
         }
     }
 }
