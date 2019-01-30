@@ -73,6 +73,7 @@ namespace Absoft.Controllers
             return BadRequest();
         }
 
+        [AllowAnonymous]
         [HttpGet("checkUserNameExists/{userName}")]
         public async Task<IActionResult> CheckUserNameExists(string userName)
         {
