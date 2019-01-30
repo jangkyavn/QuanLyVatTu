@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -79,6 +80,14 @@ namespace Absoft.Repositories.Implimentations
                 return soluongtonmoi;
             }
             else return -1;
+        }
+        public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap,int maphieuxuat, int makho, int mavt, int sl)
+        {                                   
+                int soluongtoncu = (await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
+                int soluongxuatcu = (await db.XuatChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaPhieuXuat==maphieuxuat).FirstOrDefaultAsync()).SoLuongXuat;
+                int soluongtonmoi = (soluongtoncu + sl) - soluongxuatcu;
+                if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
+                else return new CheckSoLuongParams { Status = false, SoLuong = soluongxuatcu - soluongtoncu };            
         }
     }
 }
