@@ -222,8 +222,10 @@ namespace Absoft.Repositories.Implimentations
                     mxuatvt.TongSoLuong = model.TongSoLuong;
                     mxuatvt.TongSoTien = model.TongSoTien;
                     var xvt = mp.Map<XuatVatTu>(mxuatvt);
+                    var xvtcu = mp.Map<XuatVatTu>(model);
                     // sua cac truong tru tong tien, tong sl
-                    db.XuatVatTus.Update(xvt);
+                    db.Entry(xvtcu).CurrentValues.SetValues(xvt);
+                   // db.XuatVatTus.Update(xvt);
                     // sua trong chi tiet
                     foreach (var item in listxuatchitiet)
                     {
@@ -259,7 +261,8 @@ namespace Absoft.Repositories.Implimentations
                     // cap nhap lai phieu nhap
                     xvt.TongSoLuong = mxuatvt.TongSoLuong;
                     xvt.TongSoTien = mxuatvt.TongSoTien;
-                    db.XuatVatTus.Update(xvt);
+                    db.Entry(xvtcu).CurrentValues.SetValues(xvt);
+                    //db.XuatVatTus.Update(xvt);
                     transaction.Commit();
                     await db.SaveChangesAsync();
                     return 1;

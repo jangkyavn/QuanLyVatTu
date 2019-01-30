@@ -73,6 +73,18 @@ namespace Absoft.Controllers
             return BadRequest();
         }
 
+        [HttpGet("checkUserNameExists/{userName}")]
+        public async Task<IActionResult> CheckUserNameExists(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                return BadRequest();
+            }
+
+            var result = await _userRepository.CheckUserNameExists(userName);
+            return Ok(result);
+        }
+
         [HttpPut("changeStatus/{id}")]
         public async Task<IActionResult> ChangeStatus(Guid? id)
         {

@@ -13,5 +13,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> UpdateAsync(UserUpdationViewModel userViewModel);
         Task<bool> DeleteAsync(Guid? id);
         Task<bool> ChangeStatusAsync(Guid? id);
+        Task<bool> CheckUserNameExists(string userName);
     }
 }

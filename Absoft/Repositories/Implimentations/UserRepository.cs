@@ -49,6 +49,12 @@ namespace Absoft.Repositories.Implimentations
             return result.Succeeded;
         }
 
+        public async Task<bool> CheckUserNameExists(string userName)
+        {
+            var model = await _userManager.FindByNameAsync(userName);
+            return model != null;
+        }
+
         public async Task<bool> DeleteAsync(Guid? id)
         {
             var userModel = await _userManager.FindByIdAsync(id.ToString());

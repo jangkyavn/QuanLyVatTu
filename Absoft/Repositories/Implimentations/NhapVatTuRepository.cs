@@ -176,8 +176,12 @@ namespace Absoft.Repositories.Implimentations
                     mnhapvattu.TongSoTien = model.TongSoTien;
                     // tim ban ghi theo maphieu nhap
                     var nvt = mp.Map<NhapVatTu>(mnhapvattu);
+                    var nvtcu = mp.Map<NhapVatTu>(model);
                     // sua cac truong tru tong tien, tong sl
-                    db.NhapVatTus.Update(nvt);
+                    //db.NhapVatTus.Update(nvt);
+                    db.Entry(nvtcu).CurrentValues.SetValues(nvt);
+
+
                     // sua trong chi tiet
                     foreach (var item in listnhapchitiet)
                     {
@@ -202,15 +206,17 @@ namespace Absoft.Repositories.Implimentations
                     // sua trong kho
                     // cap nhap lai phieu nhap
                     nvt.TongSoLuong = mnhapvattu.TongSoLuong;
-                    nvt.TongSoTien = mnhapvattu.TongSoTien;                   
-                    db.NhapVatTus.Update(nvt);
+                    nvt.TongSoTien = mnhapvattu.TongSoTien;
+                    db.Entry(nvtcu).CurrentValues.SetValues(nvt);
+                    //db.NhapVatTus.Update(nvt);
                     transaction.Commit();
                      await db.SaveChangesAsync();
                     return 1;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // TODO: Handle failure                    
+                    // TODO: Handle failure 
+                    throw e; 
                 }
             }
             return 0;
