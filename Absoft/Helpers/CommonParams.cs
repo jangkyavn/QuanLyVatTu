@@ -12,5 +12,7 @@
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
         public string Keyword { get; set; }
+        public string SortValue { get; set; }
+        public string SortKey { get; set; }
     }
 }

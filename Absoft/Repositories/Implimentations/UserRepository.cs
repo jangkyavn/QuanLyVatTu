@@ -88,10 +88,46 @@ namespace Absoft.Repositories.Implimentations
                 usersQuery = usersQuery.Where(x => x.UserName.ToUpper().Contains(keywordUnSign) ||
                     TextHelper.ConvertToUnSign(x.FullName.ToUpper()).Contains(keywordUnSign) ||
                     TextHelper.ConvertToUnSign(x.Email.ToUpper()).Contains(keywordUnSign));
-
-               
             }
 
+            if (!string.IsNullOrEmpty(userParams.SortValue) && !userParams.SortValue.Equals("null"))
+            {
+                switch (userParams.SortKey)
+                {
+                    case "userName":
+                        if (userParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.UserName);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.UserName);
+                        }
+                        break;
+                    case "fullName":
+                        if (userParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.FullName);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.FullName);
+                        }
+                        break;
+                    case "email":
+                        if (userParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.Email);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.Email);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             return await PagedList<UserListViewModel>.CreateAsync(usersQuery, userParams.PageNumber, userParams.PageSize);
         }

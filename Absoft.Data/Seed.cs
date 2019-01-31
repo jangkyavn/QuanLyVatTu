@@ -37,7 +37,7 @@ namespace Absoft.Data
                 var adminUser = new NguoiDung
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Admin",
+                    UserName = "admin",
                     Email = "admin@gmail.com",
                     FullName = "Administrator",
                     Gender = true,
