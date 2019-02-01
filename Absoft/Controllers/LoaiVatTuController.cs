@@ -29,7 +29,7 @@ namespace Absoft.Controllers
             var models = await _ILoaiVatTuRepository.GetByIdAsync(id);
             return Ok(models);
         }
-        [HttpGet("getListLoaiByMaHM/{id}")]
+        [HttpGet("getListLoaiByMaHM/{maMH}")]
         public async Task<IActionResult> GetListLoaiByMaHM(int maMH)
         {
             var models = await _ILoaiVatTuRepository.GetListLoaiByMaHM(maMH);
@@ -45,6 +45,12 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Insert(LoaiVatTuViewModel LoaiVatTuViewModel)
         {
             var result = await _ILoaiVatTuRepository.InsertAsync(LoaiVatTuViewModel);
+            return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _ILoaiVatTuRepository.IsDelete(id);
             return Ok(result);
         }
     }

@@ -13,5 +13,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertAsync(NguonCungCapViewModel mnguoncungcap);
         Task<bool> UpdateAsync(NguonCungCapViewModel mnguoncungcap);
         Task<bool> DeleteAsync(int id);
+        Task<bool> IsDelete(int id);
     }
 }

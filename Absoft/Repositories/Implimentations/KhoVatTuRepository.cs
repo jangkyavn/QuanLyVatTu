@@ -21,16 +21,26 @@ namespace Absoft.Repositories.Implimentations
             db = data;
             mp = mapper;
         }
-        public async Task<bool> DeleteAsync(int id)
+
+        public async Task<bool> IsDelete(int id)
         {
-            var khovt = await db.KhoVatTus.FindAsync(id);
-            db.KhoVatTus.Remove(khovt);
-            return (await db.SaveChangesAsync() > 0);
+            var entity = await db.KhoVatTus.FindAsync(id);
+            entity.Status = false;
+            return await db.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> DeleteAsync(int id)
+        {
+            
+                var khovt = await db.KhoVatTus.FindAsync(id);
+                db.KhoVatTus.Remove(khovt);
+                return (await db.SaveChangesAsync() > 0);
+            
+            
+        }
         public async Task<List<KhoVatTuViewModel>> GetAllAsync()
         {
-            return await db.KhoVatTus
+            return await db.KhoVatTus.Where(x=>x.Status==true)
                 .ProjectTo<KhoVatTuViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }

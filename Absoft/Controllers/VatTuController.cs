@@ -29,13 +29,13 @@ namespace Absoft.Controllers
             var models = await _IVatTuRepository.GetByIdAsync(id);
             return Ok(models);
         }
-        [HttpGet("getByMaLoaiVT/{id}")]
+        [HttpGet("getByMaLoaiVT/{maLoaiVT}")]
         public async Task<IActionResult> GetByMaLoaiVTAsync(int maLoaiVT)
         {
             var models = await _IVatTuRepository.GetByMaLoaiVTAsync(maLoaiVT);
             return Ok(models);
         }
-        [HttpGet("getByMaDV/{id}")]
+        [HttpGet("getByMaDV/{maDVT}")]
         public async Task<IActionResult> GetByMaDVAsync(int maDVT)
         {
             var models = await _IVatTuRepository.GetByMaDVAsync(maDVT);
@@ -51,6 +51,12 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Insert(VatTuViewModel VatTuViewModel)
         {
             var result = await _IVatTuRepository.InsertAsync(VatTuViewModel);
+            return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _IVatTuRepository.IsDelete(id);
             return Ok(result);
         }
     }

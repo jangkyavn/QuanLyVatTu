@@ -43,5 +43,11 @@ namespace Absoft.Controllers
             var result = await _INguonCungCapRepository.InsertAsync(nguonCungCapViewModel);
             return Ok(result);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _INguonCungCapRepository.IsDelete(id);
+            return Ok(result);
+        }
     }
 }

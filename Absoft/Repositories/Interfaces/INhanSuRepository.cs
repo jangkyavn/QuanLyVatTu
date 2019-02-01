@@ -13,5 +13,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertAsync(NhanSuViewModel mnhansu);
         Task<bool> UpdateAsync(NhanSuViewModel mnhansu);
         Task<bool> DeleteAsync(int id);
+        Task<bool> IsDelete(int id);
     }
 }

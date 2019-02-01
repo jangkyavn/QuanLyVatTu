@@ -17,7 +17,6 @@ namespace Absoft.Controllers
         {
             _donViTinhRepository = donViTinhRepository;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -31,7 +30,6 @@ namespace Absoft.Controllers
             var models = await _donViTinhRepository.GetById(id);
             return Ok(models);
         }
-
         [HttpPut]
         public async Task<IActionResult> Update(DonViTinhViewModel donViTinhViewModel)
         {
@@ -42,6 +40,12 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Insert(DonViTinhViewModel donViTinhViewModel)
         {
             var result = await _donViTinhRepository.InsertAsync(donViTinhViewModel);
+            return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _donViTinhRepository.IsDelete(id);
             return Ok(result);
         }
     }

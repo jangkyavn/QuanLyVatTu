@@ -21,16 +21,23 @@ namespace Absoft.Repositories.Implimentations
             db = data;
             mp = mapper;
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> IsDelete(int id)
         {
-            var ns = await db.NhanSus.FindAsync(id);
-            db.NhanSus.Remove(ns);
+            var entity = await db.NhanSus.FindAsync(id);
+            entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<bool> DeleteAsync(int id)
+        {
+          
+                var ns = await db.NhanSus.FindAsync(id);
+                db.NhanSus.Remove(ns);
+                return await db.SaveChangesAsync() > 0;
+           
+        }
         public async Task<List<NhanSuViewModel>> GetAllAsync()
         {
-            return await db.NhanSus
+            return await db.NhanSus.Where(x => x.Status == true)
                .ProjectTo<NhanSuViewModel>(mp.ConfigurationProvider)
                .ToListAsync();
         }

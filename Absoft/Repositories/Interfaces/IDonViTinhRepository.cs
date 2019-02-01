@@ -13,5 +13,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertAsync(DonViTinhViewModel mdonvitinh);
         Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh);
         Task<bool> DeleteAsync(int id);
+        Task<bool> IsDelete(int id);
+
     }
 }

@@ -24,9 +24,11 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            var vt = await db.VatTus.FindAsync(id);
-            db.VatTus.Remove(vt);
-            return await db.SaveChangesAsync() > 0;
+           
+                var vt = await db.VatTus.FindAsync(id);
+                db.VatTus.Remove(vt);
+                return await db.SaveChangesAsync() > 0;
+          
         }
         // delete all by maloaivt use transaction 
         public async Task<bool> DeleteByMaLoaiVTAsync(int MaloaiVT)
@@ -61,6 +63,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from vt in db.VatTus
                         join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        where vt.Status==true
                         select new VatTuViewModel
                         {
                             MaVatTu= vt.MaVatTu,
@@ -103,6 +106,12 @@ namespace Absoft.Repositories.Implimentations
         {
             var vt = mp.Map<VatTu>(mvattu);
             db.VatTus.Update(vt);
+            return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> IsDelete(int id)
+        {
+            var entity = await db.VatTus.FindAsync(id);
+            entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
     }

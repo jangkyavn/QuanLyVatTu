@@ -21,14 +21,12 @@ namespace Absoft.Repositories.Implimentations
             db = data;
             mp = mapper;
         }
-
         public async Task<List<DonViTinhViewModel>> GetAllAsync()
         {
-            return await db.DonViTinhs
+            return await db.DonViTinhs.Where(x=>x.Status==true)
                 .ProjectTo<DonViTinhViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
-        }
-
+        }    
         public async Task<DonViTinhViewModel> GetById(int id)
         {
             var dvt = await db.DonViTinhs.FindAsync(id);
@@ -51,9 +49,17 @@ namespace Absoft.Repositories.Implimentations
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)
         {
+           
+                var dvt = await db.DonViTinhs.FindAsync(id);
+                db.DonViTinhs.Remove(dvt);
+                return await db.SaveChangesAsync() > 0;
+           
+        }
+        public async Task<bool> IsDelete(int id)
+        {
             var dvt = await db.DonViTinhs.FindAsync(id);
-            db.DonViTinhs.Remove(dvt);
-            return await db.SaveChangesAsync() > 0;
+            dvt.Status = false;
+            return await db.SaveChangesAsync()>0;
         }
     }
 }

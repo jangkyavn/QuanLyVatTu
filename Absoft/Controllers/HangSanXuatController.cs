@@ -42,5 +42,11 @@ namespace Absoft.Controllers
             var result = await _hangSanXuatRepository.InsertAsync(hangSanXuatViewModel);
             return Ok(result);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _hangSanXuatRepository.IsDelete(id);
+            return Ok(result);
+        }
     }
 }

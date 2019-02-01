@@ -14,6 +14,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertAsync(LoaiVatTuViewModel loaivt);
         Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt);
         Task<bool> DeleteAsync(int id);
+        Task<bool> IsDelete(int id);
         Task<bool> DeleteAllByMaHMAsync(int maHM);        
     }
 }

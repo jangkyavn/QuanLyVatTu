@@ -44,5 +44,11 @@ namespace Absoft.Controllers
             var result = await _hangMucVatTuRepository.InsertAsync(hangMucVatTuViewModel);
             return Ok(result);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _hangMucVatTuRepository.IsDelete(id);
+            return Ok(result);
+        }
     }
 }

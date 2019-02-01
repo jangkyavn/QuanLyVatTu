@@ -24,15 +24,17 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            var loaivt = await db.LoaiVatTus.FindAsync(id);
-            db.LoaiVatTus.Remove(loaivt);
-            return await db.SaveChangesAsync() > 0;
+           
+                var loaivt = await db.LoaiVatTus.FindAsync(id);
+                db.LoaiVatTus.Remove(loaivt);
+                return await db.SaveChangesAsync() > 0;
+            
         }
-
         public async Task<List<LoaiVatTuViewModel>> GetAllAsync()
         {
             var query = from lvt in db.LoaiVatTus
                         join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                        where lvt.Status==true
                         select new LoaiVatTuViewModel
                         {
                             MaLoaiVatTu = lvt.MaLoaiVatTu,
@@ -103,7 +105,12 @@ namespace Absoft.Repositories.Implimentations
             }
             return false;
         }
+        public async Task<bool> IsDelete(int id)
+        {
+            var entity = await db.LoaiVatTus.FindAsync(id);
+            entity.Status = false;
+            return await db.SaveChangesAsync() > 0;
+        }
         #endregion
-
     }
 }

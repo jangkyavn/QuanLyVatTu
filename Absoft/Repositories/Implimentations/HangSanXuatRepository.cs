@@ -23,16 +23,23 @@ namespace Absoft.Repositories.Implimentations
 
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> IsDelete(int id)
         {
-            var hangsanxuat = await db.HangSanXuats.FindAsync(id);
-            db.HangSanXuats.Remove(hangsanxuat);
+            var entity = await db.HangSanXuats.FindAsync(id);
+            entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<bool> DeleteAsync(int id)
+        {
+            
+                var hangsanxuat = await db.HangSanXuats.FindAsync(id);
+                db.HangSanXuats.Remove(hangsanxuat);
+                return await db.SaveChangesAsync() > 0;
+                     
+        }
         public async Task<List<HangSanXuatViewModel>> GetAllAsync()
         {
-            return await db.HangSanXuats
+            return await db.HangSanXuats.Where(x => x.Status == true)
                 .ProjectTo<HangSanXuatViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }

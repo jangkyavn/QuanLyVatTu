@@ -13,5 +13,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertAsync(HangSanXuatViewModel mhangsanxuat);
         Task<bool> UpdateAsync(HangSanXuatViewModel mhangsanxuat);
         Task<bool> DeleteAsync(int id);
+        Task<bool> IsDelete(int id);
     }
 }
