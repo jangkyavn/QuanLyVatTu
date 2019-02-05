@@ -17,5 +17,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DeleteAsync(int id);
         Task<bool> IsDelete(int id);
         Task<bool> DeleteByMaLoaiVTAsync(int id);
+        Task<int> GetTotalCountAsync();
     }
 }

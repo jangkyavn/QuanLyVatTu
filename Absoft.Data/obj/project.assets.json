@@ -4515,23 +4515,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {},
+    "C:\\Users\\jangk\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Absoft\\Dự án\\Absoft_QuanLyVatTu\\Absoft.Data\\Absoft.Data.csproj",
+      "projectUniqueName": "D:\\Project\\Absoft_QuanLyVatTu\\Absoft.Data\\Absoft.Data.csproj",
       "projectName": "Absoft.Data",
-      "projectPath": "D:\\Absoft\\Dự án\\Absoft_QuanLyVatTu\\Absoft.Data\\Absoft.Data.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "D:\\Absoft\\Dự án\\Absoft_QuanLyVatTu\\Absoft.Data\\obj\\",
+      "projectPath": "D:\\Project\\Absoft_QuanLyVatTu\\Absoft.Data\\Absoft.Data.csproj",
+      "packagesPath": "C:\\Users\\jangk\\.nuget\\packages\\",
+      "outputPath": "D:\\Project\\Absoft_QuanLyVatTu\\Absoft.Data\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\jangk\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

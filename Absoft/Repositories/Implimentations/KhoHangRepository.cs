@@ -122,5 +122,11 @@ namespace Absoft.Repositories.Implimentations
                 throw;
             }
         }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var count = await db.KhoHangs.SumAsync(x => x.SoLuongTon);
+            return count;
+        }
     }
 }

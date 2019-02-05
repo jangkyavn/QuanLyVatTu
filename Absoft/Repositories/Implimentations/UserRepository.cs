@@ -5,6 +5,7 @@ using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<bool> AddAsync(UserCreationViewModel userViewModel)
         {
             var userModel = _mapper.Map<NguoiDung>(userViewModel);
-
+            
             userModel.Gender = true;
             userModel.DateOfBirth = DateTime.Now;
             userModel.CreatedDate = DateTime.Now;
@@ -49,7 +50,7 @@ namespace Absoft.Repositories.Implimentations
             return result.Succeeded;
         }
 
-        public async Task<bool> CheckUserNameExists(string userName)
+        public async Task<bool> CheckUserNameExistsAsync(string userName)
         {
             var model = await _userManager.FindByNameAsync(userName);
             return model != null;
@@ -137,6 +138,19 @@ namespace Absoft.Repositories.Implimentations
             var userModel = await _userManager.FindByIdAsync(id.ToString());
             var userViewModel = _mapper.Map<UserDetailViewModel>(userModel);
             return userViewModel;
+        }
+
+        public async Task<UserDetailViewModel> GetByUserNameAsync(string userName)
+        {
+            var userModel = await _userManager.FindByNameAsync(userName);
+            var userViewModel = _mapper.Map<UserDetailViewModel>(userModel);
+            return userViewModel;
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var count = await _userManager.Users.CountAsync();
+            return count;
         }
 
         public async Task<bool> UpdateAsync(UserUpdationViewModel userViewModel)

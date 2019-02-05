@@ -23,6 +23,13 @@ namespace Absoft.Controllers
             return Ok(models);
         }
 
+        [HttpGet("getTotalCount")]
+        public async Task<IActionResult> GetTotalCount()
+        {
+            var result = await _IVatTuRepository.GetTotalCountAsync();
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailById(int id)
         {

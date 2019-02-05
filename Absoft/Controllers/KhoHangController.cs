@@ -49,5 +49,12 @@ namespace Absoft.Controllers
             var models = await _IKhoHangRepository.GetTongTon(maVT, maKho);
             return Ok(models);
         }
+
+        [HttpGet("getTotalCount")]
+        public async Task<IActionResult> GetTotalCount()
+        {
+            var result = await _IKhoHangRepository.GetTotalCountAsync();
+            return Ok(result);
+        }
     }
 }

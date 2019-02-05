@@ -8,11 +8,13 @@ namespace Absoft.Repositories.Interfaces
     public interface IUserRepository
     {
         Task<UserDetailViewModel> GetByIdAsync(Guid? id);
+        Task<UserDetailViewModel> GetByUserNameAsync(string userName);
         Task<PagedList<UserListViewModel>> GetAllPagingAsync(UserParams userParams);
         Task<bool> AddAsync(UserCreationViewModel userViewModel);
         Task<bool> UpdateAsync(UserUpdationViewModel userViewModel);
         Task<bool> DeleteAsync(Guid? id);
         Task<bool> ChangeStatusAsync(Guid? id);
-        Task<bool> CheckUserNameExists(string userName);
+        Task<bool> CheckUserNameExistsAsync(string userName);
+        Task<int> GetTotalCountAsync();
     }
 }

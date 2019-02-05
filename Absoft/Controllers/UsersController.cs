@@ -1,20 +1,30 @@
-﻿using Absoft.Extentions;
+﻿using Absoft.Data.Entities;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
     public class UsersController : BaseController
     {
+        private readonly SignInManager<NguoiDung> _signInManager;
+        private readonly UserManager<NguoiDung> _userManager;
         private readonly IUserRepository _userRepository;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(
+            SignInManager<NguoiDung> signInManager,
+            UserManager<NguoiDung> userManager,
+            IUserRepository userRepository)
         {
+            _signInManager = signInManager;
+            _userManager = userManager;
             _userRepository = userRepository;
         }
 
@@ -45,6 +55,13 @@ namespace Absoft.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpGet("getTotalCount")]
+        public async Task<IActionResult> GetTotalCount()
+        {
+            var result = await _userRepository.GetTotalCountAsync();
+            return Ok(result);
         }
 
         [HttpPost]
@@ -82,7 +99,7 @@ namespace Absoft.Controllers
                 return BadRequest();
             }
 
-            var result = await _userRepository.CheckUserNameExists(userName);
+            var result = await _userRepository.CheckUserNameExistsAsync(userName);
             return Ok(result);
         }
 
@@ -102,6 +119,41 @@ namespace Absoft.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpGet("checkCurrentPassword/{password}")]
+        public async Task<IActionResult> CheckCurrentPassword(string password)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            return Ok(result.Succeeded);
+        }
+
+        [HttpPut("changePassword/{newPassword}")]
+        public async Task<IActionResult> ChangePassword(string newPassword)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return NoContent();
+            }
+            return Ok(true);
         }
 
         [HttpDelete("{id}")]

@@ -114,5 +114,11 @@ namespace Absoft.Repositories.Implimentations
             entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var count = await db.VatTus.CountAsync();
+            return count;
+        }
     }
 }
