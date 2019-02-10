@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +23,14 @@ namespace Absoft.Controllers
         {
             var models = await _hangSanXuatRepository.GetAllAsync();
             return Ok(models);
+        }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _hangSanXuatRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
 
         [HttpGet("{id}")]

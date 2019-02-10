@@ -16,7 +16,15 @@ namespace Absoft.ViewModels
         public string TenKho { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
-        public string GhiChu { get; set; }        
+        private string ghiChu;
+        public string GhiChu
+        {
+            get => ghiChu;
+            set
+            {
+                ghiChu = value ?? string.Empty;
+            }
+        }
         public bool Status { set; get; }
     }
 }

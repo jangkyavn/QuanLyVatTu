@@ -1,11 +1,11 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public NuocSanXuatRepository(DataContext  data, IMapper mapper)
+        public NuocSanXuatRepository(DataContext data, IMapper mapper)
         {
             db = data;
             mp = mapper;
@@ -30,11 +30,11 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            
-                var nsx = await db.NuocSanXuats.FindAsync(id);
-                db.NuocSanXuats.Remove(nsx);
-                return await db.SaveChangesAsync() > 0;
-           
+
+            var nsx = await db.NuocSanXuats.FindAsync(id);
+            db.NuocSanXuats.Remove(nsx);
+            return await db.SaveChangesAsync() > 0;
+
         }
         public async Task<List<NuocSanXuatViewModel>> GetAllAsync()
         {
@@ -62,6 +62,47 @@ namespace Absoft.Repositories.Implimentations
             var nsx = mp.Map<NuocSanXuat>(mnuocsanxuat);
             db.NuocSanXuats.Update(nsx);
             return await db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<PagedList<NuocSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from nsx in db.NuocSanXuats
+                        where nsx.Status == true
+                        select new NuocSanXuatViewModel
+                        {
+                            MaNuoc = nsx.MaNuoc,
+                            TenNuoc = nsx.TenNuoc,
+                            Status = nsx.Status
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenNuoc.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenNuoc.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenNuoc":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenNuoc);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenNuoc);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<NuocSanXuatViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

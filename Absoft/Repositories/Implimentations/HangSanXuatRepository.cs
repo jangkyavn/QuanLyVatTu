@@ -1,11 +1,11 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,6 +62,60 @@ namespace Absoft.Repositories.Implimentations
             db.HangSanXuats.Update(hangsanxuat);        
             return (await db.SaveChangesAsync()) > 0;
             
+        }
+
+        public async Task<PagedList<HangSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from hsx in db.HangSanXuats
+                          where hsx.Status == true
+                          select new HangSanXuatViewModel
+                          {
+                              MaHang = hsx.MaHang,
+                              TenHang = hsx.TenHang,
+                              GhiChu = hsx.GhiChu,
+                              Status = hsx.Status
+                          };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenHang.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenHang":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHang);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<HangSanXuatViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

@@ -14,9 +14,9 @@ namespace Absoft.Extentions
             response.Headers.Add("Access-Control-Allow-Origin", "*");
         }
 
-        public static void AddPagination(this HttpResponse response, int currentPage, int itemsPerPage, int totalItems, int totalPages, int firstRowOnPage, int lastRowOnPage)
+        public static void AddPagination(this HttpResponse response, int currentPage, int itemsPerPage, int totalItems, int totalPages)
         {
-            var paginationHeader = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages, firstRowOnPage, lastRowOnPage);
+            var paginationHeader = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
 
             var camelCaseFormatter = new JsonSerializerSettings();
             camelCaseFormatter.ContractResolver = new CamelCasePropertyNamesContractResolver();

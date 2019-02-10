@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Absoft.Data.Entities;
+﻿using Absoft.Extentions;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
-{   
+{
     public class HangMucVatTuController : BaseController
     {
         IHangMucVatTuRepository _hangMucVatTuRepository;
@@ -23,6 +20,14 @@ namespace Absoft.Controllers
         {
             var models = await _hangMucVatTuRepository.GetAllAsync();
             return Ok(models);
+        }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _hangMucVatTuRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
 
         [HttpGet("{id}")]

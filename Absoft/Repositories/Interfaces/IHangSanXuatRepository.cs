@@ -1,4 +1,5 @@
-﻿using Absoft.ViewModels;
+﻿using Absoft.Helpers;
+using Absoft.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Absoft.Repositories.Interfaces
     public interface IHangSanXuatRepository
     {
         Task<List<HangSanXuatViewModel>> GetAllAsync();
+        Task<PagedList<HangSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams);
         Task<HangSanXuatViewModel> GetByIdAsync(int id);
         Task<bool> InsertAsync(HangSanXuatViewModel mhangsanxuat);
         Task<bool> UpdateAsync(HangSanXuatViewModel mhangsanxuat);

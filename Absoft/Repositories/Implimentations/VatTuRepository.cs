@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -7,7 +8,6 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -119,6 +119,89 @@ namespace Absoft.Repositories.Implimentations
         {
             var count = await db.VatTus.CountAsync();
             return count;
+        }
+
+        public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from vt in db.VatTus
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
+                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        where vt.Status == true
+                        select new VatTuViewModel
+                        {
+                            MaVatTu = vt.MaVatTu,
+                            MaLoaiVatTu = vt.MaLoaiVatTu,
+                            MaDVT = vt.MaDVT,
+                            TenVT = vt.TenVT,
+                            GhiChu = vt.GhiChu,
+                            TenDVT = dvt.TenDVT,
+                            TenLoaiVatTu = lvt.TenLoai
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVT.ToUpper().Contains(keyword) ||
+                                        x.TenLoaiVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenLoaiVatTu.ToUpper().Contains(keyword) ||
+                                        x.TenDVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenDVT.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenVT":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenVT);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenVT);
+                        }
+                        break;
+                    case "tenLoaiVatTu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoaiVatTu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoaiVatTu);
+                        }
+                        break;
+                    case "tenDVT":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenDVT);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenDVT);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<VatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

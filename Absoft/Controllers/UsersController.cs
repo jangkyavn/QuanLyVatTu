@@ -29,14 +29,11 @@ namespace Absoft.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAllPaging([FromQuery]UserParams userParams)
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
-            var usersPaging = await _userRepository.GetAllPagingAsync(userParams);
-
-            Response.AddPagination(usersPaging.CurrentPage, usersPaging.PageSize, usersPaging.TotalCount, usersPaging.TotalPages, usersPaging.FirstRowOnPage, usersPaging.LastRowOnPage);
-
-            return Ok(usersPaging.Items);
+            var paged = await _userRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
 
         [HttpGet("{id}")]
@@ -100,6 +97,18 @@ namespace Absoft.Controllers
             }
 
             var result = await _userRepository.CheckUserNameExistsAsync(userName);
+            return Ok(result);
+        }
+
+        [HttpGet("checkEmailExists/{email}")]
+        public async Task<IActionResult> CheckEmailExists(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest();
+            }
+
+            var result = await _userRepository.CheckEmailExistsAsync(email);
             return Ok(result);
         }
 

@@ -13,17 +13,13 @@ namespace Absoft.Helpers
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
         public List<T> Items { get; set; }
-        public int FirstRowOnPage { get; set; }
-        public int LastRowOnPage { get; set; }
-
+   
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
             TotalCount = count;
             PageSize = pageSize;
             CurrentPage = pageNumber;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-            FirstRowOnPage = (pageNumber - 1) * PageSize + 1;
-            LastRowOnPage = Math.Min(CurrentPage * PageSize, count);
             Items = items;
         }
 
