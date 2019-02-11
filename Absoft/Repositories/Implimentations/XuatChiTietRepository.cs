@@ -87,5 +87,10 @@ namespace Absoft.Repositories.Implimentations
             if (sl <= slct) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
             else return new CheckSoLuongParams { Status = false, SoLuong = slct };
         }
+
+        public Task<bool> InsertXuatChiTiet(XuatChiTietViewModel xuatChiTietViewModel, int mapx)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

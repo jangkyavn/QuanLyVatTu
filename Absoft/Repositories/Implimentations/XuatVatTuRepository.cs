@@ -294,5 +294,10 @@ namespace Absoft.Repositories.Implimentations
             var listnct = await db.NhapChiTiets.Where(x => x.MaVatTu == maVT).ToListAsync();
             return mp.Map<List<NhapChiTietViewModel>>(listnct);
         }
+
+        public Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

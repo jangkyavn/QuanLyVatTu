@@ -19,5 +19,6 @@ namespace Absoft.Repositories.Interfaces
         Task<List<VatTuViewModel>> GetListVTByMaPNAsync(int maPN);
         Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho);
         Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT);
+        Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel);
     }
 }
