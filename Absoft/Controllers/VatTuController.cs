@@ -76,5 +76,11 @@ namespace Absoft.Controllers
             var result = await _IVatTuRepository.IsDelete(id);
             return Ok(result);
         }
+        [HttpGet("GetByMaHM/{maHM}")]
+        public async Task<IActionResult> GetByMaHM(int maHM)
+        {
+            var models = await _IVatTuRepository.GetByMaHM(maHM);
+            return Ok(models);
+        }
     }
 }

@@ -21,11 +21,19 @@ namespace Absoft.Repositories.Implimentations
             db = data;
             mp = mapper;
         }
-        public async Task<bool> InsertAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        public async Task<bool> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
         {
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
             await db.NhapChiTiets.AddAsync(nhapChiTiet);
+            await db.SaveChangesAsync();
+            return await this.SumSLTT(mnhapchitiet, maphieunhap);
+        }
+        public async Task<bool> SumSLTT(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        {
+            var pn = await db.NhapVatTus.FindAsync(maphieunhap);
+            pn.TongSoLuong += mnhapchitiet.SoLuong;
+            pn.TongSoTien += mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
             return await db.SaveChangesAsync() > 0;
         }
         public async Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
@@ -111,6 +119,6 @@ namespace Absoft.Repositories.Implimentations
                 var rs = await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
             }
             return true;
-        }
+        }     
     }
 }

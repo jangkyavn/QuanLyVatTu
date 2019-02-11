@@ -26,10 +26,22 @@ namespace Absoft.Controllers
             var models = await _INhapVatTuRepository.GetAllAsync();
             return Ok(models);
         }
+        //[HttpPost]
+        //public async Task<IActionResult> Insert(NhapVatTuParams nhapVatTuParams)
+        //{
+        //    var result = await _INhapVatTuRepository.InsertAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
+        //    return Ok(result);
+        //}
         [HttpPost]
-        public async Task<IActionResult> Insert(NhapVatTuParams nhapVatTuParams)
+        public async Task<IActionResult> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu)
         {
-            var result = await _INhapVatTuRepository.InsertAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
+            var result = await _INhapVatTuRepository.InsertNhapVatTuAsync(mnhapvattu);
+            return Ok(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        {
+            var result = await _INhapChiTietRepository.InsertChiTietAsync(mnhapchitiet, maphieunhap);
             return Ok(result);
         }
         [HttpPut]
@@ -82,7 +94,7 @@ namespace Absoft.Controllers
         [HttpGet("CheckSoLuongNhapChiTietAsync/{maphieunhap}/{makho}/{mavt}/{sl}")]
         public async Task<IActionResult> CheckSoLuongNhapChiTietAsync(int maphieunhap, int makho, int mavt, int sl)
         {
-            var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(maphieunhap, makho, mavt, sl);            
+            var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(maphieunhap, makho, mavt, sl);
             return Ok(result);
         }
     }
