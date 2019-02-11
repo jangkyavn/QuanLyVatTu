@@ -89,6 +89,13 @@ namespace Absoft.Repositories.Implimentations
             var mvt = mp.Map<VatTuViewModel>(vt);
             return mvt;
         }
+        public async Task<List<VatTuViewModel>> GetByMaHM(int maHM)
+        {
+            var listMaLoaiVT = await db.LoaiVatTus.Where(x => x.MaHM == maHM).Select(x => x.MaLoaiVatTu).ToListAsync();
+            var listVT = await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu)).ToListAsync();
+            var listmVT = mp.Map<List<VatTuViewModel>>(listVT);
+            return listmVT;
+        }
         public async Task<List<VatTuViewModel>> GetByMaDVAsync(int MADV)
         {
             return await db.VatTus
@@ -200,7 +207,6 @@ namespace Absoft.Repositories.Implimentations
                         break;
                 }
             }
-
             return await PagedList<VatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }

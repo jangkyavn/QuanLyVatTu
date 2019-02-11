@@ -50,7 +50,6 @@ namespace Absoft.Repositories.Implimentations
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)
         {
-
             var dvt = await db.DonViTinhs.FindAsync(id);
             db.DonViTinhs.Remove(dvt);
             return await db.SaveChangesAsync() > 0;
@@ -62,7 +61,6 @@ namespace Absoft.Repositories.Implimentations
             dvt.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
         public async Task<PagedList<DonViTinhViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from dvt in db.DonViTinhs
@@ -73,7 +71,6 @@ namespace Absoft.Repositories.Implimentations
                             TenDVT = dvt.TenDVT,
                             Status = dvt.Status
                         };
-
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
@@ -81,7 +78,6 @@ namespace Absoft.Repositories.Implimentations
                 query = query.Where(x => x.TenDVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenDVT.ToUpper().Contains(keyword));
             }
-
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
@@ -100,7 +96,6 @@ namespace Absoft.Repositories.Implimentations
                         break;
                 }
             }
-
             return await PagedList<DonViTinhViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
