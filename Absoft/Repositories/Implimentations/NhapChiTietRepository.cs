@@ -16,16 +16,36 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public NhapChiTietRepository(DataContext data, IMapper mapper)
+        IKhoHangRepository _ikhohang;
+        public NhapChiTietRepository(DataContext data, IMapper mapper, IKhoHangRepository ikhohang)
         {
             db = data;
             mp = mapper;
+            _ikhohang = ikhohang;
+        }
+        public async Task<bool> InsertAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        {
+            mnhapchitiet.MaPhieuNhap = maphieunhap;
+            var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
+            await db.NhapChiTiets.AddAsync(nhapChiTiet);
+            return await db.SaveChangesAsync()>0;            
         }
         public async Task<bool> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
         {
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
             await db.NhapChiTiets.AddAsync(nhapChiTiet);
+            await db.SaveChangesAsync();
+            var pn = await db.NhapVatTus.FindAsync(maphieunhap);
+            var khohang = new KhoHangViewModel()
+            {
+                MaKho = pn.MaKho,
+                MaPhieuNhap = pn.MaPhieuNhap,
+                MaVatTu = mnhapchitiet.MaVatTu,
+                SoLuongTon = mnhapchitiet.SoLuong
+            };
+            // gọi hàm nhập vào kho
+            await _ikhohang.InsertAsync(khohang);
             await db.SaveChangesAsync();
             return await this.SumSLTT(mnhapchitiet, maphieunhap);
         }

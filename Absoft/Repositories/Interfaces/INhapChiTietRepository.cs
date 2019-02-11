@@ -10,6 +10,7 @@ namespace Absoft.Repositories.Interfaces
     public interface INhapChiTietRepository
     {       
         Task<bool> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap);
+        Task<bool> InsertAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap);
         Task<bool> SumSLTT(NhapChiTietViewModel mnhapchitiet, int maphieunhap);
         Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho);
         Task<bool> DeleteNhapChiTietAsync(int mapn, int mavt, int makho);
