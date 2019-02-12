@@ -10,6 +10,8 @@ namespace Absoft.Repositories.Interfaces
     public interface IXuatVatTuRepository
     {
         Task<List<XuatVatTuViewModel>> GetAllAsync();
+        Task<PagedList<XuatVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams);
+
         Task<int> InsertAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet);
         Task<bool> DeleteAsync(int maPX);
         Task<int> UpdateAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet);        

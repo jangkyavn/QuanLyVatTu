@@ -112,8 +112,8 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenHM.ToUpper().Contains(keyword) ||
                                         x.NgayNhap.Equals(keyword) ||
-                                        x.TongSoTien.Equals(keyword) ||
-                                        x.TongSoLuong.Equals(keyword));
+                                        x.TongSoTien.ToString().Equals(keyword) ||
+                                        x.TongSoLuong.ToString().Equals(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

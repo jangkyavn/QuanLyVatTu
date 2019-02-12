@@ -303,5 +303,99 @@ namespace Absoft.Repositories.Implimentations
             await db.SaveChangesAsync();         
             return px.MaPhieuXuat;
         }
+
+        public async Task<PagedList<XuatVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from xvt in db.XuatVatTus
+                        join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
+                        join ns in db.NhanSus on xvt.MaNS equals ns.MaNS
+                        select new XuatVatTuViewModel
+                        {
+                            MaPhieuXuat = xvt.MaPhieuXuat,
+                            MaKho = xvt.MaKho,
+                            MaNS = xvt.MaNS,
+                            NgayNhap = xvt.NgayNhap,
+                            TongSoTien = xvt.TongSoTien,
+                            TongSoLuong = xvt.TongSoLuong,
+                            GhiChu = xvt.GhiChu,
+                            Status = xvt.Status,
+                            TenKho = kvt.TenKho,
+                            TenNS = ns.HoTen
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKho.ToUpper().Contains(keyword) ||
+                                        x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenNS.ToUpper().Contains(keyword) ||
+                                        x.NgayNhap.Equals(keyword) ||
+                                        x.TongSoTien.ToString().Equals(keyword) ||
+                                        x.TongSoLuong.ToString().Equals(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenKho":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKho);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKho);
+                        }
+                        break;
+                    case "tenNS":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenNS);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenNS);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
+                        }
+                        break;
+                    case "tongSoTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoTien);
+                        }
+                        break;
+                    case "tongSoLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<XuatVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
@@ -25,6 +26,15 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetAllAsync();
             return Ok(models);
         }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _IXuatVatTuRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
         [HttpGet("GetByMaPN/{maPN}")]
         public async Task<IActionResult> GetByMaPNAsync(int maPN)
         {
