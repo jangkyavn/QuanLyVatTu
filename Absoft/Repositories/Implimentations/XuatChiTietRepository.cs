@@ -16,10 +16,12 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public XuatChiTietRepository(DataContext data, IMapper mapper)
+        IKhoHangRepository _ikhohang;
+        public XuatChiTietRepository(DataContext data, IMapper mapper, IKhoHangRepository ikhohang)
         {
             db = data;
             mp = mapper;
+            _ikhohang = ikhohang;
         }
         public async Task<bool> CheckDeleteXuatChiTietAsync(int maPX, int maPN, int maVT, int maKho)
         {
@@ -87,10 +89,39 @@ namespace Absoft.Repositories.Implimentations
             if (sl <= slct) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
             else return new CheckSoLuongParams { Status = false, SoLuong = slct };
         }
-
-        public Task<bool> InsertXuatChiTiet(XuatChiTietViewModel xuatChiTietViewModel, int mapx)
+        public async Task<bool> InsertXuatChiTiet(XuatChiTietViewModel xuatChiTietViewModel, int mapx)
         {
-            throw new NotImplementedException();
+            var px = await db.XuatVatTus.FindAsync(mapx);
+            // check sl >= item.soluong
+            var slkho = await _ikhohang.GetSLTon(xuatChiTietViewModel.MaVatTu, px.MaKho, xuatChiTietViewModel.MaPhieuNhap);
+            if (slkho != 0 && slkho >= xuatChiTietViewModel.SoLuongXuat)
+            {
+                xuatChiTietViewModel.MaPhieuXuat = mapx;
+                var xct = mp.Map<XuatChiTiet>(xuatChiTietViewModel);
+                await db.XuatChiTiets.AddAsync(xct);
+                await db.SaveChangesAsync();
+                await this.SumSLTT(xuatChiTietViewModel, mapx);              
+                // set status = fales khong cho xoa nhapchitiet cua mat hang nay vi da xuat
+                var mkh = new KhoHangViewModel()
+                {
+                    SoLuongTon = slkho - xuatChiTietViewModel.SoLuongXuat,
+                    MaKho = px.MaKho,
+                    MaPhieuNhap = xuatChiTietViewModel.MaPhieuNhap,
+                    MaVatTu = xuatChiTietViewModel.MaVatTu,
+                    Status = false
+                };
+                var kh = mp.Map<KhoHang>(mkh);
+                db.KhoHangs.Update(kh);
+                return await db.SaveChangesAsync() > 0;
+            }
+            else return false; // slxuat vuot qua sl trong kho
+        }
+        public async Task<bool> SumSLTT(XuatChiTietViewModel xuatChiTietViewModel, int mapx)
+        {
+            var px = await db.XuatVatTus.FindAsync(mapx);
+            px.TongSoLuong += xuatChiTietViewModel.SoLuongXuat;
+            px.TongSoTien += xuatChiTietViewModel.SoLuongXuat + xuatChiTietViewModel.DonGia;
+            return await db.SaveChangesAsync() > 0;
         }
     }
 }

@@ -32,13 +32,13 @@ namespace Absoft.Controllers
         //    var result = await _INhapVatTuRepository.InsertAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
         //    return Ok(result);
         //}
-        [HttpPost("insertNhapVatTuAsync")]
+        [HttpPost("insertNhapVatTu")]
         public async Task<IActionResult> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu)
         {
             var result = await _INhapVatTuRepository.InsertNhapVatTuAsync(mnhapvattu);
             return Ok(result);
         }
-        [HttpPost("insertChiTietAsync")]
+        [HttpPost("insertChiTiet")]
         public async Task<IActionResult> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
         {
             var result = await _INhapChiTietRepository.InsertChiTietAsync(mnhapchitiet, maphieunhap);
