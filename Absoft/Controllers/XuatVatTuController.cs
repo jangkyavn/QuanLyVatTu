@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
+using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,10 +61,22 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetListNhapChiTietByMaVTAsync(maVT);
             return Ok(models);
         }
-        [HttpPost]
-        public async Task<IActionResult> Insert(XuatVatTuParams xuatVatTuParams)
+        //[HttpPost]
+        //public async Task<IActionResult> Insert(XuatVatTuParams xuatVatTuParams)
+        //{
+        //    var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+        //    return Ok(models);
+        //}
+        [HttpPost("insertXuatVatTu")]
+        public async Task<IActionResult> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
-            var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+            var models = await _IXuatVatTuRepository.InsertXuatVatTu(xuatVatTuViewModel);
+            return Ok(models);
+        }
+        [HttpPost("insertXuatChiTiet")]
+        public async Task<IActionResult> InsertXuatChiTiet(XuatChiTietViewModel xuatChiTietViewModel, int mapx)
+        {
+            var models = await _IXuatChiTietRepository.InsertXuatChiTiet(xuatChiTietViewModel,mapx);
             return Ok(models);
         }
         [HttpDelete("{maPX}")]

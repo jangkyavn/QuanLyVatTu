@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class NhapChiTietViewModel
     {
@@ -31,5 +25,7 @@ namespace Absoft.ViewModels
         public bool Status { set; get; }
 
         public string TenVT { get; set; }
+        public string TenNuoc { get; set; }
+        public string TenHang { get; set; }
     }
 }

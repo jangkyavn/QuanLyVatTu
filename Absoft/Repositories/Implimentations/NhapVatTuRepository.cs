@@ -80,6 +80,104 @@ namespace Absoft.Repositories.Implimentations
                         };
             return await model.ToListAsync();
         }
+
+        public async Task<PagedList<NhapVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from nvt in db.NhapVatTus
+                        join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
+                        join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                        select new NhapVatTuViewModel
+                        {
+                            MaPhieuNhap = nvt.MaPhieuNhap,
+                            MaHM = nvt.MaHM,
+                            MaKho = nvt.MaKho,
+                            TenHM = hm.TenHM,
+                            TenKho = kvt.TenKho,
+                            NgayNhap = nvt.NgayNhap,
+                            NguoiNhap = nvt.NguoiNhap,
+                            TongSoTien = nvt.TongSoTien,
+                            TongSoLuong = nvt.TongSoLuong,
+                            ChietKhau = nvt.ChietKhau,
+                            GhiChu = nvt.GhiChu,
+                            Status = nvt.Status
+                        };
+
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKho.ToUpper().Contains(keyword) ||
+                                        x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenHM.ToUpper().Contains(keyword) ||
+                                        x.NgayNhap.Equals(keyword) ||
+                                        x.TongSoTien.Equals(keyword) ||
+                                        x.TongSoLuong.Equals(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenKho":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKho);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKho);
+                        }
+                        break;
+                    case "tenHM":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHM);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHM);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
+                        }
+                        break;
+                    case "tongSoTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoTien);
+                        }
+                        break;
+                    case "tongSoLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<NhapVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
         public async Task<NhapVatTuParams> GetDetailAsync(int maPN)
         {
             var pn = await db.NhapVatTus.FindAsync(maPN);
@@ -230,6 +328,14 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return 0;
+        }
+
+        public async Task<bool> UpdateNhapVatTuAsync(NhapVatTuViewModel nhapVatTuViewModel)
+        {
+            var viewModel = mp.Map<NhapVatTu>(nhapVatTuViewModel);
+            db.NhapVatTus.Update(viewModel);
+            var result = await db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

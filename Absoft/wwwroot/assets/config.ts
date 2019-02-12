@@ -1,9 +1,9 @@
 export class Config {
     public static getDomain() {
-        return 'localhost:44379';
+        return 'qlvtbv2.theappnow.net'; // localhost:44379
     }
 
     public static getHttp() {
-        return 'https';
+        return 'http';
     }
 }
