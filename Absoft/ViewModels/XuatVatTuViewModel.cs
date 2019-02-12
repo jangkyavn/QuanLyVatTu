@@ -21,5 +21,6 @@ namespace Absoft.ViewModels
         public bool Status { set; get; }
         public string TenKho { get; set; }
         public string TenNS { get; set; }
+        public int ChietKhau { set; get; }
     }
 }
