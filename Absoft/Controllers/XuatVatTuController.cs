@@ -123,5 +123,17 @@ namespace Absoft.Controllers
             var result = await _IXuatChiTietRepository.CheckSoLuongXuatChiTietAsync(maphieunhap, mavt, sl);
             return Ok(result);
         }
+        [HttpGet("GetListByMaKho{makho}")]
+        public async Task<IActionResult> GetListByMaKho(int makho)
+        {
+            var result = await _IXuatVatTuRepository.GetListByMaKho(makho);
+            return Ok(result);
+        }
+        [HttpGet("GetListByMaKho{mapx}/{mapn}/{mavt}")]
+        public async Task<IActionResult> GetXuatChiTiet(int mapx, int mapn, int mavt)
+        {
+            var result = await _IXuatVatTuRepository.GetXuatChiTiet(mapx, mapn, mavt);
+            return Ok(result);
+        }
     }
 }

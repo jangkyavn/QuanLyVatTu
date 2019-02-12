@@ -303,5 +303,26 @@ namespace Absoft.Repositories.Implimentations
             await db.SaveChangesAsync();         
             return px.MaPhieuXuat;
         }
+        public async Task<List<KhoHangViewModel>> GetListByMaKho(int makho)
+        {
+            var model = from kh in db.KhoHangs
+                        join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        where kh.MaKho == makho
+                        select new KhoHangViewModel
+                        {
+                            MaKho = kh.MaKho,
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = vt.MaVatTu,
+                            TenVatTu = vt.TenVT,
+                            SoLuongTon = kh.SoLuongTon
+                        };
+            return await model.ToListAsync();
+        }
+        public async Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt)
+        {
+            var entity = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == mapx && x.MaPhieuNhap == mapn && x.MaVatTu == mavt).ToListAsync();
+            var model = mp.Map<XuatChiTietViewModel>(entity);
+            return model;
+        }
     }
 }
