@@ -203,7 +203,7 @@ namespace Absoft.Repositories.Implimentations
                                 DotMua = ct.DotMua,
                                 NamSX = ct.NamSX,
                                 PhanCap = ct.PhanCap,
-                                NguonGoc = ct.NguonGoc,
+                                MaNguon = ct.MaNguon,
                                 GhiChu = ct.GhiChu,
                                 Status = ct.Status
                             };
