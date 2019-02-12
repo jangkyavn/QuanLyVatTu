@@ -218,18 +218,18 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    var model =await db.XuatVatTus.FindAsync(mxuatvt.MaPhieuXuat);
+                    var model = await db.XuatVatTus.FindAsync(mxuatvt.MaPhieuXuat);
                     mxuatvt.TongSoLuong = model.TongSoLuong;
                     mxuatvt.TongSoTien = model.TongSoTien;
                     var xvt = mp.Map<XuatVatTu>(mxuatvt);
                     var xvtcu = mp.Map<XuatVatTu>(model);
                     // sua cac truong tru tong tien, tong sl
                     db.Entry(xvtcu).CurrentValues.SetValues(xvt);
-                   // db.XuatVatTus.Update(xvt);
+                    // db.XuatVatTus.Update(xvt);
                     // sua trong chi tiet
                     foreach (var item in listxuatchitiet)
                     {
-                       
+
                         var ctcu = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaPhieuXuat == item.MaPhieuXuat && x.MaVatTu == item.MaVatTu);
                         // thêm sl mới vào tổng
                         mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
@@ -237,7 +237,7 @@ namespace Absoft.Repositories.Implimentations
                         // lấy sl cũ và trừ trong tổng
                         mxuatvt.TongSoLuong -= ctcu.SoLuongXuat;
                         mxuatvt.TongSoTien -= ctcu.DonGia * ctcu.SoLuongXuat;
-                        
+
                         int sltonmoi = await ixuatchitiet.UpdateXuatChiTietAsync(item, mxuatvt.MaPhieuXuat, mxuatvt.MaKho);
                         if (sltonmoi >= 0)
                         {
@@ -294,10 +294,14 @@ namespace Absoft.Repositories.Implimentations
             var listnct = await db.NhapChiTiets.Where(x => x.MaVatTu == maVT).ToListAsync();
             return mp.Map<List<NhapChiTietViewModel>>(listnct);
         }
-
-        public Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
+        public async Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
-            throw new NotImplementedException();
+            xuatVatTuViewModel.TongSoLuong = 0;
+            xuatVatTuViewModel.TongSoTien = 0;
+            var px = mp.Map<XuatVatTu>(xuatVatTuViewModel);
+            await db.XuatVatTus.AddAsync(px);
+            await db.SaveChangesAsync();         
+            return px.MaPhieuXuat;
         }
     }
 }
