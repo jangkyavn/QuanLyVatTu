@@ -37,7 +37,7 @@ namespace Absoft.Repositories.Implimentations
                     var nvt = await db.NhapVatTus.FindAsync(maPN);
                     // sua cac truong tru tong tien, tong sl                  
                     // sua trong chi tiet
-                    var listnhapchitiet = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maPN).ToList();                    
+                    var listnhapchitiet = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maPN).ToList();
                     foreach (var item in listnhapchitiet)
                     {
                         var check = await inhapchitiet.DeleteNhapChiTietAsync(maPN, item.MaVatTu, nvt.MaKho);
@@ -45,7 +45,7 @@ namespace Absoft.Repositories.Implimentations
                         {
                             return false; // loi vi chi tiet da xuat, tra ve chi tiet
                         }
-                    }                  
+                    }
                     db.NhapVatTus.Remove(nvt);
                     transaction.Commit();
                     await db.SaveChangesAsync();
@@ -65,21 +65,119 @@ namespace Absoft.Repositories.Implimentations
                         join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
                         select new NhapVatTuViewModel
                         {
-                            MaPhieuNhap= nvt.MaPhieuNhap,
+                            MaPhieuNhap = nvt.MaPhieuNhap,
                             MaHM = nvt.MaHM,
                             MaKho = nvt.MaKho,
-                            TenHM= hm.TenHM,
+                            TenHM = hm.TenHM,
                             TenKho = kvt.TenKho,
                             NgayNhap = nvt.NgayNhap,
                             NguoiNhap = nvt.NguoiNhap,
-                            TongSoTien= nvt.TongSoTien,
-                            TongSoLuong= nvt.TongSoLuong,
+                            TongSoTien = nvt.TongSoTien,
+                            TongSoLuong = nvt.TongSoLuong,
                             ChietKhau = nvt.ChietKhau,
                             GhiChu = nvt.GhiChu,
-                            Status= nvt.Status
+                            Status = nvt.Status
                         };
             return await model.ToListAsync();
         }
+
+        public async Task<PagedList<NhapVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from nvt in db.NhapVatTus
+                        join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
+                        join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                        select new NhapVatTuViewModel
+                        {
+                            MaPhieuNhap = nvt.MaPhieuNhap,
+                            MaHM = nvt.MaHM,
+                            MaKho = nvt.MaKho,
+                            TenHM = hm.TenHM,
+                            TenKho = kvt.TenKho,
+                            NgayNhap = nvt.NgayNhap,
+                            NguoiNhap = nvt.NguoiNhap,
+                            TongSoTien = nvt.TongSoTien,
+                            TongSoLuong = nvt.TongSoLuong,
+                            ChietKhau = nvt.ChietKhau,
+                            GhiChu = nvt.GhiChu,
+                            Status = nvt.Status
+                        };
+
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKho.ToUpper().Contains(keyword) ||
+                                        x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenHM.ToUpper().Contains(keyword) ||
+                                        x.NgayNhap.Equals(keyword) ||
+                                        x.TongSoTien.ToString().Equals(keyword) ||
+                                        x.TongSoLuong.ToString().Equals(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenKho":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKho);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKho);
+                        }
+                        break;
+                    case "tenHM":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHM);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHM);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
+                        }
+                        break;
+                    case "tongSoTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoTien);
+                        }
+                        break;
+                    case "tongSoLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<NhapVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
         public async Task<NhapVatTuParams> GetDetailAsync(int maPN)
         {
             var pn = await db.NhapVatTus.FindAsync(maPN);
@@ -105,7 +203,7 @@ namespace Absoft.Repositories.Implimentations
                                 DotMua = ct.DotMua,
                                 NamSX = ct.NamSX,
                                 PhanCap = ct.PhanCap,
-                                NguonGoc = ct.NguonGoc,
+                                MaNguon = ct.MaNguon,
                                 GhiChu = ct.GhiChu,
                                 Status = ct.Status
                             };
@@ -115,17 +213,17 @@ namespace Absoft.Repositories.Implimentations
                 listnhapchitiet = chiTietVM.ToList()
             };
         }
-        public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu,List<NhapChiTietViewModel>  listnhapchitiet)
-        {           
+        public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)
+        {
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
-                {                    
+                {
                     mnhapvattu.TongSoLuong = 0;
                     mnhapvattu.TongSoTien = 0;
                     var pn = mp.Map<NhapVatTu>(mnhapvattu);
-                    await db.NhapVatTus.AddAsync(pn);                    
-                    var rs =  await db.SaveChangesAsync();
+                    await db.NhapVatTus.AddAsync(pn);
+                    var rs = await db.SaveChangesAsync();
                     if (rs > 0)
                     {
                         // gọi hàm nhập vào phiếu nhập chi tiết
@@ -156,7 +254,7 @@ namespace Absoft.Repositories.Implimentations
                         transaction.Commit();
                         return await db.SaveChangesAsync() > 0;
                     }
-                    else return false;                                                                        
+                    else return false;
                 }
                 catch (Exception)
                 {
@@ -164,6 +262,16 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return false;
+        }
+
+        public async Task<int> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu)
+        {
+            mnhapvattu.TongSoLuong = 0;
+            mnhapvattu.TongSoTien = 0;
+            var pn = mp.Map<NhapVatTu>(mnhapvattu);
+            await db.NhapVatTus.AddAsync(pn);
+            var rs = await db.SaveChangesAsync();
+            return pn.MaPhieuNhap;
         }
         public async Task<int> UpdateAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)
         {
@@ -188,16 +296,16 @@ namespace Absoft.Repositories.Implimentations
                         // cộng vào tổng ct mới
                         mnhapvattu.TongSoTien += item.DonGia * item.SoLuong;
                         mnhapvattu.TongSoLuong += item.SoLuong;
-                        var ctu =await db.NhapChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuNhap==item.MaPhieuNhap && x.MaVatTu==item.MaVatTu);
+                        var ctu = await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaVatTu == item.MaVatTu);
                         // trừ trong tổng ct cũ
                         mnhapvattu.TongSoLuong -= ctu.SoLuong;
                         mnhapvattu.TongSoTien -= ctu.SoLuong * ctu.DonGia;
                         //
-                        int sltonmoi = await inhapchitiet.UpdateNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value,mnhapvattu.MaKho);
-                        if (sltonmoi >=0)
+                        int sltonmoi = await inhapchitiet.UpdateNhapChiTietAsync(item, mnhapvattu.MaPhieuNhap.Value, mnhapvattu.MaKho);
+                        if (sltonmoi >= 0)
                         {
                             // update vào kho hàng so luong ton moi
-                            var khohang = db.KhoHangs.Where(x=>x.MaKho ==mnhapvattu.MaKho && x.MaPhieuNhap == mnhapvattu.MaPhieuNhap && x.MaVatTu==item.MaVatTu).FirstOrDefault();
+                            var khohang = db.KhoHangs.Where(x => x.MaKho == mnhapvattu.MaKho && x.MaPhieuNhap == mnhapvattu.MaPhieuNhap && x.MaVatTu == item.MaVatTu).FirstOrDefault();
                             khohang.SoLuongTon = sltonmoi;
                             db.KhoHangs.Update(khohang);
                         }
@@ -210,16 +318,24 @@ namespace Absoft.Repositories.Implimentations
                     db.Entry(nvtcu).CurrentValues.SetValues(nvt);
                     //db.NhapVatTus.Update(nvt);
                     transaction.Commit();
-                     await db.SaveChangesAsync();
+                    await db.SaveChangesAsync();
                     return 1;
                 }
                 catch (Exception e)
                 {
                     // TODO: Handle failure 
-                    throw e; 
+                    throw e;
                 }
             }
             return 0;
-        }            
+        }
+
+        public async Task<bool> UpdateNhapVatTuAsync(NhapVatTuViewModel nhapVatTuViewModel)
+        {
+            var viewModel = mp.Map<NhapVatTu>(nhapVatTuViewModel);
+            db.NhapVatTus.Update(viewModel);
+            var result = await db.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }

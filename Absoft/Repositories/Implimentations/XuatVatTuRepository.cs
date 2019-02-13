@@ -218,18 +218,18 @@ namespace Absoft.Repositories.Implimentations
             {
                 try
                 {
-                    var model =await db.XuatVatTus.FindAsync(mxuatvt.MaPhieuXuat);
+                    var model = await db.XuatVatTus.FindAsync(mxuatvt.MaPhieuXuat);
                     mxuatvt.TongSoLuong = model.TongSoLuong;
                     mxuatvt.TongSoTien = model.TongSoTien;
                     var xvt = mp.Map<XuatVatTu>(mxuatvt);
                     var xvtcu = mp.Map<XuatVatTu>(model);
                     // sua cac truong tru tong tien, tong sl
                     db.Entry(xvtcu).CurrentValues.SetValues(xvt);
-                   // db.XuatVatTus.Update(xvt);
+                    // db.XuatVatTus.Update(xvt);
                     // sua trong chi tiet
                     foreach (var item in listxuatchitiet)
                     {
-                       
+
                         var ctcu = db.XuatChiTiets.FirstOrDefault(x => x.MaPhieuNhap == item.MaPhieuNhap && x.MaPhieuXuat == item.MaPhieuXuat && x.MaVatTu == item.MaVatTu);
                         // thêm sl mới vào tổng
                         mxuatvt.TongSoTien += item.DonGia * item.SoLuongXuat;
@@ -237,7 +237,7 @@ namespace Absoft.Repositories.Implimentations
                         // lấy sl cũ và trừ trong tổng
                         mxuatvt.TongSoLuong -= ctcu.SoLuongXuat;
                         mxuatvt.TongSoTien -= ctcu.DonGia * ctcu.SoLuongXuat;
-                        
+
                         int sltonmoi = await ixuatchitiet.UpdateXuatChiTietAsync(item, mxuatvt.MaPhieuXuat, mxuatvt.MaKho);
                         if (sltonmoi >= 0)
                         {
@@ -293,6 +293,151 @@ namespace Absoft.Repositories.Implimentations
         {
             var listnct = await db.NhapChiTiets.Where(x => x.MaVatTu == maVT).ToListAsync();
             return mp.Map<List<NhapChiTietViewModel>>(listnct);
+        }
+        public async Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
+        {
+            xuatVatTuViewModel.TongSoLuong = 0;
+            xuatVatTuViewModel.TongSoTien = 0;
+            var px = mp.Map<XuatVatTu>(xuatVatTuViewModel);
+            await db.XuatVatTus.AddAsync(px);
+            await db.SaveChangesAsync();         
+            return px.MaPhieuXuat;
+        }
+
+        public async Task<PagedList<XuatVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from xvt in db.XuatVatTus
+                        join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
+                        join ns in db.NhanSus on xvt.MaNS equals ns.MaNS
+                        select new XuatVatTuViewModel
+                        {
+                            MaPhieuXuat = xvt.MaPhieuXuat,
+                            MaKho = xvt.MaKho,
+                            MaNS = xvt.MaNS,
+                            NgayNhap = xvt.NgayNhap,
+                            TongSoTien = xvt.TongSoTien,
+                            TongSoLuong = xvt.TongSoLuong,
+                            GhiChu = xvt.GhiChu,
+                            Status = xvt.Status,
+                            TenKho = kvt.TenKho,
+                            TenNS = ns.HoTen,
+                            ChietKhau = xvt.ChietKhau
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKho.ToUpper().Contains(keyword) ||
+                                        x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenNS.ToUpper().Contains(keyword) ||
+                                        x.NgayNhap.Equals(keyword) ||
+                                        x.TongSoTien.ToString().Equals(keyword) ||
+                                        x.TongSoLuong.ToString().Equals(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenKho":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKho);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKho);
+                        }
+                        break;
+                    case "tenNS":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenNS);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenNS);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
+                        }
+                        break;
+                    case "tongSoTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoTien);
+                        }
+                        break;
+                    case "tongSoLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongSoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<XuatVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+
+        public async Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword)
+        {
+            var model = from kh in db.KhoHangs
+                        join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        where kh.MaKho == makho
+                        select new KhoHangViewModel
+                        {
+                            MaKho = kh.MaKho,
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = vt.MaVatTu,
+                            TenVatTu = vt.TenVT,
+                            SoLuongTon = kh.SoLuongTon
+                        };
+
+            if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
+            {
+                keyword = keyword.ToUpper().ToTrim();
+
+                model = model.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVatTu.ToUpper().Contains(keyword) ||
+                                        x.MaPhieuNhap.ToString().Equals(keyword) ||
+                                        x.SoLuongTon.ToString().Equals(keyword));
+            }
+
+            return await model.ToListAsync();
+        }
+        public async Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt)
+        {
+            var entity = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == mapx && x.MaPhieuNhap == mapn && x.MaVatTu == mavt).ToListAsync();
+            var model = mp.Map<XuatChiTietViewModel>(entity);
+            return model;
+        }
+
+        public async Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel)
+        {
+            var viewModel = mp.Map<XuatVatTu>(xuatVatTuViewModel);
+            db.XuatVatTus.Update(viewModel);
+            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

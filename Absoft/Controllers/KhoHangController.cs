@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Absoft.Extentions;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -23,6 +21,14 @@ namespace Absoft.Controllers
         {
             var models = await _IKhoHangRepository.GetAllAsync();
             return Ok(models);
+        }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _IKhoHangRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
 
         [HttpGet("getByMaKho/{id}")]
@@ -48,6 +54,13 @@ namespace Absoft.Controllers
         {
             var models = await _IKhoHangRepository.GetTongTon(maVT, maKho);
             return Ok(models);
+        }
+
+        [HttpGet("getTotalCount")]
+        public async Task<IActionResult> GetTotalCount()
+        {
+            var result = await _IKhoHangRepository.GetTotalCountAsync();
+            return Ok(result);
         }
     }
 }

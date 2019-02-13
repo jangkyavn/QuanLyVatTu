@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class NhapChiTietViewModel
     {
@@ -24,12 +18,14 @@ namespace Absoft.ViewModels
         public string DotMua { get; set; }
         public string NamSX { get; set; }
         public string PhanCap { get; set; }
-        public string NguonGoc { get; set; }
+        public int MaNguon { get; set; }
         public int SoLuong { get; set; }
         public decimal DonGia { get; set; }
         public string GhiChu { get; set; }        
         public bool Status { set; get; }
 
         public string TenVT { get; set; }
+        public string TenNuoc { get; set; }
+        public string TenHang { get; set; }
     }
 }

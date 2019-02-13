@@ -5,6 +5,7 @@ using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,6 @@ namespace Absoft.Repositories.Implimentations
         public async Task<bool> AddAsync(UserCreationViewModel userViewModel)
         {
             var userModel = _mapper.Map<NguoiDung>(userViewModel);
-
-            userModel.Gender = true;
-            userModel.DateOfBirth = DateTime.Now;
             userModel.CreatedDate = DateTime.Now;
 
             var result = await _userManager.CreateAsync(userModel, userViewModel.Password);
@@ -49,7 +47,13 @@ namespace Absoft.Repositories.Implimentations
             return result.Succeeded;
         }
 
-        public async Task<bool> CheckUserNameExists(string userName)
+        public async Task<bool> CheckEmailExistsAsync(string email)
+        {
+            var model = await _userManager.FindByEmailAsync(email);
+            return model != null;
+        }
+
+        public async Task<bool> CheckUserNameExistsAsync(string userName)
         {
             var model = await _userManager.FindByNameAsync(userName);
             return model != null;
@@ -64,7 +68,7 @@ namespace Absoft.Repositories.Implimentations
             return result.Succeeded;
         }
 
-        public async Task<PagedList<UserListViewModel>> GetAllPagingAsync(UserParams userParams)
+        public async Task<PagedList<UserListViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var usersQuery = (from user in _dataContext.Users
                               orderby user.UserName
@@ -81,19 +85,57 @@ namespace Absoft.Repositories.Implimentations
                                            select role.Name).ToList()
                               });
 
-            if (!string.IsNullOrEmpty(userParams.Keyword))
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
-                var keywordUnSign = TextHelper.ConvertToUnSign(userParams.Keyword).ToUpper();
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                usersQuery = usersQuery.Where(x => x.UserName.ToUpper().Contains(keywordUnSign) ||
-                    TextHelper.ConvertToUnSign(x.FullName.ToUpper()).Contains(keywordUnSign) ||
-                    TextHelper.ConvertToUnSign(x.Email.ToUpper()).Contains(keywordUnSign));
-
-               
+                usersQuery = usersQuery.Where(x => 
+                    x.UserName.ToUpper().Contains(keyword) ||
+                    x.FullName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                    x.FullName.ToUpper().Contains(keyword) ||
+                    x.Email.ToUpper().Contains(keyword));
             }
 
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "userName":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.UserName);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.UserName);
+                        }
+                        break;
+                    case "fullName":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.FullName);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.FullName);
+                        }
+                        break;
+                    case "email":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            usersQuery = usersQuery.OrderBy(x => x.Email);
+                        }
+                        else
+                        {
+                            usersQuery = usersQuery.OrderByDescending(x => x.Email);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-            return await PagedList<UserListViewModel>.CreateAsync(usersQuery, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<UserListViewModel>.CreateAsync(usersQuery, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
         public async Task<UserDetailViewModel> GetByIdAsync(Guid? id)
@@ -101,6 +143,19 @@ namespace Absoft.Repositories.Implimentations
             var userModel = await _userManager.FindByIdAsync(id.ToString());
             var userViewModel = _mapper.Map<UserDetailViewModel>(userModel);
             return userViewModel;
+        }
+
+        public async Task<UserDetailViewModel> GetByUserNameAsync(string userName)
+        {
+            var userModel = await _userManager.FindByNameAsync(userName);
+            var userViewModel = _mapper.Map<UserDetailViewModel>(userModel);
+            return userViewModel;
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var count = await _userManager.Users.CountAsync();
+            return count;
         }
 
         public async Task<bool> UpdateAsync(UserUpdationViewModel userViewModel)

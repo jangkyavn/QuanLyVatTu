@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -23,19 +25,34 @@ namespace Absoft.Controllers
             return Ok(models);
         }
 
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _IVatTuRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
+        [HttpGet("getTotalCount")]
+        public async Task<IActionResult> GetTotalCount()
+        {
+            var result = await _IVatTuRepository.GetTotalCountAsync();
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailById(int id)
         {
             var models = await _IVatTuRepository.GetByIdAsync(id);
             return Ok(models);
         }
-        [HttpGet("getByMaLoaiVT/{id}")]
+        [HttpGet("getByMaLoaiVT/{maLoaiVT}")]
         public async Task<IActionResult> GetByMaLoaiVTAsync(int maLoaiVT)
         {
             var models = await _IVatTuRepository.GetByMaLoaiVTAsync(maLoaiVT);
             return Ok(models);
         }
-        [HttpGet("getByMaDV/{id}")]
+        [HttpGet("getByMaDV/{maDVT}")]
         public async Task<IActionResult> GetByMaDVAsync(int maDVT)
         {
             var models = await _IVatTuRepository.GetByMaDVAsync(maDVT);
@@ -52,6 +69,18 @@ namespace Absoft.Controllers
         {
             var result = await _IVatTuRepository.InsertAsync(VatTuViewModel);
             return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _IVatTuRepository.IsDelete(id);
+            return Ok(result);
+        }
+        [HttpGet("GetByMaHM/{maHM}")]
+        public async Task<IActionResult> GetByMaHM(int maHM)
+        {
+            var models = await _IVatTuRepository.GetByMaHM(maHM);
+            return Ok(models);
         }
     }
 }

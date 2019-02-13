@@ -16,16 +16,52 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public NhapChiTietRepository(DataContext data, IMapper mapper)
+        IKhoHangRepository _ikhohang;
+        public NhapChiTietRepository(DataContext data, IMapper mapper, IKhoHangRepository ikhohang)
         {
             db = data;
             mp = mapper;
+            _ikhohang = ikhohang;
         }
         public async Task<bool> InsertAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
         {
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
             await db.NhapChiTiets.AddAsync(nhapChiTiet);
+            return await db.SaveChangesAsync()>0;            
+        }
+        public async Task<bool> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        {
+            mnhapchitiet.MaPhieuNhap = maphieunhap;
+            var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
+            try
+            {
+                await db.NhapChiTiets.AddAsync(nhapChiTiet);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            var pn = await db.NhapVatTus.FindAsync(maphieunhap);
+            var khohang = new KhoHangViewModel()
+            {
+                MaKho = pn.MaKho,
+                MaPhieuNhap = pn.MaPhieuNhap,
+                MaVatTu = mnhapchitiet.MaVatTu,
+                SoLuongTon = mnhapchitiet.SoLuong
+            };
+            // gọi hàm nhập vào kho
+            await _ikhohang.InsertAsync(khohang);
+            await db.SaveChangesAsync();
+            return await this.SumSLTT(mnhapchitiet, maphieunhap);
+        }
+        public async Task<bool> SumSLTT(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
+        {
+            var pn = await db.NhapVatTus.FindAsync(maphieunhap);
+            pn.TongSoLuong += mnhapchitiet.SoLuong;
+            pn.TongSoTien += mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
             return await db.SaveChangesAsync() > 0;
         }
         public async Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
@@ -41,6 +77,10 @@ namespace Absoft.Repositories.Implimentations
                     var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
                     var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
                     db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);
+                    // update sl trong kho
+                    var kh = await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync();
+                    kh.SoLuongTon = soluongtonmoi;
+                    await db.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
@@ -111,6 +151,13 @@ namespace Absoft.Repositories.Implimentations
                 var rs = await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
             }
             return true;
+        }
+
+        public async Task<int> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
+        {
+            var model = await db.NhapChiTiets.Where(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap).FirstOrDefaultAsync();
+            if (model != null) return model.SoLuong;
+            else return -1;
         }
     }
 }

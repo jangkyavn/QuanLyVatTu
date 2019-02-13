@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
+using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +26,15 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetAllAsync();
             return Ok(models);
         }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _IXuatVatTuRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
         [HttpGet("GetByMaPN/{maPN}")]
         public async Task<IActionResult> GetByMaPNAsync(int maPN)
         {
@@ -60,10 +71,22 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.GetListNhapChiTietByMaVTAsync(maVT);
             return Ok(models);
         }
-        [HttpPost]
-        public async Task<IActionResult> Insert(XuatVatTuParams xuatVatTuParams)
+        //[HttpPost]
+        //public async Task<IActionResult> Insert(XuatVatTuParams xuatVatTuParams)
+        //{
+        //    var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+        //    return Ok(models);
+        //}
+        [HttpPost("insertXuatVatTu")]
+        public async Task<IActionResult> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
-            var models = await _IXuatVatTuRepository.InsertAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+            var models = await _IXuatVatTuRepository.InsertXuatVatTu(xuatVatTuViewModel);
+            return Ok(models);
+        }
+        [HttpPost("insertXuatChiTiet")]
+        public async Task<IActionResult> InsertXuatChiTiet(ExportDetailParams exportDetailParams)
+        {
+            var models = await _IXuatChiTietRepository.InsertXuatChiTiet(exportDetailParams.exportDetail, exportDetailParams.exportId);
             return Ok(models);
         }
         [HttpDelete("{maPX}")]
@@ -98,12 +121,39 @@ namespace Absoft.Controllers
             }
             return Ok(models);
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(XuatVatTuParams xuatVatTuParams)
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAsync(XuatVatTuParams xuatVatTuParams)
+        //{
+        //    var models = await _IXuatVatTuRepository.UpdateAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+        //    return Ok(models);
+        //}
+
+        [HttpPut("updateXuatVatTu")]
+        public async Task<IActionResult> UpdateXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
-            var models = await _IXuatVatTuRepository.UpdateAsync(xuatVatTuParams.mxuatvattu, xuatVatTuParams.listxuatchitiet);
+            var models = await _IXuatVatTuRepository.UpdateXuatVatTuAsync(xuatVatTuViewModel);
             return Ok(models);
         }
 
+        [HttpGet("CheckSoLuongXuatChiTietAsync/{maphieunhap}/{mavt}/{sl}")]
+        public async Task<IActionResult> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mavt, int sl)
+        {
+            var result = await _IXuatChiTietRepository.CheckSoLuongXuatChiTietAsync(maphieunhap, mavt, sl);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListByMaKho/{makho}/{keyword}")]
+        public async Task<IActionResult> GetListByMaKho(int makho, string keyword)
+        {
+            var result = await _IXuatVatTuRepository.GetListByMaKho(makho, keyword);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListByMaKho{mapx}/{mapn}/{mavt}")]
+        public async Task<IActionResult> GetXuatChiTiet(int mapx, int mapn, int mavt)
+        {
+            var result = await _IXuatVatTuRepository.GetXuatChiTiet(mapx, mapn, mavt);
+            return Ok(result);
+        }
     }
 }

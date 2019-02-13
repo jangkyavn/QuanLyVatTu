@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -121,6 +122,91 @@ namespace Absoft.Repositories.Implimentations
 
                 throw;
             }
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var count = await db.KhoHangs.SumAsync(x => x.SoLuongTon);
+            return count;
+        }
+
+        public async Task<PagedList<KhoHangViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from kh in db.KhoHangs
+                        join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
+                        join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        select new KhoHangViewModel
+                        {
+                            MaKho = kh.MaKho,
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = kh.MaVatTu,
+                            SoLuongTon = kh.SoLuongTon,
+                            TenKho = kvt.TenKho,
+                            TenVatTu = vt.TenVT
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKho.ToUpper().Contains(keyword) ||
+                                        x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVatTu.ToUpper().Contains(keyword) ||
+                                        x.MaPhieuNhap.Equals(keyword) ||
+                                        x.SoLuongTon.Equals(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenKho":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKho);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKho);
+                        }
+                        break;
+                    case "tenVatTu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenVatTu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenVatTu);
+                        }
+                        break;
+                    case "maPhieuNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPhieuNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPhieuNhap);
+                        }
+                        break;
+                    case "soLuongTon":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuongTon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuongTon);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

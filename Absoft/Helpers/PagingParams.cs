@@ -1,6 +1,6 @@
 ﻿namespace Absoft.Helpers
 {
-    public class CommonParams
+    public class PagingParams
     {
         private const int MaxPageSize = 50;
         public int PageNumber { get; set; } = 1;
@@ -12,5 +12,7 @@
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
         public string Keyword { get; set; }
+        public string SortValue { get; set; }
+        public string SortKey { get; set; }
     }
 }

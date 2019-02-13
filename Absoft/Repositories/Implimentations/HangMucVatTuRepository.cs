@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -20,12 +21,10 @@ namespace Absoft.Repositories.Implimentations
         {
             db = data;
             mp = mapper;
-        }
-       
-
+        }       
         public async Task<List<HangMucVatTuViewModel>> GetAllAsync()
         {
-            return await db.HangMucVatTus
+            return await db.HangMucVatTus.Where(x=>x.Status==true)
                 .ProjectTo<HangMucVatTuViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }
@@ -51,9 +50,71 @@ namespace Absoft.Repositories.Implimentations
         // khong len su dung vi anh huong den ban loai vat tu
         public async Task<bool> DeleteAsync(int id)
         {
-            var hangmucvt = await db.HangMucVatTus.FindAsync(id);
-            db.HangMucVatTus.Remove(hangmucvt);
+          
+                var hangmucvt = await db.HangMucVatTus.FindAsync(id);
+                db.HangMucVatTus.Remove(hangmucvt);
+                return await db.SaveChangesAsync() > 0;
+           
+        }
+        public async Task<bool> IsDelete(int id)
+        {
+            var entity = await db.HangMucVatTus.FindAsync(id);
+            entity.Status = false;
             return await db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<PagedList<HangMucVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from hmvt in db.HangMucVatTus
+                        where hmvt.Status == true
+                        select new HangMucVatTuViewModel
+                        {
+                            MaHM = hmvt.MaHM,
+                            TenHM = hmvt.TenHM,
+                            GhiChu = hmvt.GhiChu,
+                            Status = hmvt.Status
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenHM.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenHM":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHM);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHM);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<HangMucVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

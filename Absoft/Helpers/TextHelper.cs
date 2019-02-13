@@ -1,12 +1,18 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Absoft.Helpers
 {
     public static class TextHelper
     {
-        public static string ConvertToUnSign(string input)
+        public static string ToUnSign(this string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return "";
+            }
+
             input = input.Trim();
             for (int i = 0x20; i < 0x30; i++)
             {
@@ -20,6 +26,27 @@ namespace Absoft.Helpers
                 str2 = str2.Remove(str2.IndexOf("?"), 1);
             }
             return str2;
+        }
+
+        public static string ToTitleCase(this string title)
+        {
+            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
+        }
+
+        public static string ToTrim(this string value)
+        {
+            return Regex.Replace(value, @"\s+", " ").Trim();
+        }
+
+        public static string ToUpperFirstLetter(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+
+            if (str.Length > 1)
+                return char.ToUpper(str[0]) + str.Substring(1);
+
+            return str.ToUpper();
         }
     }
 }

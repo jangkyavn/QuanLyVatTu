@@ -1,5 +1,6 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -24,15 +25,17 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
+
             var loaivt = await db.LoaiVatTus.FindAsync(id);
             db.LoaiVatTus.Remove(loaivt);
             return await db.SaveChangesAsync() > 0;
-        }
 
+        }
         public async Task<List<LoaiVatTuViewModel>> GetAllAsync()
         {
             var query = from lvt in db.LoaiVatTus
                         join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                        where lvt.Status == true
                         select new LoaiVatTuViewModel
                         {
                             MaLoaiVatTu = lvt.MaLoaiVatTu,
@@ -103,7 +106,80 @@ namespace Absoft.Repositories.Implimentations
             }
             return false;
         }
-        #endregion
+        public async Task<bool> IsDelete(int id)
+        {
+            var entity = await db.LoaiVatTus.FindAsync(id);
+            entity.Status = false;
+            return await db.SaveChangesAsync() > 0;
+        }
 
+        public async Task<PagedList<LoaiVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from lvt in db.LoaiVatTus
+                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                        where lvt.Status == true
+                        select new LoaiVatTuViewModel
+                        {
+                            MaLoaiVatTu = lvt.MaLoaiVatTu,
+                            TenLoai = lvt.TenLoai,
+                            GhiChu = lvt.GhiChu,
+                            MaHM = lvt.MaHM,
+                            TenHM = hm.TenHM
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenLoai.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenLoai.ToUpper().Contains(keyword) ||
+                                        x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenHM.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenLoai":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoai);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoai);
+                        }
+                        break;
+                    case "tenHM":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHM);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHM);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<LoaiVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+        #endregion
     }
 }

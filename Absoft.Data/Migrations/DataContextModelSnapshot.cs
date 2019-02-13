@@ -271,13 +271,13 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int?>("MaHang");
 
+                    b.Property<int>("MaNguon");
+
                     b.Property<int?>("MaNuoc");
 
                     b.Property<string>("Model");
 
                     b.Property<string>("NamSX");
-
-                    b.Property<string>("NguonGoc");
 
                     b.Property<string>("PhanCap");
 
@@ -426,6 +426,8 @@ namespace Absoft.Data.Migrations
                     b.Property<int>("MaPhieuXuat")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ChietKhau");
 
                     b.Property<string>("GhiChu");
 

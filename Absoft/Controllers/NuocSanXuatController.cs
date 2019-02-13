@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +25,14 @@ namespace Absoft.Controllers
             return Ok(models);
         }
 
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _INuocSanXuatRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(int id)
         {
@@ -40,6 +50,12 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Insert(NuocSanXuatViewModel nuocSanXuatViewModel)
         {
             var result = await _INuocSanXuatRepository.InsertAsync(nuocSanXuatViewModel);
+            return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _INuocSanXuatRepository.IsDelete(id);
             return Ok(result);
         }
     }

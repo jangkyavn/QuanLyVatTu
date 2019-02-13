@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class HangSanXuatViewModel
     {
@@ -14,7 +8,15 @@ namespace Absoft.ViewModels
         }
         public int? MaHang { get; set; }
         public string TenHang { get; set; }
-        public string GhiChu { get; set; }        
+        private string ghiChu;
+        public string GhiChu
+        {
+            get => ghiChu;
+            set
+            {
+                ghiChu = value ?? string.Empty;
+            }
+        }
         public bool Status { set; get; }
     }
 }

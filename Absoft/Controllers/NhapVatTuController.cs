@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
@@ -26,21 +27,57 @@ namespace Absoft.Controllers
             var models = await _INhapVatTuRepository.GetAllAsync();
             return Ok(models);
         }
-        [HttpPost]
-        public async Task<IActionResult> Insert(NhapVatTuParams nhapVatTuParams)
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
-            var result = await _INhapVatTuRepository.InsertAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
+            var paged = await _INhapVatTuRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Insert(NhapVatTuParams nhapVatTuParams)
+        //{
+        //    var result = await _INhapVatTuRepository.InsertAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
+        //    return Ok(result);
+        //}
+        [HttpPost("insertNhapVatTu")]
+        public async Task<IActionResult> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu)
+        {
+            var result = await _INhapVatTuRepository.InsertNhapVatTuAsync(mnhapvattu);
             return Ok(result);
         }
-        [HttpPut]
-        public async Task<IActionResult> Update(NhapVatTuParams nhapVatTuParams)
+        [HttpPost("insertChiTiet")]
+        public async Task<IActionResult> InsertChiTietAsync(ImportDetailParams importDetailParams)
         {
-            var result = await _INhapVatTuRepository.UpdateAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
-            // return 1 thanh cong
-            // return -1 so luong ton kho am
-            // return 0 loi update
+            var result = await _INhapChiTietRepository.InsertChiTietAsync(importDetailParams.importDetail, importDetailParams.importId);
             return Ok(result);
         }
+        //[HttpPut]
+        //public async Task<IActionResult> Update(NhapVatTuParams nhapVatTuParams)
+        //{
+        //    var result = await _INhapVatTuRepository.UpdateAsync(nhapVatTuParams.mnhapvattu, nhapVatTuParams.listnhapchitiet);
+        //    // return 1 thanh cong
+        //    // return -1 so luong ton kho am
+        //    // return 0 loi update
+        //    return Ok(result);
+        //}
+
+        [HttpPut("updateNhapVatTu")]
+        public async Task<IActionResult> UpdateNhapVatTu(NhapVatTuViewModel nhapVatTuViewModel)
+        {
+            var result = await _INhapVatTuRepository.UpdateNhapVatTuAsync(nhapVatTuViewModel);
+            return Ok(result);
+        }
+
+        [HttpPut("updateNhapChiTiet")]
+        public async Task<IActionResult> UpdateNhapChiTiet(ImportDetailParams importDetailParams)
+        {
+            var result = await _INhapChiTietRepository.UpdateNhapChiTietAsync(importDetailParams.importDetail, importDetailParams.importId, importDetailParams.storeId);
+            return Ok(result);
+        }
+
         [HttpDelete("{maPN}")]
         public async Task<IActionResult> Delete(int maPN)
         {
@@ -82,7 +119,14 @@ namespace Absoft.Controllers
         [HttpGet("CheckSoLuongNhapChiTietAsync/{maphieunhap}/{makho}/{mavt}/{sl}")]
         public async Task<IActionResult> CheckSoLuongNhapChiTietAsync(int maphieunhap, int makho, int mavt, int sl)
         {
-            var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(maphieunhap, makho, mavt, sl);            
+            var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(maphieunhap, makho, mavt, sl);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckTonTaiVTChitiet/{maphieunhap}/{mavt}")]
+        public async Task<IActionResult> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
+        {
+            var result = await _INhapChiTietRepository.CheckTonTaiVTChitiet(maphieunhap, mavt);
             return Ok(result);
         }
     }

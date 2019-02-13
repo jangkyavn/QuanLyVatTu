@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Absoft.Helpers;
+using System;
 
 namespace Absoft.ViewModels
 {
@@ -10,12 +11,38 @@ namespace Absoft.ViewModels
         }
 
         public Guid? Id { get; set; }
-        public string UserName { get; set; }
+        private string userName;
+        public string UserName
+        {
+            get => userName;
+            set
+            {
+                userName = value.ToLower().Trim();
+            }
+        }
+
         public string Password { get; set; }
-        public string Email { get; set; }
-        public string FullName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Address { get; set; }
-        public bool Status { get; set; }
+        private string email;
+        public string Email
+        {
+            get => email;
+            set
+            {
+                email = value.ToLower().Trim();
+            }
+        }
+        private string fullName;
+        public string FullName
+        {
+            get => fullName;
+            set
+            {
+                fullName = value.ToTrim();
+                fullName = fullName.ToTitleCase();
+            }
+        }
+        public bool Gender;
+        public DateTime DateOfBirth;
+        public bool Status;
     }
 }

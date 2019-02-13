@@ -17,7 +17,7 @@ namespace Absoft.Data.Entities
         public string DotMua { get; set; }
         public string NamSX { get; set; }
         public string PhanCap { get; set; }
-        public string NguonGoc { get; set; }
+        public int MaNguon { get; set; }
         public int SoLuong { get; set; }
         public decimal DonGia { get; set; }
         public string GhiChu { get; set; }

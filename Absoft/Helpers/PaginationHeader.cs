@@ -6,17 +6,13 @@
         public int ItemsPerPage { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
-        public int FirstRowOnPage { get; set; }
-        public int LastRowOnPage { get; set; }
 
-        public PaginationHeader(int currentPage, int itemsPerPage, int totalItems, int totalPages, int firstRowOnPage, int lastRowOnPage)
+        public PaginationHeader(int currentPage, int itemsPerPage, int totalItems, int totalPages)
         {
             CurrentPage = currentPage;
             ItemsPerPage = itemsPerPage;
             TotalItems = totalItems;
             TotalPages = totalPages;
-            FirstRowOnPage = firstRowOnPage;
-            LastRowOnPage = lastRowOnPage;
         }
     }
 }
