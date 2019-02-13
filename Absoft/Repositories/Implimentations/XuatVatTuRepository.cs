@@ -320,7 +320,8 @@ namespace Absoft.Repositories.Implimentations
                             GhiChu = xvt.GhiChu,
                             Status = xvt.Status,
                             TenKho = kvt.TenKho,
-                            TenNS = ns.HoTen
+                            TenNS = ns.HoTen,
+                            ChietKhau = xvt.ChietKhau
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -396,6 +397,47 @@ namespace Absoft.Repositories.Implimentations
             }
 
             return await PagedList<XuatVatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+
+        public async Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword)
+        {
+            var model = from kh in db.KhoHangs
+                        join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        where kh.MaKho == makho
+                        select new KhoHangViewModel
+                        {
+                            MaKho = kh.MaKho,
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = vt.MaVatTu,
+                            TenVatTu = vt.TenVT,
+                            SoLuongTon = kh.SoLuongTon
+                        };
+
+            if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
+            {
+                keyword = keyword.ToUpper().ToTrim();
+
+                model = model.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVatTu.ToUpper().Contains(keyword) ||
+                                        x.MaPhieuNhap.ToString().Equals(keyword) ||
+                                        x.SoLuongTon.ToString().Equals(keyword));
+            }
+
+            return await model.ToListAsync();
+        }
+        public async Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt)
+        {
+            var entity = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == mapx && x.MaPhieuNhap == mapn && x.MaVatTu == mavt).ToListAsync();
+            var model = mp.Map<XuatChiTietViewModel>(entity);
+            return model;
+        }
+
+        public async Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel)
+        {
+            var viewModel = mp.Map<XuatVatTu>(xuatVatTuViewModel);
+            db.XuatVatTus.Update(viewModel);
+            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

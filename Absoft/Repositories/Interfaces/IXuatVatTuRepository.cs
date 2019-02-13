@@ -1,8 +1,6 @@
 ﻿using Absoft.Helpers;
 using Absoft.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
@@ -22,5 +20,8 @@ namespace Absoft.Repositories.Interfaces
         Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho);
         Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT);
         Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel);
+        Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword);
+        Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt);
+        Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel);
     }
 }

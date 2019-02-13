@@ -6,5 +6,6 @@ namespace Absoft.Helpers
     {
         public NhapChiTietViewModel importDetail { get; set; }
         public int importId { get; set; }
+        public int storeId { get; set; }
     }
 }

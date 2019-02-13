@@ -34,8 +34,16 @@ namespace Absoft.Repositories.Implimentations
         {
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
-            await db.NhapChiTiets.AddAsync(nhapChiTiet);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.NhapChiTiets.AddAsync(nhapChiTiet);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
             var pn = await db.NhapVatTus.FindAsync(maphieunhap);
             var khohang = new KhoHangViewModel()
             {
@@ -69,6 +77,10 @@ namespace Absoft.Repositories.Implimentations
                     var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
                     var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
                     db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);
+                    // update sl trong kho
+                    var kh = await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync();
+                    kh.SoLuongTon = soluongtonmoi;
+                    await db.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
@@ -139,6 +151,13 @@ namespace Absoft.Repositories.Implimentations
                 var rs = await this.DeleteNhapChiTietAsync(mapn, item.MaVatTu, makho);
             }
             return true;
-        }     
+        }
+
+        public async Task<int> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
+        {
+            var model = await db.NhapChiTiets.Where(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap).FirstOrDefaultAsync();
+            if (model != null) return model.SoLuong;
+            else return -1;
+        }
     }
 }

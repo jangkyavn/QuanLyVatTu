@@ -71,6 +71,13 @@ namespace Absoft.Controllers
             return Ok(result);
         }
 
+        [HttpPut("updateNhapChiTiet")]
+        public async Task<IActionResult> UpdateNhapChiTiet(ImportDetailParams importDetailParams)
+        {
+            var result = await _INhapChiTietRepository.UpdateNhapChiTietAsync(importDetailParams.importDetail, importDetailParams.importId, importDetailParams.storeId);
+            return Ok(result);
+        }
+
         [HttpDelete("{maPN}")]
         public async Task<IActionResult> Delete(int maPN)
         {
@@ -113,6 +120,13 @@ namespace Absoft.Controllers
         public async Task<IActionResult> CheckSoLuongNhapChiTietAsync(int maphieunhap, int makho, int mavt, int sl)
         {
             var result = await _INhapChiTietRepository.CheckSoLuongNhapChiTietAsync(maphieunhap, makho, mavt, sl);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckTonTaiVTChitiet/{maphieunhap}/{mavt}")]
+        public async Task<IActionResult> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
+        {
+            var result = await _INhapChiTietRepository.CheckTonTaiVTChitiet(maphieunhap, mavt);
             return Ok(result);
         }
     }

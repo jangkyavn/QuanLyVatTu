@@ -43,9 +43,17 @@ namespace Absoft.Repositories.Implimentations
             // cong sl nguoc lai kho
             var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
             kh.SoLuongTon += slx;
-            if (kh.SoLuongTon == (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaVatTu == maVT)).SoLuong)
+            try
             {
-                kh.Status = true;
+                if (kh.SoLuongTon == (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaVatTu == maVT)).SoLuong)
+                {
+                    kh.Status = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
             db.KhoHangs.Update(kh);
             return await db.SaveChangesAsync() > 0;
@@ -120,7 +128,7 @@ namespace Absoft.Repositories.Implimentations
         {
             var px = await db.XuatVatTus.FindAsync(mapx);
             px.TongSoLuong += xuatChiTietViewModel.SoLuongXuat;
-            px.TongSoTien += xuatChiTietViewModel.SoLuongXuat + xuatChiTietViewModel.DonGia;
+            px.TongSoTien += xuatChiTietViewModel.SoLuongXuat * xuatChiTietViewModel.DonGia;
             return await db.SaveChangesAsync() > 0;
         }
     }
