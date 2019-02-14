@@ -111,9 +111,20 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> UpdateAsync(VatTuViewModel mvattu)
         {
-            var vt = mp.Map<VatTu>(mvattu);
-            db.VatTus.Update(vt);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<VatTu>(mvattu);
+            var model = await db.VatTus.FindAsync(mvattu.MaVatTu);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<bool> IsDelete(int id)
         {

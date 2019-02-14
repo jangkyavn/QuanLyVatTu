@@ -43,9 +43,20 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh)
         {
-            var dvt = mp.Map<DonViTinh>(mdonvitinh);
-            db.DonViTinhs.Update(dvt);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<DonViTinh>(mdonvitinh);
+            var model = await db.DonViTinhs.FindAsync(mdonvitinh.MaDVT);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                              
+            }
+            return false;
         }
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)

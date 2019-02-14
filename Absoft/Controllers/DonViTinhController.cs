@@ -42,7 +42,7 @@ namespace Absoft.Controllers
         }
         [HttpPut]
         public async Task<IActionResult> Update(DonViTinhViewModel donViTinhViewModel)
-        {
+        {           
             var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
             return Ok(result);
         }
@@ -63,9 +63,10 @@ namespace Absoft.Controllers
                 }
                 else
                 {
-                    var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);                    
-                    var resultChange = _donViTinhRepository.ChangStatus(id);
-                    return Ok(result);
+                    donViTinhViewModel.MaDVT = id;
+                    var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
+                    var resultChange = await _donViTinhRepository.ChangStatus(id);                                                   
+                    return Ok(resultChange);
                 }                               
             }
         }

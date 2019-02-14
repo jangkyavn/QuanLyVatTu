@@ -64,6 +64,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    NhanSuViewModel.MaNS = id;
                     var result = await _INhanSuRepository.UpdateAsync(NhanSuViewModel);
                     var resultChange = _INhanSuRepository.ChangStatus(id);
                     return Ok(result);

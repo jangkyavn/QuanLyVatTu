@@ -64,6 +64,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    LoaiVatTuViewModel.MaLoaiVatTu = id;
                     var result = await _ILoaiVatTuRepository.UpdateAsync(LoaiVatTuViewModel);
                     var resultChange = _ILoaiVatTuRepository.ChangStatus(id);
                     return Ok(result);

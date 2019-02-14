@@ -60,6 +60,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    hangMucVatTuViewModel.MaHM = id;
                     var result = await _hangMucVatTuRepository.UpdateAsync(hangMucVatTuViewModel);
                     var resultChange = _hangMucVatTuRepository.ChangStatus(id);
                     return Ok(result);

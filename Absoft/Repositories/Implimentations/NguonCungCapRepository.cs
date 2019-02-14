@@ -6,6 +6,7 @@ using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,9 +57,20 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NguonCungCapViewModel mnguoncungcap)
         {
-            var ncc = mp.Map<NguonCungCap>(mnguoncungcap);
-            db.NguonCungCaps.Update(ncc);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<NguonCungCap>(mnguoncungcap);
+            var model = await db.NguonCungCaps.FindAsync(mnguoncungcap.MaNguon);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<int> CheckTonTai(string name)
         {
