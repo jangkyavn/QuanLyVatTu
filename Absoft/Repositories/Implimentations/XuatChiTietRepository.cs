@@ -142,5 +142,11 @@ namespace Absoft.Repositories.Implimentations
             px.TongSoTien += xuatChiTietViewModel.SoLuongXuat * xuatChiTietViewModel.DonGia;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<int> CheckTonTaiVTChitiet(int maphieuxuat, int maphieunhap, int mavt)
+        {
+            var model = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap);
+            if (model != null) return model.SoLuongXuat;
+            else return -1;
+        }
     }
 }
