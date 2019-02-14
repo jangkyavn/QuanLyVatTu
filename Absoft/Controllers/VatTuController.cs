@@ -81,6 +81,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    VatTuViewModel.MaVatTu = id;
                     var result = await _IVatTuRepository.UpdateAsync(VatTuViewModel);
                     var resultChange = _IVatTuRepository.ChangStatus(id);
                     return Ok(result);

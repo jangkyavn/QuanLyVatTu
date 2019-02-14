@@ -6,6 +6,7 @@ using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,9 +60,20 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NuocSanXuatViewModel mnuocsanxuat)
         {
-            var nsx = mp.Map<NuocSanXuat>(mnuocsanxuat);
-            db.NuocSanXuats.Update(nsx);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<NuocSanXuat>(mnuocsanxuat);
+            var model = await db.NuocSanXuats.FindAsync(mnuocsanxuat.MaNuoc);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<int> CheckTonTai(string name)
         {

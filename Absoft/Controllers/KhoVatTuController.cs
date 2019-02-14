@@ -63,6 +63,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    khoVatTuViewModel.MaKho = id;
                     var result = await _IKhoVatTuRepository.UpdateAsync(khoVatTuViewModel);
                     var resultChange = _IKhoVatTuRepository.ChangStatus(id);
                     return Ok(result);

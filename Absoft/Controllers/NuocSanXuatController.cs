@@ -63,6 +63,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    nuocSanXuatViewModel.MaNuoc = id;
                     var result = await _INuocSanXuatRepository.UpdateAsync(nuocSanXuatViewModel);
                     var resultChange = _INuocSanXuatRepository.ChangStatus(id);
                     return Ok(result);

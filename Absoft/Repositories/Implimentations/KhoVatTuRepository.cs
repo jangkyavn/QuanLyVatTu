@@ -61,9 +61,20 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(KhoVatTuViewModel mkhovattu)
         {
-            var kvt = mp.Map<KhoVatTu>(mkhovattu);
-            db.KhoVatTus.Update(kvt);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<KhoVatTu>(mkhovattu);
+            var model = await db.KhoVatTus.FindAsync(mkhovattu.MaKho);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<int> CheckTonTai(string name)
         {

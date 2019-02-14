@@ -63,6 +63,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    hangSanXuatViewModel.MaHang = id;
                     var result = await _hangSanXuatRepository.UpdateAsync(hangSanXuatViewModel);
                     var resultChange = _hangSanXuatRepository.ChangStatus(id);
                     return Ok(result);

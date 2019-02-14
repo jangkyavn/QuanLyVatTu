@@ -59,9 +59,20 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<bool> UpdateAsync(NhanSuViewModel mnhansu)
         {
-            var ns = mp.Map<NhanSu>(mnhansu);
-            db.NhanSus.Update(ns);
-            return await db.SaveChangesAsync() > 0;
+            var entity = mp.Map<NhanSu>(mnhansu);
+            var model = await db.NhanSus.FindAsync(mnhansu.MaNS);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<int> CheckTonTai(string name)
         {

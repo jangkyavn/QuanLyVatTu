@@ -61,6 +61,7 @@ namespace Absoft.Controllers
                 }
                 else
                 {
+                    nguonCungCapViewModel.MaNguon = id;
                     var result = await _INguonCungCapRepository.UpdateAsync(nguonCungCapViewModel);
                     var resultChange = _INguonCungCapRepository.ChangStatus(id);
                     return Ok(result);

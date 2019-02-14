@@ -70,9 +70,20 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> UpdateAsync(LoaiVatTuViewModel loaivt)
         {
-            var loaivattu = mp.Map<LoaiVatTu>(loaivt);
-            db.LoaiVatTus.Update(loaivattu);
-            return (await db.SaveChangesAsync() > 0);
+            var entity = mp.Map<LoaiVatTu>(loaivt);
+            var model = await db.LoaiVatTus.FindAsync(loaivt.MaLoaiVatTu);
+            try
+            {
+                entity.Status = model.Status;
+                db.Entry(model).CurrentValues.SetValues(entity);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
         public async Task<int> CheckTonTai(string name)
         {
