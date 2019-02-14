@@ -48,7 +48,7 @@ namespace Absoft.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> Insert(DonViTinhViewModel donViTinhViewModel)
-        {
+        {        
             var id = await _donViTinhRepository.CheckTonTai(donViTinhViewModel.TenDVT);
             if (id ==-1)
             {
@@ -57,9 +57,16 @@ namespace Absoft.Controllers
             }         
             else
             {
-                var resultChange = _donViTinhRepository.ChangStatus(id);
-                var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
-                return Ok(result);
+                if(await _donViTinhRepository.GetStatus(id)==true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);                    
+                    var resultChange = _donViTinhRepository.ChangStatus(id);
+                    return Ok(result);
+                }                               
             }
         }
         [HttpDelete("{id}")]

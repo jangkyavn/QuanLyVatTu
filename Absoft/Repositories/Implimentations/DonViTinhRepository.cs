@@ -76,6 +76,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.DonViTinhs.FindAsync(id)).Status;
+        }
         public async Task<PagedList<DonViTinhViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from dvt in db.DonViTinhs
