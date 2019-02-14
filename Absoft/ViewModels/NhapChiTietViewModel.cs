@@ -27,5 +27,6 @@
         public string TenVT { get; set; }
         public string TenNuoc { get; set; }
         public string TenHang { get; set; }
+        public string TenNguon { get; set; }
     }
 }

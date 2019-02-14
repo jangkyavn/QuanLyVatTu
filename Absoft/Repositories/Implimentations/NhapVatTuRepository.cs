@@ -185,6 +185,12 @@ namespace Absoft.Repositories.Implimentations
 
             var chiTietVM = from ct in db.NhapChiTiets
                             join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                            join nsx in db.NuocSanXuats on ct.MaNuoc equals nsx.MaNuoc into tmpNuocSanXuats
+                            join hsx in db.HangSanXuats on ct.MaHang equals hsx.MaHang into tmpHangSanXuats
+                            join ncc in db.NguonCungCaps on ct.MaNguon equals ncc.MaNguon into tmpNguonCungCaps
+                            from nsx in tmpNuocSanXuats.DefaultIfEmpty()
+                            from hsx in tmpHangSanXuats.DefaultIfEmpty()
+                            from ncc in tmpNguonCungCaps.DefaultIfEmpty()
                             where ct.MaPhieuNhap == maPN
                             select new NhapChiTietViewModel
                             {
@@ -194,7 +200,9 @@ namespace Absoft.Repositories.Implimentations
                                 DonGia = ct.DonGia,
                                 SoLuong = ct.SoLuong,
                                 MaHang = ct.MaHang,
+                                TenHang = hsx.TenHang,
                                 MaNuoc = ct.MaNuoc,
+                                TenNuoc = nsx.TenNuoc,
                                 Model = ct.Model,
                                 Seri = ct.Seri,
                                 SoKhung = ct.SoKhung,
@@ -204,6 +212,7 @@ namespace Absoft.Repositories.Implimentations
                                 NamSX = ct.NamSX,
                                 PhanCap = ct.PhanCap,
                                 MaNguon = ct.MaNguon,
+                                TenNguon = ncc.TenNguon,
                                 GhiChu = ct.GhiChu,
                                 Status = ct.Status
                             };
