@@ -77,6 +77,7 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> UpdateXuatChiTietAsync(XuatChiTietViewModel mxuatchitiet, int maphieuxuat, int makho)
         {
+            var xvt = await db.XuatVatTus.FirstOrDefaultAsync(x => x.MaPhieuXuat == maphieuxuat);
             var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
             // lay so luong cu 
             int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
@@ -84,13 +85,23 @@ namespace Absoft.Repositories.Implimentations
             int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat;
             if (soluongtonmoi >= 0)
             {
+                // update tong so luong, tong tien
+                xvt.TongSoLuong += mxuatchitiet.SoLuongXuat;
+                xvt.TongSoLuong -= soluongxuatcu; 
+                xvt.TongSoTien += mxuatchitiet.SoLuongXuat * mxuatchitiet.DonGia;
+                xvt.TongSoTien -= xct.SoLuongXuat * xct.DonGia;
+                //up date chi tiet
                 var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
-                db.Entry(xct).CurrentValues.SetValues(xuatchitiet);
-                var rs = await db.SaveChangesAsync();
+                db.Entry(xct).CurrentValues.SetValues(xuatchitiet);                
+                //update sl moi trong kho
+                var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho);
+                kh.SoLuongTon = soluongtonmoi;
+                ////////
+                await db.SaveChangesAsync();
                 return soluongtonmoi;
             }
             else return -1;
-        }
+        }     
         public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl)
         {
             int slct = (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mvt)).SoLuong;

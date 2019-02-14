@@ -66,27 +66,35 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> UpdateNhapChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap, int makho)
         {
+            var nvt = await db.NhapVatTus.FindAsync(maphieunhap);
+            var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
             // lay so luong cu 
             int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
-            int soluongnhapcu = db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu).FirstOrDefault().SoLuong;
+            int soluongnhapcu = nct.SoLuong;
             int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
             if (soluongtonmoi >= 0)
             {
                 try
                 {
-                    var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
+                    // update tongluong, tongtien nhapvattu                    
+                    nvt.TongSoLuong += mnhapchitiet.SoLuong ;
+                    nvt.TongSoLuong -= soluongnhapcu;
+                    nvt.TongSoTien += mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
+                    nvt.TongSoTien -= nct.SoLuong * nct.DonGia;
+
+                    // update nhapchitet
                     var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
                     db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);
                     // update sl trong kho
                     var kh = await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync();
                     kh.SoLuongTon = soluongtonmoi;
+                                      
                     await db.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
                     throw e;
-                }
-                await db.SaveChangesAsync();
+                }              
                 return soluongtonmoi;
             }
             else return -1;

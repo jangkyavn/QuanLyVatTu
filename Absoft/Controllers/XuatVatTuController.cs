@@ -134,7 +134,12 @@ namespace Absoft.Controllers
             var models = await _IXuatVatTuRepository.UpdateXuatVatTuAsync(xuatVatTuViewModel);
             return Ok(models);
         }
-
+        [HttpPut("updateXuatChiTietAsync")]
+        public async Task<IActionResult> UpdateXuatChiTietAsync(ExportDetailParams exportDetailParams)
+        {
+            var models = await _IXuatChiTietRepository.UpdateXuatChiTietAsync(exportDetailParams.exportDetail, exportDetailParams.exportId, exportDetailParams.storeId);
+            return Ok(models);
+        }
         [HttpGet("CheckSoLuongXuatChiTietAsync/{maphieunhap}/{mavt}/{sl}")]
         public async Task<IActionResult> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mavt, int sl)
         {
