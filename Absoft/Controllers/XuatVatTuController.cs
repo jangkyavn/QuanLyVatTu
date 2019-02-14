@@ -154,7 +154,7 @@ namespace Absoft.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetListByMaKho{mapx}/{mapn}/{mavt}")]
+        [HttpGet("GetXuatChiTiet{mapx}/{mapn}/{mavt}")]
         public async Task<IActionResult> GetXuatChiTiet(int mapx, int mapn, int mavt)
         {
             var result = await _IXuatVatTuRepository.GetXuatChiTiet(mapx, mapn, mavt);
