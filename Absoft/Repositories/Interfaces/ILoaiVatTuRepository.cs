@@ -17,6 +17,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> IsDelete(int id);
         Task<bool> DeleteAllByMaHMAsync(int maHM);
         Task<int> CheckTonTai(string name);
-        Task<bool> ChangStatus(int id);
+        Task<bool> ChangStatus(int id);   
+        Task<bool> GetStatus(int id);
     }
 }

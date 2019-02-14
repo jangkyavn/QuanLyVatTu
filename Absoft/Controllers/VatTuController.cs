@@ -67,8 +67,25 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(VatTuViewModel VatTuViewModel)
         {
-            var result = await _IVatTuRepository.InsertAsync(VatTuViewModel);
-            return Ok(result);
+            var id = await _IVatTuRepository.CheckTonTai(VatTuViewModel.TenVT);
+            if (id == -1)
+            {
+                var result = await _IVatTuRepository.InsertAsync(VatTuViewModel);
+                return Ok(result);
+            }
+            else
+            {
+                if (await _IVatTuRepository.GetStatus(id) == true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _IVatTuRepository.UpdateAsync(VatTuViewModel);
+                    var resultChange = _IVatTuRepository.ChangStatus(id);
+                    return Ok(result);
+                }
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

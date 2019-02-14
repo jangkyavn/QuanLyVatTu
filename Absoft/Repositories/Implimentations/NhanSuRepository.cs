@@ -78,6 +78,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.NhanSus.FindAsync(id)).Status;
+        }
         public async Task<PagedList<NhanSuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from ns in db.NhanSus

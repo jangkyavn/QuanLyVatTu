@@ -49,8 +49,25 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(NuocSanXuatViewModel nuocSanXuatViewModel)
         {
-            var result = await _INuocSanXuatRepository.InsertAsync(nuocSanXuatViewModel);
-            return Ok(result);
+            var id = await _INuocSanXuatRepository.CheckTonTai(nuocSanXuatViewModel.TenNuoc);
+            if (id == -1)
+            {
+                var result = await _INuocSanXuatRepository.InsertAsync(nuocSanXuatViewModel);
+                return Ok(result);
+            }
+            else
+            {
+                if (await _INuocSanXuatRepository.GetStatus(id) == true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _INuocSanXuatRepository.UpdateAsync(nuocSanXuatViewModel);
+                    var resultChange = _INuocSanXuatRepository.ChangStatus(id);
+                    return Ok(result);
+                }
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

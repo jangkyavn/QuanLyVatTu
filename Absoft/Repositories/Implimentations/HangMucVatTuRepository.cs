@@ -77,6 +77,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.HangMucVatTus.FindAsync(id)).Status;
+        }
         public async Task<PagedList<HangMucVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from hmvt in db.HangMucVatTus

@@ -50,8 +50,25 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(NhanSuViewModel NhanSuViewModel)
         {
-            var result = await _INhanSuRepository.InsertAsync(NhanSuViewModel);
-            return Ok(result);
+            var id = await _INhanSuRepository.CheckTonTai(NhanSuViewModel.HoTen);
+            if (id == -1)
+            {
+                var result = await _INhanSuRepository.InsertAsync(NhanSuViewModel);
+                return Ok(result);
+            }
+            else
+            {
+                if (await _INhanSuRepository.GetStatus(id) == true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _INhanSuRepository.UpdateAsync(NhanSuViewModel);
+                    var resultChange = _INhanSuRepository.ChangStatus(id);
+                    return Ok(result);
+                }
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

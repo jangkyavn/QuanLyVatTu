@@ -78,6 +78,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.NuocSanXuats.FindAsync(id)).Status;
+        }
         public async Task<PagedList<NuocSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from nsx in db.NuocSanXuats

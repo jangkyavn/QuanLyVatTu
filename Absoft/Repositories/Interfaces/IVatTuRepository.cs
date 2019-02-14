@@ -21,5 +21,6 @@ namespace Absoft.Repositories.Interfaces
         Task<List<VatTuViewModel>> GetByMaHM(int maHM);
         Task<int> CheckTonTai(string name);
         Task<bool> ChangStatus(int id);
+        Task<bool> GetStatus(int id);
     }
 }

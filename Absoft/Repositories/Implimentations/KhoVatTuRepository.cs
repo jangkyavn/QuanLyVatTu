@@ -80,6 +80,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.KhoVatTus.FindAsync(id)).Status;
+        }
         public async Task<PagedList<KhoVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from hvt in db.KhoVatTus

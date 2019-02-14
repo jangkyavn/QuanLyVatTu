@@ -89,6 +89,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.LoaiVatTus.FindAsync(id)).Status;
+        }
         #region Khong nen su dung vi anh huong den bang vattu
         // xoa tat ca loai vat tu theo hang muc       
         // use transaction xoa tat ca loai vat tu theo hang muc

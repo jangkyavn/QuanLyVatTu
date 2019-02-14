@@ -75,6 +75,10 @@ namespace Absoft.Repositories.Implimentations
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> GetStatus(int id)
+        {
+            return (await db.NguonCungCaps.FindAsync(id)).Status;
+        }
         public async Task<PagedList<NguonCungCapViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from ncc in db.NguonCungCaps

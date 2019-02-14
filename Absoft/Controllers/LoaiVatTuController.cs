@@ -50,8 +50,25 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(LoaiVatTuViewModel LoaiVatTuViewModel)
         {
-            var result = await _ILoaiVatTuRepository.InsertAsync(LoaiVatTuViewModel);
-            return Ok(result);
+            var id = await _ILoaiVatTuRepository.CheckTonTai(LoaiVatTuViewModel.TenLoai);
+            if (id == -1)
+            {
+                var result = await _ILoaiVatTuRepository.InsertAsync(LoaiVatTuViewModel);
+                return Ok(result);
+            }
+            else
+            {
+                if (await _ILoaiVatTuRepository.GetStatus(id) == true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _ILoaiVatTuRepository.UpdateAsync(LoaiVatTuViewModel);
+                    var resultChange = _ILoaiVatTuRepository.ChangStatus(id);
+                    return Ok(result);
+                }
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

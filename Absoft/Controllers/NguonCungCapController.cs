@@ -47,8 +47,25 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(NguonCungCapViewModel nguonCungCapViewModel)
         {
-            var result = await _INguonCungCapRepository.InsertAsync(nguonCungCapViewModel);
-            return Ok(result);
+            var id = await _INguonCungCapRepository.CheckTonTai(nguonCungCapViewModel.TenNguon);
+            if (id == -1)
+            {
+                var result = await _INguonCungCapRepository.InsertAsync(nguonCungCapViewModel);
+                return Ok(result);
+            }
+            else
+            {
+                if (await _INguonCungCapRepository.GetStatus(id) == true)
+                {
+                    return Ok(-1); // đã tồn tại không cho thêm
+                }
+                else
+                {
+                    var result = await _INguonCungCapRepository.UpdateAsync(nguonCungCapViewModel);
+                    var resultChange = _INguonCungCapRepository.ChangStatus(id);
+                    return Ok(result);
+                }
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
