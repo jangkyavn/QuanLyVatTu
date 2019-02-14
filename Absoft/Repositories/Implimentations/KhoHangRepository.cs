@@ -108,6 +108,7 @@ namespace Absoft.Repositories.Implimentations
             db.KhoHangs.Update(kh);
             return await db.SaveChangesAsync() > 0;
         }
+
         public async Task<bool> TruSlXuat(KhoHangViewModel mkhohang)
         {
             try

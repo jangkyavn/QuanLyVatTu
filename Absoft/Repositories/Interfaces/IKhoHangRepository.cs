@@ -19,5 +19,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> TruSlXuat(KhoHangViewModel mkhohang);
         Task<int> GetSLTon(int maVT, int maKho, int maPN);
         Task<int> GetTotalCountAsync();
+
     }
 }

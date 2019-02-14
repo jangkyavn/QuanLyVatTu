@@ -60,7 +60,21 @@ namespace Absoft.Repositories.Implimentations
             db.NguonCungCaps.Update(ncc);
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.NguonCungCaps.AnyAsync(x => x.TenNguon.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.NguonCungCaps.FirstOrDefaultAsync(x => x.TenNguon.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaNguon;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.NguonCungCaps.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<NguonCungCapViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from ncc in db.NguonCungCaps

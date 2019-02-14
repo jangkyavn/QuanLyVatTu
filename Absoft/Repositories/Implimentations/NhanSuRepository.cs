@@ -63,7 +63,21 @@ namespace Absoft.Repositories.Implimentations
             db.NhanSus.Update(ns);
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.NhanSus.AnyAsync(x => x.HoTen.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.NhanSus.FirstOrDefaultAsync(x => x.HoTen.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaNS;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.NhanSus.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<NhanSuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from ns in db.NhanSus

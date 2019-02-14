@@ -65,7 +65,21 @@ namespace Absoft.Repositories.Implimentations
             db.KhoVatTus.Update(kvt);
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.KhoVatTus.AnyAsync(x => x.TenKho.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.KhoVatTus.FirstOrDefaultAsync(x => x.TenKho.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaKho;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.KhoVatTus.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<KhoVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from hvt in db.KhoVatTus

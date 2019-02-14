@@ -74,6 +74,21 @@ namespace Absoft.Repositories.Implimentations
             db.LoaiVatTus.Update(loaivattu);
             return (await db.SaveChangesAsync() > 0);
         }
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.LoaiVatTus.AnyAsync(x => x.TenLoai.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaLoaiVatTu;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.LoaiVatTus.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         #region Khong nen su dung vi anh huong den bang vattu
         // xoa tat ca loai vat tu theo hang muc       
         // use transaction xoa tat ca loai vat tu theo hang muc

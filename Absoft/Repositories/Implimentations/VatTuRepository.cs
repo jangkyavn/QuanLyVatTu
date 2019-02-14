@@ -127,7 +127,21 @@ namespace Absoft.Repositories.Implimentations
             var count = await db.VatTus.CountAsync();
             return count;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.VatTus.AnyAsync(x => x.TenVT.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.VatTus.FirstOrDefaultAsync(x => x.TenVT.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaVatTu;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.VatTus.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from vt in db.VatTus

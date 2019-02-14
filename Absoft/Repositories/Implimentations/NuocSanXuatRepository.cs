@@ -63,7 +63,21 @@ namespace Absoft.Repositories.Implimentations
             db.NuocSanXuats.Update(nsx);
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.NuocSanXuats.AnyAsync(x => x.TenNuoc.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.NuocSanXuats.FirstOrDefaultAsync(x => x.TenNuoc.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaNuoc;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.NuocSanXuats.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<NuocSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from nsx in db.NuocSanXuats

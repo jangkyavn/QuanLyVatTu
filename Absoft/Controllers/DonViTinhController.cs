@@ -49,14 +49,24 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(DonViTinhViewModel donViTinhViewModel)
         {
-            var result = await _donViTinhRepository.InsertAsync(donViTinhViewModel);
-            return Ok(result);
+            var id = await _donViTinhRepository.CheckTonTai(donViTinhViewModel.TenDVT);
+            if (id ==-1)
+            {
+                var result = await _donViTinhRepository.InsertAsync(donViTinhViewModel);
+                return Ok(result);
+            }         
+            else
+            {
+                var resultChange = _donViTinhRepository.ChangStatus(id);
+                var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
+                return Ok(result);
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _donViTinhRepository.IsDelete(id);
             return Ok(result);
-        }
+        }        
     }
 }

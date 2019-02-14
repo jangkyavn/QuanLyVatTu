@@ -14,5 +14,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> UpdateAsync(NuocSanXuatViewModel mnuocsanxuat);
         Task<bool> DeleteAsync(int id);
         Task<bool> IsDelete(int id);
+        Task<int> CheckTonTai(string name);
+        Task<bool> ChangStatus(int id);
     }
 }

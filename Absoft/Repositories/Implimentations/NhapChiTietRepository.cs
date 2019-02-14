@@ -28,22 +28,16 @@ namespace Absoft.Repositories.Implimentations
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
             await db.NhapChiTiets.AddAsync(nhapChiTiet);
-            return await db.SaveChangesAsync()>0;            
+            return await db.SaveChangesAsync() > 0;
         }
         public async Task<bool> InsertChiTietAsync(NhapChiTietViewModel mnhapchitiet, int maphieunhap)
-        {
+        {                       
             mnhapchitiet.MaPhieuNhap = maphieunhap;
             var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
-            try
-            {
-                await db.NhapChiTiets.AddAsync(nhapChiTiet);
-                await db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
 
-                throw ex;
-            }
+            await db.NhapChiTiets.AddAsync(nhapChiTiet);
+            await db.SaveChangesAsync();
+
             var pn = await db.NhapVatTus.FindAsync(maphieunhap);
             var khohang = new KhoHangViewModel()
             {
@@ -77,7 +71,7 @@ namespace Absoft.Repositories.Implimentations
                 try
                 {
                     // update tongluong, tongtien nhapvattu                    
-                    nvt.TongSoLuong += mnhapchitiet.SoLuong ;
+                    nvt.TongSoLuong += mnhapchitiet.SoLuong;
                     nvt.TongSoLuong -= soluongnhapcu;
                     nvt.TongSoTien += mnhapchitiet.SoLuong * mnhapchitiet.DonGia;
                     nvt.TongSoTien -= nct.SoLuong * nct.DonGia;
@@ -88,13 +82,13 @@ namespace Absoft.Repositories.Implimentations
                     // update sl trong kho
                     var kh = await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync();
                     kh.SoLuongTon = soluongtonmoi;
-                                      
+
                     await db.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
                     throw e;
-                }              
+                }
                 return soluongtonmoi;
             }
             else return -1;
@@ -135,12 +129,12 @@ namespace Absoft.Repositories.Implimentations
         {
             if (await this.CheckStatus(maphieunhap, mavt, makho) == true)
             {
-                return new CheckSoLuongParams { Status= true, SoLuong=1};
+                return new CheckSoLuongParams { Status = true, SoLuong = 1 };
             }
             else
             {
-                int soluongtoncu =(await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
-                int soluongnhapcu =(await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt).FirstOrDefaultAsync()).SoLuong;
+                int soluongtoncu = (await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
+                int soluongnhapcu = (await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt).FirstOrDefaultAsync()).SoLuong;
                 int soluongtonmoi = (soluongtoncu + sl) - soluongnhapcu;
                 if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
                 else return new CheckSoLuongParams { Status = false, SoLuong = soluongnhapcu - soluongtoncu };

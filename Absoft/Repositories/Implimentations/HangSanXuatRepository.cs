@@ -63,7 +63,21 @@ namespace Absoft.Repositories.Implimentations
             return (await db.SaveChangesAsync()) > 0;
             
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.HangSanXuats.AnyAsync(x => x.TenHang.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.HangSanXuats.FirstOrDefaultAsync(x => x.TenHang.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaHang;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.HangSanXuats.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<HangSanXuatViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from hsx in db.HangSanXuats

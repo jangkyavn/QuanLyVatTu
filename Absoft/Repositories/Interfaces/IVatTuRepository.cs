@@ -19,5 +19,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DeleteByMaLoaiVTAsync(int id);
         Task<int> GetTotalCountAsync();
         Task<List<VatTuViewModel>> GetByMaHM(int maHM);
+        Task<int> CheckTonTai(string name);
+        Task<bool> ChangStatus(int id);
     }
 }

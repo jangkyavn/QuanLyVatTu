@@ -62,7 +62,21 @@ namespace Absoft.Repositories.Implimentations
             entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.HangMucVatTus.AnyAsync(x => x.TenHM.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.HangMucVatTus.FirstOrDefaultAsync(x => x.TenHM.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaHM;
+            }
+            else return -1;
+        }
+        public async Task<bool> ChangStatus(int id)
+        {
+            var model = await db.HangMucVatTus.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<HangMucVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from hmvt in db.HangMucVatTus

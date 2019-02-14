@@ -61,6 +61,21 @@ namespace Absoft.Repositories.Implimentations
             dvt.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<int> CheckTonTai(string name)
+        {
+            var rs = await db.DonViTinhs.AnyAsync(x => x.TenDVT.ToUpper().Equals(name.ToUpper().ToTrim()));
+            if (rs == true)
+            {
+                return (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaDVT;
+            }
+            else return -1;       
+        }
+        public async Task<bool> ChangStatus(int id)
+        {            
+            var model = await db.DonViTinhs.FindAsync(id);
+            model.Status = !model.Status;
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<DonViTinhViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from dvt in db.DonViTinhs
