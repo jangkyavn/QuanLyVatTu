@@ -321,7 +321,8 @@ namespace Absoft.Repositories.Implimentations
                             Status = xvt.Status,
                             TenKho = kvt.TenKho,
                             TenNS = ns.HoTen,
-                            ChietKhau = xvt.ChietKhau
+                            ChietKhau = xvt.ChietKhau,
+                            ThanhTien = (decimal)((double)xvt.TongSoTien * (1 - ((double)xvt.ChietKhau / 100)))
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -334,7 +335,9 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenNS.ToUpper().Contains(keyword) ||
                                         x.NgayNhap.Equals(keyword) ||
                                         x.TongSoTien.ToString().Equals(keyword) ||
-                                        x.TongSoLuong.ToString().Equals(keyword));
+                                        x.TongSoLuong.ToString().Equals(keyword) ||
+                                        x.ChietKhau.ToString().Equals(keyword) ||
+                                        x.ThanhTien.ToString().Equals(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
@@ -389,6 +392,26 @@ namespace Absoft.Repositories.Implimentations
                         else
                         {
                             query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    case "chietKhau":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ChietKhau);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ChietKhau);
+                        }
+                        break;
+                    case "thanhTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ThanhTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ThanhTien);
                         }
                         break;
                     default:
