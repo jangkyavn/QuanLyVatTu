@@ -365,7 +365,7 @@ namespace Absoft.Repositories.Implimentations
             var viewModel = mp.Map<NhapVatTu>(nhapVatTuViewModel);
             db.NhapVatTus.Update(viewModel);
             await db.SaveChangesAsync();
-            var result =await this.SumTongLuongTongTien(nhapVatTuViewModel.MaPhieuNhap.Value);
+            var result = await this.SumTongLuongTongTien(nhapVatTuViewModel.MaPhieuNhap.Value);
             return result;
         }
         public async Task<bool> SumTongLuongTongTien(int id)
@@ -381,6 +381,7 @@ namespace Absoft.Repositories.Implimentations
             var entity = await db.NhapVatTus.FindAsync(id);
             entity.TongSoLuong = tongluong;
             entity.TongSoTien = tongtien;
+            db.Update(entity);
             return await db.SaveChangesAsync() > 0;
         }
     }
