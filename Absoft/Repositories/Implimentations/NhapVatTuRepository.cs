@@ -332,19 +332,33 @@ namespace Absoft.Repositories.Implimentations
                 }
                 catch (Exception e)
                 {
-                    // TODO: Handle failure 
-                    throw e;
+                    // TODO: Handle failure                     
                 }
             }
             return 0;
         }
-
         public async Task<bool> UpdateNhapVatTuAsync(NhapVatTuViewModel nhapVatTuViewModel)
         {
             var viewModel = mp.Map<NhapVatTu>(nhapVatTuViewModel);
             db.NhapVatTus.Update(viewModel);
-            var result = await db.SaveChangesAsync();
-            return result > 0;
+            await db.SaveChangesAsync();
+            var result =await this.SumTongLuongTongTien(nhapVatTuViewModel.MaPhieuNhap.Value);
+            return result;
+        }
+        public async Task<bool> SumTongLuongTongTien(int id)
+        {
+            int tongluong = 0;
+            decimal tongtien = 0;
+            var list = await db.NhapChiTiets.Where(x => x.MaPhieuNhap == id).ToListAsync();
+            foreach (var item in list)
+            {
+                tongluong += item.SoLuong;
+                tongtien += (item.SoLuong * item.DonGia);
+            }
+            var entity = await db.NhapVatTus.FindAsync(id);
+            entity.TongSoLuong = tongluong;
+            entity.TongSoTien = tongtien;
+            return await db.SaveChangesAsync() > 0;
         }
     }
 }

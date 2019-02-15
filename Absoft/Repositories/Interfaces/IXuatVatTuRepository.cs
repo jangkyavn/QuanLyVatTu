@@ -23,5 +23,6 @@ namespace Absoft.Repositories.Interfaces
         Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword);
         Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt);
         Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel);
+        Task<bool> SumTongLuongTongTien(int id);
     }
 }

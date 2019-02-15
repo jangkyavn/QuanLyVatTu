@@ -437,7 +437,24 @@ namespace Absoft.Repositories.Implimentations
         {
             var viewModel = mp.Map<XuatVatTu>(xuatVatTuViewModel);
             db.XuatVatTus.Update(viewModel);
-            return (await db.SaveChangesAsync()) > 0;
+            await db.SaveChangesAsync();
+            var rs =await this.SumTongLuongTongTien(xuatVatTuViewModel.MaPhieuXuat);
+            return rs;
+        }
+        public async Task<bool> SumTongLuongTongTien(int id)
+        {
+            int tongluong = 0;
+            decimal tongtien = 0;
+            var list = await db.XuatChiTiets.Where(x => x.MaPhieuNhap == id).ToListAsync();
+            foreach (var item in list)
+            {
+                tongluong += item.SoLuongXuat;
+                tongtien += (item.SoLuongXuat * item.DonGia);
+            }
+            var entity = await db.XuatVatTus.FindAsync(id);
+            entity.TongSoLuong = tongluong;
+            entity.TongSoTien = tongtien;
+            return await db.SaveChangesAsync() > 0;
         }
     }
 }

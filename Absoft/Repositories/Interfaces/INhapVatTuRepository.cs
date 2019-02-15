@@ -16,5 +16,6 @@ namespace Absoft.Repositories.Interfaces
         Task<NhapVatTuParams> GetDetailAsync(int maPN);
         Task<int> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu);
         Task<bool> UpdateNhapVatTuAsync(NhapVatTuViewModel nhapVatTuViewModel);
+        Task<bool> SumTongLuongTongTien(int id);
     }
 }
