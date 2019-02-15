@@ -22,7 +22,8 @@ namespace Absoft.ViewModels
         public decimal TongSoTien { get; set; }
         public int TongSoLuong { get; set; }
         public int ChietKhau { get; set; }
-        public string GhiChu { get; set; }        
+        public string GhiChu { get; set; }
+        public decimal ThanhTien { get; set; }
         public bool Status { get; set; }           
     }
 }

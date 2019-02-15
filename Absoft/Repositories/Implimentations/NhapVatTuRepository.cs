@@ -99,6 +99,7 @@ namespace Absoft.Repositories.Implimentations
                             TongSoLuong = nvt.TongSoLuong,
                             ChietKhau = nvt.ChietKhau,
                             GhiChu = nvt.GhiChu,
+                            ThanhTien = (decimal)((double)nvt.TongSoTien * (1 - ((double)nvt.ChietKhau / 100))),
                             Status = nvt.Status
                         };
 
@@ -113,7 +114,9 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenHM.ToUpper().Contains(keyword) ||
                                         x.NgayNhap.Equals(keyword) ||
                                         x.TongSoTien.ToString().Equals(keyword) ||
-                                        x.TongSoLuong.ToString().Equals(keyword));
+                                        x.TongSoLuong.ToString().Equals(keyword) ||
+                                        x.ChietKhau.ToString().Equals(keyword) ||
+                                        x.ThanhTien.ToString().Equals(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
@@ -168,6 +171,26 @@ namespace Absoft.Repositories.Implimentations
                         else
                         {
                             query = query.OrderByDescending(x => x.TongSoLuong);
+                        }
+                        break;
+                    case "chietKhau":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ChietKhau);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ChietKhau);
+                        }
+                        break;
+                    case "thanhTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ThanhTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ThanhTien);
                         }
                         break;
                     default:
