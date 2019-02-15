@@ -454,6 +454,7 @@ namespace Absoft.Repositories.Implimentations
             var entity = await db.XuatVatTus.FindAsync(id);
             entity.TongSoLuong = tongluong;
             entity.TongSoTien = tongtien;
+            db.Update(entity);
             return await db.SaveChangesAsync() > 0;
         }
     }
