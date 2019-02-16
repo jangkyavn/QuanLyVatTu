@@ -339,7 +339,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.ChietKhau.ToString().Equals(keyword) ||
                                         x.ThanhTien.ToString().Equals(keyword));
             }
-
+            if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
+            {
+                var fromDate = pagingParams.fromDate;
+                var toDate = pagingParams.toDate;
+                query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(toDate));
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)

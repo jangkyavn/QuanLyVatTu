@@ -54,7 +54,7 @@ namespace Absoft.Repositories.Implimentations
             }
             catch (Exception)
             {
-                              
+
             }
             return false;
         }
@@ -72,6 +72,27 @@ namespace Absoft.Repositories.Implimentations
             dvt.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> IsDeleteMulti(List<int> listid)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in listid)
+                    {
+                        var dvt = await db.DonViTinhs.FindAsync(item);
+                        dvt.Status = false;                        
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync()>0;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+                return false;
+            }       
+        }
         public async Task<int> CheckTonTai(string name)
         {
             var rs = await db.DonViTinhs.AnyAsync(x => x.TenDVT.ToUpper().Equals(name.ToUpper().ToTrim()));
@@ -79,10 +100,10 @@ namespace Absoft.Repositories.Implimentations
             {
                 return (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT.ToUpper().ToTrim() == name.ToUpper().ToTrim())).MaDVT;
             }
-            else return -1;       
+            else return -1;
         }
         public async Task<bool> ChangStatus(int id)
-        {            
+        {
             var model = await db.DonViTinhs.FindAsync(id);
             model.Status = !model.Status;
             return await db.SaveChangesAsync() > 0;

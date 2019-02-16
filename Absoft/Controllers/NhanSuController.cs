@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Absoft.Controllers
-{   
+{
     public class NhanSuController : BaseController
     {
         INhanSuRepository _INhanSuRepository;
-        public NhanSuController(INhanSuRepository INhanSuRepository)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public NhanSuController(INhanSuRepository INhanSuRepository, IHostingEnvironment hostingEnvironment)
         {
             _INhanSuRepository = INhanSuRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
@@ -76,6 +80,32 @@ namespace Absoft.Controllers
         {
             var result = await _INhanSuRepository.IsDelete(id);
             return Ok(result);
+        }
+        [HttpGet("loadCities")]
+        public IActionResult LoadCities()
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\city.json";
+            var cities = new List<CityParam>().Deserialize(path);
+            return new OkObjectResult(cities.OrderBy(x => x.name));
+        }
+        [HttpGet("loadDistricts/{cityId}")]
+        public IActionResult LoadDistricts(int? cityId)
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\district.json";
+            var districts = new List<DistrictsParam>().Deserialize(path);
+
+            if (cityId.HasValue)
+            {
+                districts = districts.Where(x => x.parent_code == cityId.Value).OrderBy(x => x.name).ToList();
+            }
+            return new OkObjectResult(districts);
+        }
+        [HttpGet("loadNations")]
+        public IActionResult LoadNations()
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\nation.json";
+            var cities = new List<NationsParam>().Deserialize(path);
+            return new OkObjectResult(cities.OrderBy(x => x.name));
         }
     }
 }

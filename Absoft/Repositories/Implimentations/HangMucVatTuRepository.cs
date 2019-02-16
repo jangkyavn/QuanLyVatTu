@@ -33,7 +33,27 @@ namespace Absoft.Repositories.Implimentations
         {
             return ( mp.Map<HangMucVatTuViewModel>(await db.HangMucVatTus.FindAsync(id)));
         }
-
+        public async Task<bool> IsDeleteMulti(List<int> listid)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in listid)
+                    {
+                        var dvt = await db.HangMucVatTus.FindAsync(item);
+                        dvt.Status = false;
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+                return false;
+            }
+        }
         public async Task<bool> InsertAsync(HangMucVatTuViewModel mhangmucvattu)
         {
             var hangmucvattu = mp.Map<HangMucVatTu>(mhangmucvattu);

@@ -27,5 +27,6 @@ namespace Absoft.ViewModels
         public string ThanNhan { get; set; }
         public string GhiChu { get; set; }        
         public bool Status { set; get; }
+        public string Dang { get; set; }
     }
 }
