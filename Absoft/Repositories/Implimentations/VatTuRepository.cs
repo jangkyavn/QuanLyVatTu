@@ -180,8 +180,9 @@ namespace Absoft.Repositories.Implimentations
         public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from vt in db.VatTus
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
                         where vt.Status == true
                         select new VatTuViewModel
                         {

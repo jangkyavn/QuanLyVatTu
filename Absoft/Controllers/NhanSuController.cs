@@ -84,28 +84,20 @@ namespace Absoft.Controllers
         [HttpGet("loadCities")]
         public IActionResult LoadCities()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\json\\city.json";
-            var cities = new List<CityParam>().Deserialize(path);
-            return new OkObjectResult(cities.OrderBy(x => x.name));
+            var models = _INhanSuRepository.LoadCities();
+            return new OkObjectResult(models);
         }
         [HttpGet("loadDistricts/{cityId}")]
         public IActionResult LoadDistricts(int? cityId)
         {
-            string path = _hostingEnvironment.WebRootPath + "\\json\\district.json";
-            var districts = new List<DistrictsParam>().Deserialize(path);
-
-            if (cityId.HasValue)
-            {
-                districts = districts.Where(x => x.parent_code == cityId.Value).OrderBy(x => x.name).ToList();
-            }
-            return new OkObjectResult(districts);
+            var models = _INhanSuRepository.LoadDistricts(cityId.Value);
+            return new OkObjectResult(models);
         }
         [HttpGet("loadNations")]
         public IActionResult LoadNations()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\json\\nation.json";
-            var cities = new List<NationsParam>().Deserialize(path);
-            return new OkObjectResult(cities.OrderBy(x => x.name));
+            var models = _INhanSuRepository.LoadNations();
+            return new OkObjectResult(models);
         }
     }
 }

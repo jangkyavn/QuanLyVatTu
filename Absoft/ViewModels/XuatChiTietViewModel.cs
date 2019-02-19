@@ -19,5 +19,6 @@ namespace Absoft.ViewModels
         public bool Status { set; get; }
         public decimal DonGia { get; set; }
         public string TenVT { get; set; }
+        public string TenDVT { get; set; }
     }
 }

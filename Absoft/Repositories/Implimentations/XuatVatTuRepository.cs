@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -78,6 +79,8 @@ namespace Absoft.Repositories.Implimentations
             var px = await db.XuatVatTus.FindAsync(maPX);
             var chiTietVM = from ct in db.XuatChiTiets
                             join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                            join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where ct.MaPhieuXuat == maPX
                             select new XuatChiTietViewModel
                             {
@@ -85,6 +88,7 @@ namespace Absoft.Repositories.Implimentations
                                 MaPhieuNhap = ct.MaPhieuNhap,
                                 MaVatTu = ct.MaVatTu,
                                 TenVT = vt.TenVT,
+                                TenDVT = dvt.TenDVT,
                                 DonGia = ct.DonGia,
                                 SoLuongXuat = ct.SoLuongXuat,
                                 GhiChu = ct.GhiChu,
@@ -329,15 +333,21 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == DateTime.Parse(x.NgayNhap).Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenNS.ToUpper().Contains(keyword) ||
-                                        x.NgayNhap.Equals(keyword) ||
                                         x.TongSoTien.ToString().Equals(keyword) ||
                                         x.TongSoLuong.ToString().Equals(keyword) ||
                                         x.ChietKhau.ToString().Equals(keyword) ||
                                         x.ThanhTien.ToString().Equals(keyword));
+                }
             }
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
@@ -473,7 +483,7 @@ namespace Absoft.Repositories.Implimentations
         {
             int tongluong = 0;
             decimal tongtien = 0;
-            var list = await db.XuatChiTiets.Where(x => x.MaPhieuNhap == id).ToListAsync();
+            var list = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == id).ToListAsync();
             foreach (var item in list)
             {
                 tongluong += item.SoLuongXuat;

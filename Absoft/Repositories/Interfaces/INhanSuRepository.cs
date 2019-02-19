@@ -10,6 +10,9 @@ namespace Absoft.Repositories.Interfaces
         Task<List<NhanSuViewModel>> GetAllAsync();
         Task<PagedList<NhanSuViewModel>> GetAllPagingAsync(PagingParams pagingParams);
         Task<NhanSuViewModel> GetByIdAsync(int id);
+        List<CityParam> LoadCities();
+        List<DistrictsParam> LoadDistricts(int? cityId);
+        List<NationsParam> LoadNations();
         Task<bool> InsertAsync(NhanSuViewModel mnhansu);
         Task<bool> UpdateAsync(NhanSuViewModel mnhansu);
         Task<bool> DeleteAsync(int id);

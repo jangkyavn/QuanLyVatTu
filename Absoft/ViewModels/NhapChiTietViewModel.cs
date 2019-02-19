@@ -23,10 +23,13 @@
         public decimal DonGia { get; set; }
         public string GhiChu { get; set; }        
         public bool Status { set; get; }
-
+        public string BietDuoc { get; set; }
+        public string SoLo { get; set; }
+        public string HanDung { get; set; }
         public string TenVT { get; set; }
         public string TenNuoc { get; set; }
         public string TenHang { get; set; }
         public string TenNguon { get; set; }
+        public string TenDVT { get; set; }
     }
 }
