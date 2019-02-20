@@ -166,5 +166,12 @@ namespace Absoft.Controllers
             var result = await _IXuatChiTietRepository.CheckTonTaiVTChitiet(maphieuxuat, maphieunhap, mavt);
             return Ok(result);
         }
+        [HttpGet("getDonGiaChiTietXuat/{maphieuxuat}/{maphieunhap}/{mavt}")]
+        public async Task<IActionResult> GetDonGiaChiTietXuat(int maphieuxuat, int maphieunhap, int mavt)
+        {
+            var result = await _IXuatChiTietRepository.GetDonGiaChiTietXuat(maphieuxuat, maphieunhap, mavt);
+            return Ok(result);
+        }
+        
     }
 }

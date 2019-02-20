@@ -148,5 +148,11 @@ namespace Absoft.Repositories.Implimentations
             if (model != null) return model.SoLuongXuat;
             else return -1;
         }
+
+        public async Task<decimal> GetDonGiaChiTietXuat(int maphieuxuat, int maphieunhap, int mavt)
+        {
+            var rs = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuXuat == maphieuxuat && x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt);
+            return rs != null ? rs.DonGia : 0;
+        }
     }
 }

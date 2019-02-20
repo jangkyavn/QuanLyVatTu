@@ -17,5 +17,6 @@ namespace Absoft.Repositories.Interfaces
         Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl);
         Task<bool> InsertXuatChiTiet(XuatChiTietViewModel xuatChiTietViewModel, int mapx);
         Task<int> CheckTonTaiVTChitiet(int maphieuxuat, int maphieunhap, int mavt);
+        Task<decimal> GetDonGiaChiTietXuat(int maphieuxuat, int maphieunhap, int mavt);
     }
 }
