@@ -5,9 +5,13 @@ using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,18 +21,26 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public VatTuRepository(DataContext data, IMapper mapper)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        IHangMucVatTuRepository _hangMucVatTuRepository;
+        ILoaiVatTuRepository _loaiVatTuRepository;
+        IDonViTinhRepository _donViTinhRepository;
+        public VatTuRepository(DataContext data, IMapper mapper, IHostingEnvironment hostingEnvironment, IHangMucVatTuRepository hangMucVatTuRepository, ILoaiVatTuRepository loaiVatTuRepository, IDonViTinhRepository donViTinhRepository)
         {
             db = data;
             mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _hangMucVatTuRepository = hangMucVatTuRepository;
+            _loaiVatTuRepository = loaiVatTuRepository;
+            _donViTinhRepository = donViTinhRepository;
         }
         public async Task<bool> DeleteAsync(int id)
         {
-           
-                var vt = await db.VatTus.FindAsync(id);
-                db.VatTus.Remove(vt);
-                return await db.SaveChangesAsync() > 0;
-          
+
+            var vt = await db.VatTus.FindAsync(id);
+            db.VatTus.Remove(vt);
+            return await db.SaveChangesAsync() > 0;
+
         }
         // delete all by maloaivt use transaction 
         public async Task<bool> DeleteByMaLoaiVTAsync(int MaloaiVT)
@@ -63,12 +75,12 @@ namespace Absoft.Repositories.Implimentations
             var query = from vt in db.VatTus
                         join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                        where vt.Status==true
+                        where vt.Status == true
                         select new VatTuViewModel
                         {
-                            MaVatTu= vt.MaVatTu,
+                            MaVatTu = vt.MaVatTu,
                             MaLoaiVatTu = vt.MaLoaiVatTu,
-                            MaDVT =  vt.MaDVT,
+                            MaDVT = vt.MaDVT,
                             TenVT = vt.TenVT,
                             GhiChu = vt.GhiChu,
                             TenDVT = dvt.TenDVT,
@@ -92,7 +104,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<VatTuViewModel>> GetByMaHM(int maHM)
         {
             var listMaLoaiVT = await db.LoaiVatTus.Where(x => x.MaHM == maHM).Select(x => x.MaLoaiVatTu).ToListAsync();
-            var listVT = await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu) && o.Status==true).ToListAsync();
+            var listVT = await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu) && o.Status == true).ToListAsync();
             var listmVT = mp.Map<List<VatTuViewModel>>(listVT);
             return listmVT;
         }
@@ -258,6 +270,125 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return await PagedList<VatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        public async Task<bool> ImportVT(IList<IFormFile> files)
+        {            
+            var upload = new UploadFile(_hostingEnvironment);
+            var fileUrl = upload.InsertFile(files);
+            if (!String.IsNullOrEmpty(fileUrl))
+            {
+                try
+                {
+                    FileInfo file = new FileInfo(fileUrl);
+                    using (ExcelPackage package = new ExcelPackage(file))
+                    {
+                        ExcelWorksheet workSheet = package.Workbook.Worksheets["VatTu"];
+                        int totalRows = workSheet.Dimension.Rows;
+                        List<VatTuViewModel> List = new List<VatTuViewModel>();
+                        for (int i = 2; i <= totalRows; i++)
+                        {
+                            List.Add(new VatTuViewModel
+                            {
+                                TenVT = workSheet.Cells[i, 1].Value.ToString(),
+                                TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString(),
+                                TenDVT = workSheet.Cells[i, 3].Value.ToString(),
+                                TenHM = workSheet.Cells[i, 4].Value.ToString(),
+                                GhiChu = workSheet.Cells[i, 5].Value.ToString(),
+                                Status = true,
+                            });
+                        }
+                        foreach (var item in List)
+                        {
+                            // kt vat tu ton tai
+                            using (var transaction = db.Database.BeginTransaction())
+                            {
+                                try
+                                {
+                                    var MaVT = await CheckTonTai(item.TenVT);
+                                    if (MaVT == -1)
+                                    {
+                                        var MaHM = await _hangMucVatTuRepository.CheckTonTai(item.TenHM);
+                                        if (MaHM == -1)
+                                        {
+                                            // them moi hang muc
+                                            HangMucVatTuViewModel model = new HangMucVatTuViewModel()
+                                            {
+                                                TenHM = item.TenHM
+                                            };
+                                            var rsHM = await _hangMucVatTuRepository.InsertAsync(model);
+                                            // lay MaHM moi
+                                            if (rsHM == true)
+                                            {
+                                                MaHM = (await db.HangMucVatTus.FirstOrDefaultAsync(x => x.TenHM == item.TenHM)).MaHM;
+                                            }
+                                        }
+                                        var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
+                                        if (MaLoaiVatTu == -1)
+                                        {
+                                            // them moi loai vat tu
+                                            LoaiVatTuViewModel model = new LoaiVatTuViewModel()
+                                            {
+                                                TenLoai = item.TenLoaiVatTu,
+                                                MaHM = MaHM
+                                            };
+                                            var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
+                                            if (rsLVT == true)
+                                            {
+                                                // lay MaLoaiVatTu moi
+                                                MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
+                                            }
+                                        }
+                                        int? MaDVT = null;
+                                        if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT!=null)
+                                        {
+                                            MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
+                                            if (MaDVT == -1)
+                                            {
+                                                // them moi don vi tinh
+                                                DonViTinhViewModel model = new DonViTinhViewModel()
+                                                {
+                                                    TenDVT = item.TenDVT
+                                                };
+                                                var rsDVT = await _donViTinhRepository.InsertAsync(model);
+                                                if (rsDVT == true)
+                                                {
+                                                    // lay MaDVT moi
+                                                    MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
+                                                }
+                                            }
+                                        }                                       
+                                        VatTuViewModel vt = new VatTuViewModel()
+                                        {
+                                            TenVT = item.TenVT,
+                                            MaDVT = MaDVT,
+                                            MaLoaiVatTu = MaLoaiVatTu,
+                                            GhiChu = item.GhiChu
+                                        };
+                                        var rsVT = await this.InsertAsync(vt);
+                                    }
+                                    transaction.Commit();
+                                    await db.SaveChangesAsync();
+                                }
+                                catch (Exception)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                        file.Delete();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

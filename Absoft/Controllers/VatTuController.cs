@@ -100,5 +100,12 @@ namespace Absoft.Controllers
             var models = await _IVatTuRepository.GetByMaHM(maHM);
             return Ok(models);
         }
+        [HttpPost]
+        [Route("ImportVT")]
+        public async Task<IActionResult> ImportVT(IList<IFormFile> files)
+        {
+            var result = await _IVatTuRepository.ImportVT(files);
+            return Ok(result);
+        }
     }
 }

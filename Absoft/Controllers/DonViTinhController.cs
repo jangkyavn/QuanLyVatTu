@@ -20,12 +20,12 @@ namespace Absoft.Controllers
     public class DonViTinhController : BaseController
     {
         IDonViTinhRepository _donViTinhRepository;
-        private readonly IHostingEnvironment _hostingEnvironment;       
+        private readonly IHostingEnvironment _hostingEnvironment;
         public DonViTinhController(IDonViTinhRepository donViTinhRepository, IHostingEnvironment hostingEnvironment)
         {
             _donViTinhRepository = donViTinhRepository;
             _hostingEnvironment = hostingEnvironment;
-           
+
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -84,92 +84,12 @@ namespace Absoft.Controllers
             var result = await _donViTinhRepository.IsDelete(id);
             return Ok(result);
         }
-        [HttpGet]
+        [HttpPost]
         [Route("ImportDVT")]
         public async Task<IActionResult> ImportDVT(IList<IFormFile> files)
         {
-            //string rootFolder = _hostingEnvironment.WebRootPath;
-            //string fileName = @"DonViTinh.xls";
-            //FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
-            var upload = new UploadFile(_hostingEnvironment);
-            var fileUrl = upload.InsertFile(files);
-            if (!String.IsNullOrEmpty(fileUrl))
-            {
-                try
-                {
-                    FileInfo file = new FileInfo(fileUrl);
-                    using (ExcelPackage package = new ExcelPackage(file))
-                    {
-                        ExcelWorksheet workSheet = package.Workbook.Worksheets["DonViTinh"];
-                        int totalRows = workSheet.Dimension.Rows;
-                        List<DonViTinhViewModel> List = new List<DonViTinhViewModel>();
-                        for (int i = 2; i <= totalRows; i++)
-                        {
-                            List.Add(new DonViTinhViewModel
-                            {
-                                TenDVT = workSheet.Cells[i, 1].Value.ToString(),
-                                Status = true,
-                            });
-                        }
-                        // _db.Phones.AddRange(List);
-                        // _db.SaveChanges();               
-                        var rs = await _donViTinhRepository.InsertListAsync(List);
-                        if (rs == true)
-                        {
-                            file.Delete();
-                            return Ok(rs);
-                        }
-                        else return Ok(false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            else
-            {
-                return Ok(false);
-            }
-        }
-        //[HttpGet]
-        //[Route("ExportDVT")]
-        //public string ExportDVT()
-        //{
-        //    try
-        //    {
-        //        string rootFolder = _hostingEnvironment.WebRootPath;
-        //        string fileName = @"ExportDonViTinh.xls";
-
-        //        FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
-
-        //        using (ExcelPackage package = new ExcelPackage(file))
-        //        {
-
-        //            IList<DonViTinh> List = _db.DonViTinhs.ToList();
-
-        //            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("DonViTinh");
-        //            int totalRows = List.Count();
-
-        //            // worksheet.Cells[1, 1].Value = "Id";
-        //            worksheet.Cells[1, 1].Value = "TenDVT";
-        //            //worksheet.Cells[1, 3].Value = "Status";                
-        //            int i = 0;
-        //            for (int row = 2; row <= totalRows + 1; row++)
-        //            {
-        //                // worksheet.Cells[row, 1].Value = List[i].Id;
-        //                worksheet.Cells[row, 1].Value = List[i].TenDVT;
-        //                // worksheet.Cells[row, 3].Value = List[i].Status;                    
-        //                i++;
-        //            }
-        //            package.Save();
-        //        }
-        //        return " DonViTinh list has been exported successfully";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+            var result = await _donViTinhRepository.ImportDVT(files);
+            return Ok(result);
+        }        
     }
 }
