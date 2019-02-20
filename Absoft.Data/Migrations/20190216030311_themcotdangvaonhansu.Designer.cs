@@ -4,14 +4,16 @@ using Absoft.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Absoft.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190216030311_themcotdangvaonhansu")]
+    partial class themcotdangvaonhansu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,15 +267,11 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("MaVatTu");
 
-                    b.Property<string>("BietDuoc");
-
                     b.Property<decimal>("DonGia");
 
                     b.Property<string>("DotMua");
 
                     b.Property<string>("GhiChu");
-
-                    b.Property<string>("HanDung");
 
                     b.Property<int?>("MaHang");
 
@@ -292,8 +290,6 @@ namespace Absoft.Data.Migrations
                     b.Property<string>("SoDangKy");
 
                     b.Property<string>("SoKhung");
-
-                    b.Property<string>("SoLo");
 
                     b.Property<int>("SoLuong");
 
@@ -395,7 +391,7 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("GhiChu");
 
-                    b.Property<int?>("MaDVT");
+                    b.Property<int>("MaDVT");
 
                     b.Property<int>("MaLoaiVatTu");
 

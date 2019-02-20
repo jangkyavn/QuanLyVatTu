@@ -14,5 +14,7 @@
         public string Keyword { get; set; }
         public string SortValue { get; set; }
         public string SortKey { get; set; }
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
     }
 }

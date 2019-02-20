@@ -142,7 +142,27 @@ namespace Absoft.Repositories.Implimentations
             entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<bool> IsDeleteMulti(List<int> listid)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in listid)
+                    {
+                        var dvt = await db.LoaiVatTus.FindAsync(item);
+                        dvt.Status = false;
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+                return false;
+            }
+        }
         public async Task<PagedList<LoaiVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from lvt in db.LoaiVatTus

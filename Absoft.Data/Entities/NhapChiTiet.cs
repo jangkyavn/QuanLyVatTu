@@ -19,6 +19,9 @@ namespace Absoft.Data.Entities
         public string PhanCap { get; set; }
         public int MaNguon { get; set; }
         public int SoLuong { get; set; }
+        public string BietDuoc { get; set; }
+        public string SoLo { get; set; }
+        public string HanDung { get; set; }
         public decimal DonGia { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }

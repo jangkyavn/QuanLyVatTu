@@ -13,7 +13,7 @@ namespace Absoft.Data.Entities
         [Key]
         public int MaVatTu { get; set; }
         public int MaLoaiVatTu { get; set; }
-        public int MaDVT { get; set; }
+        public int? MaDVT { get; set; }
         public string TenVT { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }

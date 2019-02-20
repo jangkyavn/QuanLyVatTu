@@ -132,7 +132,27 @@ namespace Absoft.Repositories.Implimentations
             entity.Status = false;
             return await db.SaveChangesAsync() > 0;
         }
-
+        public async Task<bool> IsDeleteMulti(List<int> listid)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in listid)
+                    {
+                        var dvt = await db.VatTus.FindAsync(item);
+                        dvt.Status = false;
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+                return false;
+            }
+        }
         public async Task<int> GetTotalCountAsync()
         {
             var count = await db.VatTus.CountAsync();
@@ -160,8 +180,9 @@ namespace Absoft.Repositories.Implimentations
         public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from vt in db.VatTus
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
                         where vt.Status == true
                         select new VatTuViewModel
                         {

@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Absoft.Controllers
-{   
+{
     public class NhanSuController : BaseController
     {
         INhanSuRepository _INhanSuRepository;
-        public NhanSuController(INhanSuRepository INhanSuRepository)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public NhanSuController(INhanSuRepository INhanSuRepository, IHostingEnvironment hostingEnvironment)
         {
             _INhanSuRepository = INhanSuRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
@@ -76,6 +80,24 @@ namespace Absoft.Controllers
         {
             var result = await _INhanSuRepository.IsDelete(id);
             return Ok(result);
+        }
+        [HttpGet("loadCities")]
+        public IActionResult LoadCities()
+        {
+            var models = _INhanSuRepository.LoadCities();
+            return new OkObjectResult(models);
+        }
+        [HttpGet("loadDistricts/{cityId}")]
+        public IActionResult LoadDistricts(int? cityId)
+        {
+            var models = _INhanSuRepository.LoadDistricts(cityId.Value);
+            return new OkObjectResult(models);
+        }
+        [HttpGet("loadNations")]
+        public IActionResult LoadNations()
+        {
+            var models = _INhanSuRepository.LoadNations();
+            return new OkObjectResult(models);
         }
     }
 }

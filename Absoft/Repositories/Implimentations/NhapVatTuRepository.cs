@@ -8,6 +8,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -86,6 +87,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from nvt in db.NhapVatTus
                         join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
                         join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                        orderby nvt.NgayNhap descending
                         select new NhapVatTuViewModel
                         {
                             MaPhieuNhap = nvt.MaPhieuNhap,
@@ -108,16 +110,30 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == DateTime.Parse(x.NgayNhap).Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenHM.ToUpper().Contains(keyword) ||
-                                        x.NgayNhap.Equals(keyword) ||
                                         x.TongSoTien.ToString().Equals(keyword) ||
                                         x.TongSoLuong.ToString().Equals(keyword) ||
                                         x.ChietKhau.ToString().Equals(keyword) ||
                                         x.ThanhTien.ToString().Equals(keyword));
+                }
             }
+
+            if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
+            {
+                var fromDate = pagingParams.fromDate;
+                var toDate = pagingParams.toDate;
+                query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(toDate));
+            }
+
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
@@ -203,46 +219,71 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<NhapVatTuParams> GetDetailAsync(int maPN)
         {
-            var pn = await db.NhapVatTus.FindAsync(maPN);
-            var mpn = mp.Map<NhapVatTuViewModel>(pn);
+            var queryNhapVT = await (from nvt in db.NhapVatTus
+                                     join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                                     join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
+                                     where nvt.MaPhieuNhap == maPN
+                                     select new NhapVatTuViewModel
+                                     {
+                                         MaKho = nvt.MaKho,
+                                         MaHM = nvt.MaHM,
+                                         MaPhieuNhap = nvt.MaPhieuNhap,
+                                         NgayNhap = nvt.NgayNhap,
+                                         ChietKhau = nvt.ChietKhau,
+                                         GhiChu = nvt.GhiChu,
+                                         NguoiNhap = nvt.NguoiNhap,
+                                         Status = nvt.Status,
+                                         TenHM = hm.TenHM,
+                                         TenKho = kvt.TenKho,
+                                         TongSoLuong = nvt.TongSoLuong,
+                                         TongSoTien = nvt.TongSoTien,
+                                         ThanhTien = (decimal)((double)nvt.TongSoTien * (1 - ((double)nvt.ChietKhau / 100)))
+                                     }).FirstOrDefaultAsync();
 
-            var chiTietVM = from ct in db.NhapChiTiets
-                            join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
-                            join nsx in db.NuocSanXuats on ct.MaNuoc equals nsx.MaNuoc into tmpNuocSanXuats
-                            join hsx in db.HangSanXuats on ct.MaHang equals hsx.MaHang into tmpHangSanXuats
-                            join ncc in db.NguonCungCaps on ct.MaNguon equals ncc.MaNguon into tmpNguonCungCaps
-                            from nsx in tmpNuocSanXuats.DefaultIfEmpty()
-                            from hsx in tmpHangSanXuats.DefaultIfEmpty()
-                            from ncc in tmpNguonCungCaps.DefaultIfEmpty()
-                            where ct.MaPhieuNhap == maPN
-                            select new NhapChiTietViewModel
-                            {
-                                MaPhieuNhap = ct.MaPhieuNhap,
-                                MaVatTu = ct.MaVatTu,
-                                TenVT = vt.TenVT,
-                                DonGia = ct.DonGia,
-                                SoLuong = ct.SoLuong,
-                                MaHang = ct.MaHang,
-                                TenHang = hsx.TenHang,
-                                MaNuoc = ct.MaNuoc,
-                                TenNuoc = nsx.TenNuoc,
-                                Model = ct.Model,
-                                Seri = ct.Seri,
-                                SoKhung = ct.SoKhung,
-                                SoMay = ct.SoMay,
-                                SoDangKy = ct.SoDangKy,
-                                DotMua = ct.DotMua,
-                                NamSX = ct.NamSX,
-                                PhanCap = ct.PhanCap,
-                                MaNguon = ct.MaNguon,
-                                TenNguon = ncc.TenNguon,
-                                GhiChu = ct.GhiChu,
-                                Status = ct.Status
-                            };
+            var chiTietVM = await (from ct in db.NhapChiTiets
+                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                                   join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                                   join nsx in db.NuocSanXuats on ct.MaNuoc equals nsx.MaNuoc into tmpNuocSanXuats
+                                   join hsx in db.HangSanXuats on ct.MaHang equals hsx.MaHang into tmpHangSanXuats
+                                   join ncc in db.NguonCungCaps on ct.MaNguon equals ncc.MaNguon into tmpNguonCungCaps
+                                   from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                   from nsx in tmpNuocSanXuats.DefaultIfEmpty()
+                                   from hsx in tmpHangSanXuats.DefaultIfEmpty()
+                                   from ncc in tmpNguonCungCaps.DefaultIfEmpty()
+                                   where ct.MaPhieuNhap == maPN
+                                   select new NhapChiTietViewModel
+                                   {
+                                       MaPhieuNhap = ct.MaPhieuNhap,
+                                       MaVatTu = ct.MaVatTu,
+                                       TenVT = vt.TenVT,
+                                       DonGia = ct.DonGia,
+                                       SoLuong = ct.SoLuong,
+                                       MaHang = ct.MaHang,
+                                       TenHang = hsx.TenHang,
+                                       MaNuoc = ct.MaNuoc,
+                                       TenNuoc = nsx.TenNuoc,
+                                       Model = ct.Model,
+                                       Seri = ct.Seri,
+                                       SoKhung = ct.SoKhung,
+                                       SoMay = ct.SoMay,
+                                       SoDangKy = ct.SoDangKy,
+                                       DotMua = ct.DotMua,
+                                       NamSX = ct.NamSX,
+                                       PhanCap = ct.PhanCap,
+                                       MaNguon = ct.MaNguon,
+                                       TenNguon = ncc.TenNguon,
+                                       GhiChu = ct.GhiChu,
+                                       TenDVT = dvt.TenDVT,
+                                       BietDuoc = ct.BietDuoc,
+                                       SoLo = ct.SoLo,
+                                       HanDung = ct.HanDung,
+                                       Status = ct.Status
+                                   }).ToListAsync();
+
             return new NhapVatTuParams()
             {
-                mnhapvattu = mpn,
-                listnhapchitiet = chiTietVM.ToList()
+                mnhapvattu = queryNhapVT,
+                listnhapchitiet = chiTietVM
             };
         }
         public async Task<bool> InsertAsync(NhapVatTuViewModel mnhapvattu, List<NhapChiTietViewModel> listnhapchitiet)

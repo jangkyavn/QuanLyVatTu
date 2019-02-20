@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class VatTuViewModel
     {
@@ -12,9 +6,10 @@ namespace Absoft.ViewModels
         {
             Status = true;
         }
+
         public int? MaVatTu { get; set; }
         public int MaLoaiVatTu { get; set; }
-        public int MaDVT { get; set; }
+        public int? MaDVT { get; set; }
         public string TenVT { get; set; }
         private string ghiChu;
         public string GhiChu

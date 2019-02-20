@@ -7,7 +7,7 @@ namespace Absoft.ViewModels
     {
         public UserCreationViewModel()
         {
-            Status = false;
+            Status = true;
         }
 
         public Guid? Id { get; set; }

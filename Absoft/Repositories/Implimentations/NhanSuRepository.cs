@@ -1,10 +1,12 @@
 ﻿using Absoft.Data;
 using Absoft.Data.Entities;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,18 +17,42 @@ namespace Absoft.Repositories.Implimentations
 {
     public class NhanSuRepository : INhanSuRepository
     {
-        DataContext db;
-        IMapper mp;
-        public NhanSuRepository(DataContext data, IMapper mapper)
+        private readonly DataContext db;
+        private readonly IMapper mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        public NhanSuRepository(DataContext data, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             db = data;
             mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
         }
         public async Task<bool> IsDelete(int id)
         {
             var entity = await db.NhanSus.FindAsync(id);
             entity.Status = false;
             return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> IsDeleteMulti(List<int> listid)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in listid)
+                    {
+                        var dvt = await db.NhanSus.FindAsync(item);
+                        dvt.Status = false;
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    // TODO: Handle failure                    
+                }
+                return false;
+            }
         }
         public async Task<bool> DeleteAsync(int id)
         {
@@ -95,6 +121,8 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<PagedList<NhanSuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
+            var ss = "311,2".Split(',')[1];
+
             var query = from ns in db.NhanSus
                           where ns.Status == true
                           select new NhanSuViewModel
@@ -102,8 +130,8 @@ namespace Absoft.Repositories.Implimentations
                               MaNS = ns.MaNS,
                               HoTen = ns.HoTen,
                               NgaySinh = ns.NgaySinh,
-                              QueQuan = ns.QueQuan,
-                              DanToc = ns.DanToc,
+                              QueQuan = GetAddress(ns.QueQuan),
+                              DanToc = GetNation(ns.DanToc),
                               Status = ns.Status
                           };
 
@@ -170,6 +198,50 @@ namespace Absoft.Repositories.Implimentations
             }
 
             return await PagedList<NhanSuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        public List<CityParam> LoadCities()
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\city.json";
+            var cities = new List<CityParam>().Deserialize(path).OrderBy(x => x.name).ToList();
+            return cities;
+        }
+
+        public List<DistrictsParam> LoadDistricts(int? cityId)
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\district.json";
+            var districts = new List<DistrictsParam>().Deserialize(path);
+
+            if (cityId.HasValue)
+            {
+                districts = districts.Where(x => x.parent_code == cityId.Value).OrderBy(x => x.name).ToList();
+            }
+            return districts;
+        }
+
+        public List<NationsParam> LoadNations()
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\json\\nation.json";
+            var nations = new List<NationsParam>().Deserialize(path);
+            return nations;
+        }
+
+        private string GetAddress(string address)
+        {
+            var cityId = Convert.ToInt32(address.Split(',')[1]);
+            var districtId = Convert.ToInt32(address.Split(',')[0]);
+
+            var city = LoadCities().FirstOrDefault(x => x.code == cityId).name;
+            var district = LoadDistricts(cityId).FirstOrDefault(x => x.code == districtId).name;
+
+            return district + ", " + city;
+        }
+
+        private string GetNation(string nation)
+        {
+            int nationId = Convert.ToInt32(nation);
+
+            return LoadNations().FirstOrDefault(x => x.code == nationId).name;
         }
     }
 }
