@@ -40,6 +40,26 @@ namespace Absoft.Repositories.Implimentations
             await db.DonViTinhs.AddAsync(dvt);
             return await db.SaveChangesAsync() > 0;
         }
+        public async Task<bool> InsertListAsync(List<DonViTinhViewModel> mdonvitinh)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var dvt = mp.Map<List<DonViTinh>>(mdonvitinh);
+                    foreach (var item in dvt)
+                    {
+                        await db.DonViTinhs.AddAsync(item);
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }                
+            }            
+        }
 
         public async Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh)
         {
@@ -81,17 +101,17 @@ namespace Absoft.Repositories.Implimentations
                     foreach (var item in listid)
                     {
                         var dvt = await db.DonViTinhs.FindAsync(item);
-                        dvt.Status = false;                        
+                        dvt.Status = false;
                     }
                     transaction.Commit();
-                    return await db.SaveChangesAsync()>0;
+                    return await db.SaveChangesAsync() > 0;
                 }
                 catch (Exception)
                 {
                     // TODO: Handle failure                    
                 }
                 return false;
-            }       
+            }
         }
         public async Task<int> CheckTonTai(string name)
         {
