@@ -92,7 +92,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<VatTuViewModel>> GetByMaHM(int maHM)
         {
             var listMaLoaiVT = await db.LoaiVatTus.Where(x => x.MaHM == maHM).Select(x => x.MaLoaiVatTu).ToListAsync();
-            var listVT = await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu)).ToListAsync();
+            var listVT = await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu) && o.Status==true).ToListAsync();
             var listmVT = mp.Map<List<VatTuViewModel>>(listVT);
             return listmVT;
         }

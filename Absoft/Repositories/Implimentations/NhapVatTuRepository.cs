@@ -394,7 +394,7 @@ namespace Absoft.Repositories.Implimentations
                     await db.SaveChangesAsync();
                     return 1;
                 }
-                catch (Exception e)
+                catch (Exception )
                 {
                     // TODO: Handle failure                     
                 }
