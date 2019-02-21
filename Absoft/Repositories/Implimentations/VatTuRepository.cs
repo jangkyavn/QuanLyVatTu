@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Implimentations
@@ -44,7 +46,7 @@ namespace Absoft.Repositories.Implimentations
             }
             catch (DbUpdateException)
             {
-                return false;                
+                return false;
             }
         }
         // delete all by maloaivt use transaction 
@@ -278,7 +280,7 @@ namespace Absoft.Repositories.Implimentations
         }
 
         public async Task<bool> ImportVT(IList<IFormFile> files)
-        {            
+        {
             var upload = new UploadFile(_hostingEnvironment);
             var fileUrl = upload.InsertFile(files);
             if (!String.IsNullOrEmpty(fileUrl))
@@ -293,15 +295,20 @@ namespace Absoft.Repositories.Implimentations
                         List<VatTuViewModel> List = new List<VatTuViewModel>();
                         for (int i = 2; i <= totalRows; i++)
                         {
-                            List.Add(new VatTuViewModel
+                            if ((workSheet.Cells[i, 1].Value) != null && (workSheet.Cells[i, 2].Value) != null && (workSheet.Cells[i, 4].Value) != null)
                             {
-                                TenVT = workSheet.Cells[i, 1].Value.ToString(),
-                                TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString(),
-                                TenDVT = workSheet.Cells[i, 3].Value.ToString(),
-                                TenHM = workSheet.Cells[i, 4].Value.ToString(),
-                                GhiChu = workSheet.Cells[i, 5].Value.ToString(),
-                                Status = true,
-                            });
+                                if ((workSheet.Cells[i, 3].Value) == null) workSheet.Cells[i, 3].Value = "";
+                                if ((workSheet.Cells[i, 5].Value) == null) workSheet.Cells[i, 5].Value = "";
+                                List.Add(new VatTuViewModel
+                                {
+                                    TenVT = workSheet.Cells[i, 1].Value.ToString(),
+                                    TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString(),
+                                    TenDVT = workSheet.Cells[i, 3].Value.ToString(),
+                                    TenHM = workSheet.Cells[i, 4].Value.ToString(),
+                                    GhiChu = workSheet.Cells[i, 5].Value.ToString(),
+                                    Status = true,
+                                });
+                            }
                         }
                         foreach (var item in List)
                         {
@@ -311,7 +318,7 @@ namespace Absoft.Repositories.Implimentations
                                 try
                                 {
                                     var MaVT = await CheckTonTai(item.TenVT);
-                                    if (MaVT == -1 && item.TenLoaiVatTu !=null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM!=null && !string.IsNullOrEmpty(item.TenHM))
+                                    if (MaVT == -1 && item.TenLoaiVatTu != null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM != null && !string.IsNullOrEmpty(item.TenHM))
                                     {
                                         var MaHM = await _hangMucVatTuRepository.CheckTonTai(item.TenHM);
                                         if (MaHM == -1)
@@ -345,7 +352,7 @@ namespace Absoft.Repositories.Implimentations
                                             }
                                         }
                                         int? MaDVT = null;
-                                        if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT!=null)
+                                        if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT != null)
                                         {
                                             MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
                                             if (MaDVT == -1)
@@ -362,7 +369,7 @@ namespace Absoft.Repositories.Implimentations
                                                     MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
                                                 }
                                             }
-                                        }                                       
+                                        }
                                         VatTuViewModel vt = new VatTuViewModel()
                                         {
                                             TenVT = item.TenVT,
@@ -393,6 +400,65 @@ namespace Absoft.Repositories.Implimentations
             else
             {
                 return false;
+            }
+        }
+        public string ExportVT()
+        {
+            try
+            {
+                string rootFolder = _hostingEnvironment.WebRootPath;
+                var gui = Guid.NewGuid();
+                string fileName = @"ExportVatTu" + gui + ".xls";
+
+                FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
+
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+
+                    // IList<VatTu> List = db.VatTus.ToList();
+                    var listvt = from vt in db.VatTus
+                                 join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpdonvitinh
+                                 join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                                 join hmvt in db.HangMucVatTus on lvt.MaHM equals hmvt.MaHM
+                                 from dvt in tmpdonvitinh.DefaultIfEmpty()
+                                 select new VatTuViewModel
+                                 {
+                                     TenVT = vt.TenVT,
+                                     TenLoaiVatTu = lvt.TenLoai,
+                                     TenDVT = dvt.TenDVT,
+                                     TenHM = hmvt.TenHM,
+                                     GhiChu = vt.GhiChu
+                                 };
+                    IList<VatTuViewModel> List = listvt.ToList();
+
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("VatTu");
+                    int totalRows = List.Count();
+
+                    worksheet.Cells[1, 1].Value = "TenVT";
+                    worksheet.Cells[1, 2].Value = "TenLoaiVatTu";
+                    worksheet.Cells[1, 3].Value = "TenDVT";
+                    worksheet.Cells[1, 4].Value = "TenHM";
+                    worksheet.Cells[1, 5].Value = "GhiChu";
+                    int i = 0;
+                    for (int row = 2; row <= totalRows + 1; row++)
+                    {
+                        worksheet.Cells[row, 1].Value = List[i].TenVT;
+                        worksheet.Cells[row, 2].Value = List[i].TenLoaiVatTu;
+                        worksheet.Cells[row, 3].Value = List[i].TenDVT;
+                        worksheet.Cells[row, 4].Value = List[i].TenHM;
+                        worksheet.Cells[row, 5].Value = List[i].GhiChu;
+                        i++;
+                    }
+                    package.Save();
+                                    
+                }
+                // return Path.Combine("https://localhost:44379/", fileName);
+                return ("https://localhost:44379/" + fileName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+//                 return false;
             }
         }
     }

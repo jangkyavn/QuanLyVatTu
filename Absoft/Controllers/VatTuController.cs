@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Absoft.Extentions;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Absoft.Controllers
-{    
+{
     public class VatTuController : BaseController
     {
         IVatTuRepository _IVatTuRepository;
@@ -97,5 +98,12 @@ namespace Absoft.Controllers
             var result = await _IVatTuRepository.ImportVT(files);
             return Ok(result);
         }
+        [HttpGet]
+        [Route("ExportVT")]
+        public IActionResult ExportVT()
+        {
+            var result = _IVatTuRepository.ExportVT();
+            return Ok(result);
+        }       
     }
 }
