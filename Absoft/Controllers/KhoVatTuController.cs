@@ -57,17 +57,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _IKhoVatTuRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    khoVatTuViewModel.MaKho = id;
-                    var result = await _IKhoVatTuRepository.UpdateAsync(khoVatTuViewModel);
-                    var resultChange = _IKhoVatTuRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]

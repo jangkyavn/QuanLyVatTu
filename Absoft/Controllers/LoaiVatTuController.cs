@@ -58,17 +58,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _ILoaiVatTuRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    LoaiVatTuViewModel.MaLoaiVatTu = id;
-                    var result = await _ILoaiVatTuRepository.UpdateAsync(LoaiVatTuViewModel);
-                    var resultChange = _ILoaiVatTuRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]

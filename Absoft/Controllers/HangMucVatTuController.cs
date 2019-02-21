@@ -54,17 +54,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _hangMucVatTuRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    hangMucVatTuViewModel.MaHM = id;
-                    var result = await _hangMucVatTuRepository.UpdateAsync(hangMucVatTuViewModel);
-                    var resultChange = _hangMucVatTuRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1);
             }
         }
         [HttpDelete("{id}")]

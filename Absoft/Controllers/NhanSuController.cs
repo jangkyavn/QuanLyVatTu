@@ -62,17 +62,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _INhanSuRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    NhanSuViewModel.MaNS = id;
-                    var result = await _INhanSuRepository.UpdateAsync(NhanSuViewModel);
-                    var resultChange = _INhanSuRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]

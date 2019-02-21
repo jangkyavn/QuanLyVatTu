@@ -55,17 +55,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _INguonCungCapRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    nguonCungCapViewModel.MaNguon = id;
-                    var result = await _INguonCungCapRepository.UpdateAsync(nguonCungCapViewModel);
-                    var resultChange = _INguonCungCapRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]
