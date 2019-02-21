@@ -104,6 +104,13 @@ namespace Absoft.Controllers
         {
             var result = _IVatTuRepository.ExportVT();
             return Ok(result);
-        }       
+        }
+        [HttpGet]
+        [Route("DeleteFileVTAfterExport/{filename}")]
+        public IActionResult DeleteFileVTAfterExport(string filename)
+        {
+            var result = _IVatTuRepository.DeleteFileVTAfterExport(filename);
+            return Ok(result);
+        }
     }
 }

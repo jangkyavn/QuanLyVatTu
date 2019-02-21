@@ -27,7 +27,8 @@ namespace Absoft.Repositories.Implimentations
         IHangMucVatTuRepository _hangMucVatTuRepository;
         ILoaiVatTuRepository _loaiVatTuRepository;
         IDonViTinhRepository _donViTinhRepository;
-        public VatTuRepository(DataContext data, IMapper mapper, IHostingEnvironment hostingEnvironment, IHangMucVatTuRepository hangMucVatTuRepository, ILoaiVatTuRepository loaiVatTuRepository, IDonViTinhRepository donViTinhRepository)
+        IHttpContextAccessor _IHttpContextAccessor;
+        public VatTuRepository(DataContext data, IMapper mapper, IHostingEnvironment hostingEnvironment, IHangMucVatTuRepository hangMucVatTuRepository, ILoaiVatTuRepository loaiVatTuRepository, IDonViTinhRepository donViTinhRepository, IHttpContextAccessor IHttpContextAccessor)
         {
             db = data;
             mp = mapper;
@@ -35,6 +36,7 @@ namespace Absoft.Repositories.Implimentations
             _hangMucVatTuRepository = hangMucVatTuRepository;
             _loaiVatTuRepository = loaiVatTuRepository;
             _donViTinhRepository = donViTinhRepository;
+            _IHttpContextAccessor = IHttpContextAccessor;
         }
         public async Task<bool> DeleteAsync(int id)
         {
@@ -402,7 +404,7 @@ namespace Absoft.Repositories.Implimentations
                 return false;
             }
         }
-        public string ExportVT()
+        public object ExportVT()
         {
             try
             {
@@ -450,15 +452,54 @@ namespace Absoft.Repositories.Implimentations
                         i++;
                     }
                     package.Save();
-                                    
+
+
                 }
-                // return Path.Combine("https://localhost:44379/", fileName);
-                return ("https://localhost:44379/" + fileName);
+                string url = "";
+                if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+                {
+                    url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+                }
+                else
+                {
+                    url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+                }
+                return (new
+                {
+                   url =  url + "/" + fileName,
+                    fileName
+                });
             }
             catch (Exception ex)
             {
                 throw ex;
-//                 return false;
+                //                 return false;
+            }
+        }
+
+        public bool DeleteFileVTAfterExport(string filename)
+        {                       
+            if (!String.IsNullOrEmpty(filename))
+            {
+                string rootFolder = _hostingEnvironment.WebRootPath;              
+
+                FileInfo file = new FileInfo(Path.Combine(rootFolder, filename));
+                try
+                {                  
+                    using (ExcelPackage package = new ExcelPackage(file))
+                    {                        
+                            file.Delete();
+                            return true;                       
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
     }
