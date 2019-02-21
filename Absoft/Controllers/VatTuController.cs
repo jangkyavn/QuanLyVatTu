@@ -75,17 +75,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _IVatTuRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    VatTuViewModel.MaVatTu = id;
-                    var result = await _IVatTuRepository.UpdateAsync(VatTuViewModel);
-                    var resultChange = _IVatTuRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]

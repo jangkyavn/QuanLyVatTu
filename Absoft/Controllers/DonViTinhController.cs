@@ -65,17 +65,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _donViTinhRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    donViTinhViewModel.MaDVT = id;
-                    var result = await _donViTinhRepository.UpdateAsync(donViTinhViewModel);
-                    var resultChange = await _donViTinhRepository.ChangStatus(id);
-                    return Ok(resultChange);
-                }
+                return Ok(-1);
             }
         }
         [HttpDelete("{id}")]

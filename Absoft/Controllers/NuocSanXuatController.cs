@@ -57,17 +57,7 @@ namespace Absoft.Controllers
             }
             else
             {
-                if (await _INuocSanXuatRepository.GetStatus(id) == true)
-                {
-                    return Ok(-1); // đã tồn tại không cho thêm
-                }
-                else
-                {
-                    nuocSanXuatViewModel.MaNuoc = id;
-                    var result = await _INuocSanXuatRepository.UpdateAsync(nuocSanXuatViewModel);
-                    var resultChange = _INuocSanXuatRepository.ChangStatus(id);
-                    return Ok(result);
-                }
+                return Ok(-1); // đã tồn tại không cho thêm
             }
         }
         [HttpDelete("{id}")]
