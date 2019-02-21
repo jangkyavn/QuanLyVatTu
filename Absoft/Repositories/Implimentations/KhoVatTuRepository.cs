@@ -52,12 +52,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            
+            try
+            {
                 var khovt = await db.KhoVatTus.FindAsync(id);
                 db.KhoVatTus.Remove(khovt);
                 return (await db.SaveChangesAsync() > 0);
-            
-            
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }                        
         }
         public async Task<List<KhoVatTuViewModel>> GetAllAsync()
         {

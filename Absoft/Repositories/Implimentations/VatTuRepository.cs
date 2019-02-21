@@ -36,11 +36,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-
-            var vt = await db.VatTus.FindAsync(id);
-            db.VatTus.Remove(vt);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var vt = await db.VatTus.FindAsync(id);
+                db.VatTus.Remove(vt);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }
         }
         // delete all by maloaivt use transaction 
         public async Task<bool> DeleteByMaLoaiVTAsync(int MaloaiVT)
@@ -306,7 +311,7 @@ namespace Absoft.Repositories.Implimentations
                                 try
                                 {
                                     var MaVT = await CheckTonTai(item.TenVT);
-                                    if (MaVT == -1)
+                                    if (MaVT == -1 && item.TenLoaiVatTu !=null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM!=null && !string.IsNullOrEmpty(item.TenHM))
                                     {
                                         var MaHM = await _hangMucVatTuRepository.CheckTonTai(item.TenHM);
                                         if (MaHM == -1)

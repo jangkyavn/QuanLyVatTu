@@ -78,7 +78,7 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _INhanSuRepository.IsDelete(id);
+            var result = await _INhanSuRepository.DeleteAsync(id);
             return Ok(result);
         }
         [HttpGet("loadCities")]

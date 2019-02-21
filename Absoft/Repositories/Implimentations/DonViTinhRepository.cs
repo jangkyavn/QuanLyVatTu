@@ -87,10 +87,16 @@ namespace Absoft.Repositories.Implimentations
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)
         {
-            var dvt = await db.DonViTinhs.FindAsync(id);
-            db.DonViTinhs.Remove(dvt);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var dvt = await db.DonViTinhs.FindAsync(id);
+                db.DonViTinhs.Remove(dvt);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }          
         }
         public async Task<bool> IsDelete(int id)
         {
@@ -215,46 +221,44 @@ namespace Absoft.Repositories.Implimentations
             else
             {
                 return false;
+            }            
+        }
+        public bool ExportDVT()
+        {
+            try
+            {
+                string rootFolder = _hostingEnvironment.WebRootPath;
+                string fileName = @"ExportDonViTinh.xls";
+
+                FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
+
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+
+                    IList<DonViTinh> List = db.DonViTinhs.ToList();
+
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("DonViTinh");
+                    int totalRows = List.Count();
+
+                    // worksheet.Cells[1, 1].Value = "Id";
+                    worksheet.Cells[1, 1].Value = "TenDVT";
+                    //worksheet.Cells[1, 3].Value = "Status";                
+                    int i = 0;
+                    for (int row = 2; row <= totalRows + 1; row++)
+                    {
+                        // worksheet.Cells[row, 1].Value = List[i].Id;
+                        worksheet.Cells[row, 1].Value = List[i].TenDVT;
+                        // worksheet.Cells[row, 3].Value = List[i].Status;                    
+                        i++;
+                    }
+                    package.Save();
+                }
+                return true;
             }
-            //[HttpGet]
-            //[Route("ExportDVT")]
-            //public string ExportDVT()
-            //{
-            //    try
-            //    {
-            //        string rootFolder = _hostingEnvironment.WebRootPath;
-            //        string fileName = @"ExportDonViTinh.xls";
-
-            //        FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
-
-            //        using (ExcelPackage package = new ExcelPackage(file))
-            //        {
-
-            //            IList<DonViTinh> List = _db.DonViTinhs.ToList();
-
-            //            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("DonViTinh");
-            //            int totalRows = List.Count();
-
-            //            // worksheet.Cells[1, 1].Value = "Id";
-            //            worksheet.Cells[1, 1].Value = "TenDVT";
-            //            //worksheet.Cells[1, 3].Value = "Status";                
-            //            int i = 0;
-            //            for (int row = 2; row <= totalRows + 1; row++)
-            //            {
-            //                // worksheet.Cells[row, 1].Value = List[i].Id;
-            //                worksheet.Cells[row, 1].Value = List[i].TenDVT;
-            //                // worksheet.Cells[row, 3].Value = List[i].Status;                    
-            //                i++;
-            //            }
-            //            package.Save();
-            //        }
-            //        return " DonViTinh list has been exported successfully";
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw ex;
-            //    }
-            //}
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

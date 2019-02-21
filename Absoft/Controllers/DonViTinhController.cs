@@ -81,7 +81,7 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _donViTinhRepository.IsDelete(id);
+            var result = await _donViTinhRepository.DeleteAsync(id);
             return Ok(result);
         }
         [HttpPost]
@@ -90,6 +90,13 @@ namespace Absoft.Controllers
         {
             var result = await _donViTinhRepository.ImportDVT(files);
             return Ok(result);
-        }        
+        }
+        [HttpGet]
+        [Route("ExportDVT")]
+        public IActionResult ExportDVT()
+        {
+            var result = _donViTinhRepository.ExportDVT();
+            return Ok(result);
+        }
     }
 }
