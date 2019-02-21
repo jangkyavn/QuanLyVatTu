@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Absoft.Data.Migrations
 {
-    public partial class CreateTable : Migration
+    public partial class CreateTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,8 @@ namespace Absoft.Data.Migrations
                 {
                     MaDVT = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    TenDVT = table.Column<string>(nullable: true)
+                    TenDVT = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,7 +29,8 @@ namespace Absoft.Data.Migrations
                     MaHM = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     TenHM = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +44,8 @@ namespace Absoft.Data.Migrations
                     MaHang = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     TenHang = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,7 +59,8 @@ namespace Absoft.Data.Migrations
                     MaKho = table.Column<int>(nullable: false),
                     MaPhieuNhap = table.Column<int>(nullable: false),
                     MaVatTu = table.Column<int>(nullable: false),
-                    SoLuongTon = table.Column<int>(nullable: false)
+                    SoLuongTon = table.Column<int>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,39 +76,12 @@ namespace Absoft.Data.Migrations
                     TenKho = table.Column<string>(nullable: true),
                     DiaChi = table.Column<string>(nullable: true),
                     DienThoai = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KhoVatTu", x => x.MaKho);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LoaiVatTu",
-                columns: table => new
-                {
-                    MaLoaiVatTu = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MaHM = table.Column<int>(nullable: false),
-                    TenLoai = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoaiVatTu", x => x.MaLoaiVatTu);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NuocSanXuat",
-                columns: table => new
-                {
-                    MaNuoc = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    TenNuoc = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NuocSanXuat", x => x.MaNuoc);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,10 +104,10 @@ namespace Absoft.Data.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FullName = table.Column<string>(maxLength: 50, nullable: false),
-                    Gender = table.Column<bool>(nullable: false),
+                    Gender = table.Column<bool>(nullable: true),
                     Avatar = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    DateOfBirth = table.Column<DateTime>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    DateOfBirth = table.Column<DateTime>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: true),
                     Address = table.Column<string>(maxLength: 100, nullable: true),
                     Status = table.Column<bool>(nullable: false)
                 },
@@ -146,7 +123,8 @@ namespace Absoft.Data.Migrations
                     MaNguon = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     TenNguon = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,7 +149,9 @@ namespace Absoft.Data.Migrations
                     BanThan = table.Column<string>(nullable: true),
                     QuaTrinhHocTap = table.Column<string>(nullable: true),
                     ThanNhan = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false),
+                    Dang = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -194,10 +174,14 @@ namespace Absoft.Data.Migrations
                     DotMua = table.Column<string>(nullable: true),
                     NamSX = table.Column<string>(nullable: true),
                     PhanCap = table.Column<string>(nullable: true),
-                    NguonGoc = table.Column<string>(nullable: true),
-                    SoLuong = table.Column<int>(nullable: false),
-                    DonGia = table.Column<decimal>(nullable: false),
-                    GhiChu = table.Column<string>(nullable: true)
+                    MaNguon = table.Column<int>(nullable: true),
+                    SoLuong = table.Column<int>(nullable: true),
+                    BietDuoc = table.Column<string>(nullable: true),
+                    SoLo = table.Column<string>(nullable: true),
+                    HanDung = table.Column<string>(nullable: true),
+                    DonGia = table.Column<decimal>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,24 +189,17 @@ namespace Absoft.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NhapVatTu",
+                name: "NuocSanXuat",
                 columns: table => new
                 {
-                    MaPhieuNhap = table.Column<int>(nullable: false)
+                    MaNuoc = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MaHM = table.Column<int>(nullable: false),
-                    MaKho = table.Column<int>(nullable: false),
-                    NgayNhap = table.Column<string>(nullable: true),
-                    NguoiNhap = table.Column<string>(nullable: true),
-                    TongSoTien = table.Column<decimal>(nullable: false),
-                    TongSoLuong = table.Column<int>(nullable: false),
-                    ChietKhau = table.Column<int>(nullable: false),
-                    GhiChu = table.Column<string>(nullable: true),
+                    TenNuoc = table.Column<string>(nullable: true),
                     Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NhapVatTu", x => x.MaPhieuNhap);
+                    table.PrimaryKey("PK_NuocSanXuat", x => x.MaNuoc);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,30 +217,16 @@ namespace Absoft.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VatTu",
-                columns: table => new
-                {
-                    MaVatTu = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MaLoaiVatTu = table.Column<int>(nullable: false),
-                    MaDVT = table.Column<int>(nullable: false),
-                    TenVT = table.Column<string>(nullable: true),
-                    GhiChu = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VatTu", x => x.MaVatTu);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "XuatChiTiet",
                 columns: table => new
                 {
                     MaPhieuXuat = table.Column<int>(nullable: false),
                     MaPhieuNhap = table.Column<int>(nullable: false),
                     MaVatTu = table.Column<int>(nullable: false),
-                    SoLuongXuat = table.Column<int>(nullable: false),
-                    GhiChu = table.Column<string>(nullable: true)
+                    SoLuongXuat = table.Column<int>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false),
+                    DonGia = table.Column<decimal>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,21 +234,59 @@ namespace Absoft.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "XuatVatTu",
+                name: "LoaiVatTu",
                 columns: table => new
                 {
-                    MaPhieuXuat = table.Column<int>(nullable: false)
+                    MaLoaiVatTu = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MaKho = table.Column<int>(nullable: false),
-                    MaNS = table.Column<int>(nullable: false),
-                    NgayNhap = table.Column<string>(nullable: true),
-                    TongSoTien = table.Column<decimal>(nullable: false),
-                    TongSoLuong = table.Column<int>(nullable: false),
-                    GhiChu = table.Column<string>(nullable: true)
+                    MaHM = table.Column<int>(nullable: false),
+                    TenLoai = table.Column<string>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_XuatVatTu", x => x.MaPhieuXuat);
+                    table.PrimaryKey("PK_LoaiVatTu", x => x.MaLoaiVatTu);
+                    table.ForeignKey(
+                        name: "FK_LoaiVatTu_HangMucVatTu_MaHM",
+                        column: x => x.MaHM,
+                        principalTable: "HangMucVatTu",
+                        principalColumn: "MaHM",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NhapVatTu",
+                columns: table => new
+                {
+                    MaPhieuNhap = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    SoPhieuNhap = table.Column<string>(nullable: true),
+                    MaHM = table.Column<int>(nullable: false),
+                    MaKho = table.Column<int>(nullable: false),
+                    NgayNhap = table.Column<string>(nullable: true),
+                    NguoiNhap = table.Column<string>(nullable: true),
+                    TongSoTien = table.Column<decimal>(nullable: true),
+                    TongSoLuong = table.Column<int>(nullable: true),
+                    ChietKhau = table.Column<float>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NhapVatTu", x => x.MaPhieuNhap);
+                    table.ForeignKey(
+                        name: "FK_NhapVatTu_HangMucVatTu_MaHM",
+                        column: x => x.MaHM,
+                        principalTable: "HangMucVatTu",
+                        principalColumn: "MaHM",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_NhapVatTu_KhoVatTu_MaKho",
+                        column: x => x.MaKho,
+                        principalTable: "KhoVatTu",
+                        principalColumn: "MaKho",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -350,6 +351,39 @@ namespace Absoft.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "XuatVatTu",
+                columns: table => new
+                {
+                    MaPhieuXuat = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    SoPhieuXuat = table.Column<string>(nullable: true),
+                    MaKho = table.Column<int>(nullable: false),
+                    MaNS = table.Column<int>(nullable: false),
+                    NgayNhap = table.Column<string>(nullable: true),
+                    TongSoTien = table.Column<decimal>(nullable: true),
+                    TongSoLuong = table.Column<int>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false),
+                    ChietKhau = table.Column<float>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_XuatVatTu", x => x.MaPhieuXuat);
+                    table.ForeignKey(
+                        name: "FK_XuatVatTu_KhoVatTu_MaKho",
+                        column: x => x.MaKho,
+                        principalTable: "KhoVatTu",
+                        principalColumn: "MaKho",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_XuatVatTu_NhanSu_MaNS",
+                        column: x => x.MaNS,
+                        principalTable: "NhanSu",
+                        principalColumn: "MaNS",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -394,6 +428,35 @@ namespace Absoft.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VatTu",
+                columns: table => new
+                {
+                    MaVatTu = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    MaLoaiVatTu = table.Column<int>(nullable: false),
+                    MaDVT = table.Column<int>(nullable: true),
+                    TenVT = table.Column<string>(nullable: true),
+                    GhiChu = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VatTu", x => x.MaVatTu);
+                    table.ForeignKey(
+                        name: "FK_VatTu_DonViTinh_MaDVT",
+                        column: x => x.MaDVT,
+                        principalTable: "DonViTinh",
+                        principalColumn: "MaDVT",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VatTu_LoaiVatTu_MaLoaiVatTu",
+                        column: x => x.MaLoaiVatTu,
+                        principalTable: "LoaiVatTu",
+                        principalColumn: "MaLoaiVatTu",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -410,6 +473,11 @@ namespace Absoft.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoaiVatTu_MaHM",
+                table: "LoaiVatTu",
+                column: "MaHM");
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "NguoiDung",
                 column: "NormalizedEmail");
@@ -422,6 +490,16 @@ namespace Absoft.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NhapVatTu_MaHM",
+                table: "NhapVatTu",
+                column: "MaHM");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NhapVatTu_MaKho",
+                table: "NhapVatTu",
+                column: "MaKho");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "VaiTro",
                 column: "NormalizedName",
@@ -432,6 +510,26 @@ namespace Absoft.Data.Migrations
                 name: "IX_VaiTroNguoiDung_RoleId",
                 table: "VaiTroNguoiDung",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VatTu_MaDVT",
+                table: "VatTu",
+                column: "MaDVT");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VatTu_MaLoaiVatTu",
+                table: "VatTu",
+                column: "MaLoaiVatTu");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatVatTu_MaKho",
+                table: "XuatVatTu",
+                column: "MaKho");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatVatTu_MaNS",
+                table: "XuatVatTu",
+                column: "MaNS");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -449,37 +547,22 @@ namespace Absoft.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "DonViTinh");
-
-            migrationBuilder.DropTable(
-                name: "HangMucVatTu");
-
-            migrationBuilder.DropTable(
                 name: "HangSanXuat");
 
             migrationBuilder.DropTable(
                 name: "KhoHang");
 
             migrationBuilder.DropTable(
-                name: "KhoVatTu");
-
-            migrationBuilder.DropTable(
-                name: "LoaiVatTu");
-
-            migrationBuilder.DropTable(
-                name: "NuocSanXuat");
-
-            migrationBuilder.DropTable(
                 name: "NguonCungCap");
-
-            migrationBuilder.DropTable(
-                name: "NhanSu");
 
             migrationBuilder.DropTable(
                 name: "NhapChiTiet");
 
             migrationBuilder.DropTable(
                 name: "NhapVatTu");
+
+            migrationBuilder.DropTable(
+                name: "NuocSanXuat");
 
             migrationBuilder.DropTable(
                 name: "VaiTroNguoiDung");
@@ -498,6 +581,21 @@ namespace Absoft.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "NguoiDung");
+
+            migrationBuilder.DropTable(
+                name: "DonViTinh");
+
+            migrationBuilder.DropTable(
+                name: "LoaiVatTu");
+
+            migrationBuilder.DropTable(
+                name: "KhoVatTu");
+
+            migrationBuilder.DropTable(
+                name: "NhanSu");
+
+            migrationBuilder.DropTable(
+                name: "HangMucVatTu");
         }
     }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace Absoft.Data.Entities
 {
@@ -27,5 +24,7 @@ namespace Absoft.Data.Entities
         public string GhiChu { get; set; }
         public bool Status { set; get; }
         public string Dang { get; set; }
+
+        public ICollection<XuatVatTu> XuatVatTus { get; set; }
     }
 }

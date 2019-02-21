@@ -8,13 +8,17 @@ namespace Absoft.Data.Entities
     {
         [Key]
         public int MaPhieuXuat { get; set; }
+        public string SoPhieuXuat { get; set; }
         public int MaKho { get; set; }
         public int MaNS { get; set; }
         public string NgayNhap { get; set; }
-        public decimal TongSoTien { get; set; }
-        public int TongSoLuong { get; set; }
+        public decimal? TongSoTien { get; set; }
+        public int? TongSoLuong { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }
-        public int ChietKhau { set; get; }
+        public float? ChietKhau { set; get; }
+
+        public KhoVatTu KhoVatTu { get; set; }
+        public NhanSu NhanSu { get; set; }
     }
 }

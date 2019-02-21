@@ -37,11 +37,15 @@ namespace Absoft.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.AddConfiguration(new KhoHangConfiguration());
-            modelBuilder.AddConfiguration(new NhapChiTietConfiguration());
-            modelBuilder.AddConfiguration(new XuatChiTietConfiguration());
-            modelBuilder.AddConfiguration(new VaiTroConfiguration());
+            modelBuilder.AddConfiguration(new LoaiVatTuConfiguration());
             modelBuilder.AddConfiguration(new NguoiDungConfiguration());
+            modelBuilder.AddConfiguration(new NhapChiTietConfiguration());
+            modelBuilder.AddConfiguration(new NhapVatTuConfiguration());
+            modelBuilder.AddConfiguration(new VaiTroConfiguration());
             modelBuilder.AddConfiguration(new VaiTroNguoiDungConfiguration());
+            modelBuilder.AddConfiguration(new VatTuConfiguration());
+            modelBuilder.AddConfiguration(new XuatChiTietConfiguration());
+            modelBuilder.AddConfiguration(new XuatVatTuConfiguration());
         }
 
         public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataContext>

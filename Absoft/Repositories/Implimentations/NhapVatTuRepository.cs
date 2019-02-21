@@ -416,8 +416,8 @@ namespace Absoft.Repositories.Implimentations
             var list = await db.NhapChiTiets.Where(x => x.MaPhieuNhap == id).ToListAsync();
             foreach (var item in list)
             {
-                tongluong += item.SoLuong;
-                tongtien += (item.SoLuong * item.DonGia);
+                tongluong += item.SoLuong.Value;
+                tongtien += (item.SoLuong.Value * item.DonGia.Value);
             }
             var entity = await db.NhapVatTus.FindAsync(id);
             entity.TongSoLuong = tongluong;

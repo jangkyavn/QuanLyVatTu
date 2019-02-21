@@ -42,7 +42,7 @@ namespace Absoft.ViewModels
             }
         }
         public bool Gender;
-        public DateTime DateOfBirth;
+        public DateTime? DateOfBirth;
         public bool Status;
     }
 }

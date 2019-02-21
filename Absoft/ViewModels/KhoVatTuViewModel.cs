@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class KhoVatTuViewModel
     {
@@ -12,6 +6,7 @@ namespace Absoft.ViewModels
         {
             Status = true;
         }
+
         public int? MaKho { get; set; }
         public string TenKho { get; set; }
         public string DiaChi { get; set; }

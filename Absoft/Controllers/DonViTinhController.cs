@@ -84,7 +84,8 @@ namespace Absoft.Controllers
             var result = await _donViTinhRepository.IsDelete(id);
             return Ok(result);
         }
-        [HttpGet]
+
+        [HttpPost]
         [Route("ImportDVT")]
         public async Task<IActionResult> ImportDVT(IList<IFormFile> files)
         {

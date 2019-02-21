@@ -6,6 +6,7 @@
         {
             Status = true;
         }
+
         public int? MaHang { get; set; }
         public string TenHang { get; set; }
         private string ghiChu;

@@ -14,10 +14,10 @@ namespace Absoft.ViewModels
         public int MaPhieuXuat { get; set; }
         public int MaPhieuNhap { get; set; }
         public int MaVatTu { get; set; }
-        public int SoLuongXuat { get; set; }
+        public int? SoLuongXuat { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }
-        public decimal DonGia { get; set; }
+        public decimal? DonGia { get; set; }
         public string TenVT { get; set; }
         public string TenDVT { get; set; }
     }

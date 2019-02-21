@@ -63,9 +63,9 @@ namespace Absoft.Repositories.Implimentations
             var nvt = await db.NhapVatTus.FindAsync(maphieunhap);
             var nct = db.NhapChiTiets.FirstOrDefault(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu);
             // lay so luong cu 
-            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
-            int soluongnhapcu = nct.SoLuong;
-            int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong) - soluongnhapcu;
+            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon.Value;
+            int soluongnhapcu = nct.SoLuong.Value;
+            int soluongtonmoi = (soluongtoncu + mnhapchitiet.SoLuong.Value) - soluongnhapcu;
             if (soluongtonmoi >= 0)
             {
                 try
@@ -133,8 +133,8 @@ namespace Absoft.Repositories.Implimentations
             }
             else
             {
-                int soluongtoncu = (await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon;
-                int soluongnhapcu = (await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt).FirstOrDefaultAsync()).SoLuong;
+                int soluongtoncu = (await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt && x.MaKho == makho).FirstOrDefaultAsync()).SoLuongTon.Value;
+                int soluongnhapcu = (await db.NhapChiTiets.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt).FirstOrDefaultAsync()).SoLuong.Value;
                 int soluongtonmoi = (soluongtoncu + sl) - soluongnhapcu;
                 if (soluongtonmoi >= 0) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
                 else return new CheckSoLuongParams { Status = false, SoLuong = soluongnhapcu - soluongtoncu };
@@ -158,7 +158,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<int> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
         {
             var model = await db.NhapChiTiets.Where(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap).FirstOrDefaultAsync();
-            if (model != null) return model.SoLuong;
+            if (model != null) return model.SoLuong.Value;
             else return -1;
         }
     }

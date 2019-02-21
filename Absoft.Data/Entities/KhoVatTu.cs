@@ -17,5 +17,8 @@ namespace Absoft.Data.Entities
         public string DienThoai { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }
+
+        public ICollection<NhapVatTu> NhapVatTus { get; set; }
+        public ICollection<XuatVatTu> XuatVatTus { get; set; }
     }
 }

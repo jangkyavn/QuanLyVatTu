@@ -63,12 +63,12 @@ namespace Absoft.Repositories.Implimentations
         {
             if (maVT != 0 && maKho != 0)
             {
-                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho).SumAsync(x => x.SoLuongTon);
+                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho).SumAsync(x => x.SoLuongTon.Value);
                 return tongton;
             }
             else if (maKho == 0 && maVT != 0)
             {
-                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT).SumAsync(x => x.SoLuongTon);
+                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT).SumAsync(x => x.SoLuongTon.Value);
                 return tongton;
             }
             else return 0;
@@ -77,7 +77,7 @@ namespace Absoft.Repositories.Implimentations
         {
             if (maVT != 0 && maKho != 0 && maPN != 0)
             {
-                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho && x.MaPhieuNhap == maPN).SumAsync(x => x.SoLuongTon);
+                var tongton = await db.KhoHangs.Where(x => x.MaVatTu == maVT && x.MaKho == maKho && x.MaPhieuNhap == maPN).SumAsync(x => x.SoLuongTon.Value);
                 return tongton;
             }
             else return 0;
@@ -127,7 +127,7 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<int> GetTotalCountAsync()
         {
-            var count = await db.KhoHangs.SumAsync(x => x.SoLuongTon);
+            var count = await db.KhoHangs.SumAsync(x => x.SoLuongTon.Value);
             return count;
         }
 

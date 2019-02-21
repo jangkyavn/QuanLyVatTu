@@ -33,8 +33,8 @@ namespace Absoft.Repositories.Implimentations
         {
             // remove xuatchitiet
             var xct = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaPhieuXuat == maPX && x.MaVatTu == maVT);
-            int slx = xct.SoLuongXuat;
-            decimal dgx = xct.DonGia;
+            int slx = xct.SoLuongXuat.Value;
+            decimal dgx = xct.DonGia.Value;
             db.XuatChiTiets.Remove(xct);
             //tru soluongtong, tong gia trong px
             var px = await db.XuatVatTus.FindAsync(maPX);
@@ -80,9 +80,9 @@ namespace Absoft.Repositories.Implimentations
             var xvt = await db.XuatVatTus.FirstOrDefaultAsync(x => x.MaPhieuXuat == maphieuxuat);
             var xct = db.XuatChiTiets.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && mxuatchitiet.MaPhieuXuat == maphieuxuat).FirstOrDefault();
             // lay so luong cu 
-            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon;
-            int soluongxuatcu = xct.SoLuongXuat;
-            int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat;
+            int soluongtoncu = db.KhoHangs.Where(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho).FirstOrDefault().SoLuongTon.Value;
+            int soluongxuatcu = xct.SoLuongXuat.Value;
+            int soluongtonmoi = (soluongtoncu + soluongxuatcu) - mxuatchitiet.SoLuongXuat.Value;
             if (soluongtonmoi >= 0)
             {
                 // update tong so luong, tong tien
@@ -104,7 +104,7 @@ namespace Absoft.Repositories.Implimentations
         }     
         public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl)
         {
-            int slct = (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mvt)).SoLuong;
+            int slct = (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mvt)).SoLuong.Value;
             if (sl <= slct) return new CheckSoLuongParams { Status = true, SoLuong = 1 };
             else return new CheckSoLuongParams { Status = false, SoLuong = slct };
         }
@@ -145,14 +145,14 @@ namespace Absoft.Repositories.Implimentations
         public async Task<int> CheckTonTaiVTChitiet(int maphieuxuat, int maphieunhap, int mavt)
         {
             var model = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap);
-            if (model != null) return model.SoLuongXuat;
+            if (model != null) return model.SoLuongXuat.Value;
             else return -1;
         }
 
         public async Task<decimal> GetDonGiaChiTietXuat(int maphieuxuat, int maphieunhap, int mavt)
         {
             var rs = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuXuat == maphieuxuat && x.MaPhieuNhap == maphieunhap && x.MaVatTu == mavt);
-            return rs != null ? rs.DonGia : 0;
+            return rs != null ? rs.DonGia.Value : 0;
         }
     }
 }

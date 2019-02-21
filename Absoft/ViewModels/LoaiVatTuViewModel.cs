@@ -6,6 +6,7 @@
         {
             Status = true;
         }
+
         public int? MaLoaiVatTu { get; set; }
         public int? MaHM { get; set; }
         public string TenLoai { get; set; }

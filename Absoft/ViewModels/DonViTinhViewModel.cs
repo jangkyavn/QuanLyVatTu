@@ -1,11 +1,4 @@
-﻿using Absoft.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class DonViTinhViewModel
     {
@@ -13,17 +6,9 @@ namespace Absoft.ViewModels
         {
             Status = true;             
         }
+
         public int? MaDVT { get; set; }
-        private string tenDVT { get; set; } 
-        public string TenDVT
-        {
-            get => tenDVT;
-            set
-            {
-                tenDVT = value.ToTrim();
-            }
-        }
+        public string TenDVT { get; set; }
         public bool Status { set; get; }
-        
     }
 }

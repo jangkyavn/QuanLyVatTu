@@ -76,7 +76,7 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("MaVatTu");
 
-                    b.Property<int>("SoLuongTon");
+                    b.Property<int?>("SoLuongTon");
 
                     b.Property<bool>("Status");
 
@@ -122,6 +122,8 @@ namespace Absoft.Data.Migrations
 
                     b.HasKey("MaLoaiVatTu");
 
+                    b.HasIndex("MaHM");
+
                     b.ToTable("LoaiVatTu");
                 });
 
@@ -142,9 +144,9 @@ namespace Absoft.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<DateTime>("DateOfBirth");
+                    b.Property<DateTime?>("DateOfBirth");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -157,7 +159,7 @@ namespace Absoft.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<bool>("Gender");
+                    b.Property<bool?>("Gender");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -267,7 +269,7 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("BietDuoc");
 
-                    b.Property<decimal>("DonGia");
+                    b.Property<decimal?>("DonGia");
 
                     b.Property<string>("DotMua");
 
@@ -277,7 +279,7 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int?>("MaHang");
 
-                    b.Property<int>("MaNguon");
+                    b.Property<int?>("MaNguon");
 
                     b.Property<int?>("MaNuoc");
 
@@ -295,7 +297,7 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("SoLo");
 
-                    b.Property<int>("SoLuong");
+                    b.Property<int?>("SoLuong");
 
                     b.Property<string>("SoMay");
 
@@ -312,7 +314,7 @@ namespace Absoft.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ChietKhau");
+                    b.Property<float?>("ChietKhau");
 
                     b.Property<string>("GhiChu");
 
@@ -324,13 +326,19 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("NguoiNhap");
 
+                    b.Property<string>("SoPhieuNhap");
+
                     b.Property<bool>("Status");
 
-                    b.Property<int>("TongSoLuong");
+                    b.Property<int?>("TongSoLuong");
 
-                    b.Property<decimal>("TongSoTien");
+                    b.Property<decimal?>("TongSoTien");
 
                     b.HasKey("MaPhieuNhap");
+
+                    b.HasIndex("MaHM");
+
+                    b.HasIndex("MaKho");
 
                     b.ToTable("NhapVatTu");
                 });
@@ -405,6 +413,10 @@ namespace Absoft.Data.Migrations
 
                     b.HasKey("MaVatTu");
 
+                    b.HasIndex("MaDVT");
+
+                    b.HasIndex("MaLoaiVatTu");
+
                     b.ToTable("VatTu");
                 });
 
@@ -416,11 +428,11 @@ namespace Absoft.Data.Migrations
 
                     b.Property<int>("MaVatTu");
 
-                    b.Property<decimal>("DonGia");
+                    b.Property<decimal?>("DonGia");
 
                     b.Property<string>("GhiChu");
 
-                    b.Property<int>("SoLuongXuat");
+                    b.Property<int?>("SoLuongXuat");
 
                     b.Property<bool>("Status");
 
@@ -435,7 +447,7 @@ namespace Absoft.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ChietKhau");
+                    b.Property<float?>("ChietKhau");
 
                     b.Property<string>("GhiChu");
 
@@ -445,13 +457,19 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("NgayNhap");
 
+                    b.Property<string>("SoPhieuXuat");
+
                     b.Property<bool>("Status");
 
-                    b.Property<int>("TongSoLuong");
+                    b.Property<int?>("TongSoLuong");
 
-                    b.Property<decimal>("TongSoTien");
+                    b.Property<decimal?>("TongSoTien");
 
                     b.HasKey("MaPhieuXuat");
+
+                    b.HasIndex("MaKho");
+
+                    b.HasIndex("MaNS");
 
                     b.ToTable("XuatVatTu");
                 });
@@ -526,6 +544,27 @@ namespace Absoft.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Absoft.Data.Entities.LoaiVatTu", b =>
+                {
+                    b.HasOne("Absoft.Data.Entities.HangMucVatTu", "HangMucVatTu")
+                        .WithMany("LoaiVatTus")
+                        .HasForeignKey("MaHM")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.NhapVatTu", b =>
+                {
+                    b.HasOne("Absoft.Data.Entities.HangMucVatTu", "HangMucVatTu")
+                        .WithMany("NhapVatTus")
+                        .HasForeignKey("MaHM")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Absoft.Data.Entities.KhoVatTu", "KhoVatTu")
+                        .WithMany("NhapVatTus")
+                        .HasForeignKey("MaKho")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Absoft.Data.Entities.VaiTroNguoiDung", b =>
                 {
                     b.HasOne("Absoft.Data.Entities.VaiTro", "Role")
@@ -537,6 +576,32 @@ namespace Absoft.Data.Migrations
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.VatTu", b =>
+                {
+                    b.HasOne("Absoft.Data.Entities.DonViTinh", "DonViTinh")
+                        .WithMany("VatTus")
+                        .HasForeignKey("MaDVT")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Absoft.Data.Entities.LoaiVatTu", "LoaiVatTu")
+                        .WithMany("VatTus")
+                        .HasForeignKey("MaLoaiVatTu")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Absoft.Data.Entities.XuatVatTu", b =>
+                {
+                    b.HasOne("Absoft.Data.Entities.KhoVatTu", "KhoVatTu")
+                        .WithMany("XuatVatTus")
+                        .HasForeignKey("MaKho")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Absoft.Data.Entities.NhanSu", "NhanSu")
+                        .WithMany("XuatVatTus")
+                        .HasForeignKey("MaNS")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

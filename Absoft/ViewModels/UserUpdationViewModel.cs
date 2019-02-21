@@ -5,7 +5,7 @@ namespace Absoft.ViewModels
 {
     public class UserUpdationViewModel
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         private string userName;
         public string UserName
         {
@@ -34,8 +34,8 @@ namespace Absoft.ViewModels
                 fullName = fullName.ToTitleCase();
             }
         }
-        public bool Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public bool? Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         private string phoneNumber;
         public string PhoneNumber
         {
