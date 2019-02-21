@@ -52,11 +52,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-
-            var nsx = await db.NuocSanXuats.FindAsync(id);
-            db.NuocSanXuats.Remove(nsx);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var nsx = await db.NuocSanXuats.FindAsync(id);
+                db.NuocSanXuats.Remove(nsx);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }
         }
         public async Task<List<NuocSanXuatViewModel>> GetAllAsync()
         {

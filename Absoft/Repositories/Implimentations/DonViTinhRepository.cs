@@ -5,9 +5,13 @@ using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,10 +21,12 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        public DonViTinhRepository(DataContext data, IMapper mapper)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public DonViTinhRepository(DataContext data, IMapper mapper, IHostingEnvironment hostingEnvironmen)
         {
             db = data;
             mp = mapper;
+            _hostingEnvironment = hostingEnvironmen;
         }
         public async Task<List<DonViTinhViewModel>> GetAllAsync()
         {
@@ -81,10 +87,16 @@ namespace Absoft.Repositories.Implimentations
         // ko len su dung vi anh huong den bang vattu
         public async Task<bool> DeleteAsync(int id)
         {
-            var dvt = await db.DonViTinhs.FindAsync(id);
-            db.DonViTinhs.Remove(dvt);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var dvt = await db.DonViTinhs.FindAsync(id);
+                db.DonViTinhs.Remove(dvt);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }          
         }
         public async Task<bool> IsDelete(int id)
         {
@@ -168,6 +180,85 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
             return await PagedList<DonViTinhViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        public async Task<bool> ImportDVT(IList<IFormFile> files)
+        {           
+            var upload = new UploadFile(_hostingEnvironment);
+            var fileUrl = upload.InsertFile(files);
+            if (!String.IsNullOrEmpty(fileUrl))
+            {
+                try
+                {
+                    FileInfo file = new FileInfo(fileUrl);
+                    using (ExcelPackage package = new ExcelPackage(file))
+                    {
+                        ExcelWorksheet workSheet = package.Workbook.Worksheets["DonViTinh"];
+                        int totalRows = workSheet.Dimension.Rows;
+                        List<DonViTinhViewModel> List = new List<DonViTinhViewModel>();
+                        for (int i = 2; i <= totalRows; i++)
+                        {
+                            List.Add(new DonViTinhViewModel
+                            {
+                                TenDVT = workSheet.Cells[i, 1].Value.ToString(),
+                                Status = true,
+                            });
+                        }                                  
+                        var rs = await this.InsertListAsync(List);
+                        if (rs == true)
+                        {
+                            file.Delete();
+                            return true;
+                        }
+                        else return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return false;
+            }            
+        }
+        public bool ExportDVT()
+        {
+            try
+            {
+                string rootFolder = _hostingEnvironment.WebRootPath;
+                string fileName = @"ExportDonViTinh.xls";
+
+                FileInfo file = new FileInfo(Path.Combine(rootFolder, fileName));
+
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+
+                    IList<DonViTinh> List = db.DonViTinhs.ToList();
+
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("DonViTinh");
+                    int totalRows = List.Count();
+
+                    // worksheet.Cells[1, 1].Value = "Id";
+                    worksheet.Cells[1, 1].Value = "TenDVT";
+                    //worksheet.Cells[1, 3].Value = "Status";                
+                    int i = 0;
+                    for (int row = 2; row <= totalRows + 1; row++)
+                    {
+                        // worksheet.Cells[row, 1].Value = List[i].Id;
+                        worksheet.Cells[row, 1].Value = List[i].TenDVT;
+                        // worksheet.Cells[row, 3].Value = List[i].Status;                    
+                        i++;
+                    }
+                    package.Save();
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
