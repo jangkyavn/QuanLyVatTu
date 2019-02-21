@@ -165,6 +165,26 @@ namespace Absoft.Controllers
             return Ok(true);
         }
 
+        [HttpPut("changePasswordForOther/{id}/{newPassword}")]
+        public async Task<IActionResult> ChangePasswordForOther(Guid id, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return Ok(true);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
