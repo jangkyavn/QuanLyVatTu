@@ -326,7 +326,7 @@ namespace Absoft.Repositories.Implimentations
                             TenKho = kvt.TenKho,
                             TenNS = ns.HoTen,
                             ChietKhau = xvt.ChietKhau,
-                            ThanhTien = (decimal)((double)xvt.TongSoTien * (1 - ((double)xvt.ChietKhau / 100)))
+                            ThanhTien = xvt.TongSoTien * (1 - (xvt.ChietKhau / 100))
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))

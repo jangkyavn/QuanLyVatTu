@@ -18,7 +18,7 @@
         public bool Status { set; get; }
         public string TenKho { get; set; }
         public string TenNS { get; set; }
-        public float? ChietKhau { set; get; }
+        public decimal? ChietKhau { set; get; }
         public decimal? ThanhTien { get; set; }
     }
 }

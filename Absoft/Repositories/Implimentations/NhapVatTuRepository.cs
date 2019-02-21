@@ -91,6 +91,7 @@ namespace Absoft.Repositories.Implimentations
                         select new NhapVatTuViewModel
                         {
                             MaPhieuNhap = nvt.MaPhieuNhap,
+                            SoPhieuNhap = nvt.SoPhieuNhap,
                             MaHM = nvt.MaHM,
                             MaKho = nvt.MaKho,
                             TenHM = hm.TenHM,
@@ -100,8 +101,8 @@ namespace Absoft.Repositories.Implimentations
                             TongSoTien = nvt.TongSoTien,
                             TongSoLuong = nvt.TongSoLuong,
                             ChietKhau = nvt.ChietKhau,
+                            ThanhTien = nvt.TongSoTien * (1 - (nvt.ChietKhau / 100)),
                             GhiChu = nvt.GhiChu,
-                            ThanhTien = (decimal)((double)nvt.TongSoTien * (1 - ((double)nvt.ChietKhau / 100))),
                             Status = nvt.Status
                         };
 
@@ -237,7 +238,7 @@ namespace Absoft.Repositories.Implimentations
                                          TenKho = kvt.TenKho,
                                          TongSoLuong = nvt.TongSoLuong,
                                          TongSoTien = nvt.TongSoTien,
-                                         ThanhTien = (decimal)((double)nvt.TongSoTien * (1 - ((double)nvt.ChietKhau / 100)))
+                                         ThanhTien = nvt.TongSoTien * (1 - (nvt.ChietKhau / 100))
                                      }).FirstOrDefaultAsync();
 
             var chiTietVM = await (from ct in db.NhapChiTiets

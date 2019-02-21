@@ -268,7 +268,7 @@ namespace Absoft.Data.Migrations
                     NguoiNhap = table.Column<string>(nullable: true),
                     TongSoTien = table.Column<decimal>(nullable: true),
                     TongSoLuong = table.Column<int>(nullable: true),
-                    ChietKhau = table.Column<float>(nullable: true),
+                    ChietKhau = table.Column<decimal>(nullable: true),
                     GhiChu = table.Column<string>(nullable: true),
                     Status = table.Column<bool>(nullable: false)
                 },
@@ -364,7 +364,7 @@ namespace Absoft.Data.Migrations
                     TongSoLuong = table.Column<int>(nullable: true),
                     GhiChu = table.Column<string>(nullable: true),
                     Status = table.Column<bool>(nullable: false),
-                    ChietKhau = table.Column<float>(nullable: true)
+                    ChietKhau = table.Column<decimal>(nullable: true)
                 },
                 constraints: table =>
                 {

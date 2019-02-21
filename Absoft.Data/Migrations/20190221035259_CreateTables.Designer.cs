@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Absoft.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190221030945_ChangeTypeChietKhau")]
-    partial class ChangeTypeChietKhau
+    [Migration("20190221035259_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -314,7 +314,7 @@ namespace Absoft.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float?>("ChietKhau");
+                    b.Property<decimal?>("ChietKhau");
 
                     b.Property<string>("GhiChu");
 
@@ -447,7 +447,7 @@ namespace Absoft.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float?>("ChietKhau");
+                    b.Property<decimal?>("ChietKhau");
 
                     b.Property<string>("GhiChu");
 

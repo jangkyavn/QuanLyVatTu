@@ -15,7 +15,7 @@ namespace Absoft.Data.Entities
         public string NguoiNhap { get; set; }
         public decimal? TongSoTien { get; set; }
         public int? TongSoLuong { get; set; }
-        public float? ChietKhau { get; set; }
+        public decimal? ChietKhau { get; set; }
         public string GhiChu { get; set; }
         public bool Status { get; set; }
 
