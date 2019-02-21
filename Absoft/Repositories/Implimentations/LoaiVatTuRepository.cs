@@ -25,11 +25,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-
-            var loaivt = await db.LoaiVatTus.FindAsync(id);
-            db.LoaiVatTus.Remove(loaivt);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var loaivt = await db.LoaiVatTus.FindAsync(id);
+                db.LoaiVatTus.Remove(loaivt);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }
         }
         public async Task<List<LoaiVatTuViewModel>> GetAllAsync()
         {

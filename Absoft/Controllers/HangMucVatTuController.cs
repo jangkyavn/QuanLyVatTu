@@ -70,7 +70,7 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _hangMucVatTuRepository.IsDelete(id);
+            var result = await _hangMucVatTuRepository.DeleteAsync(id);
             return Ok(result);
         }
     }

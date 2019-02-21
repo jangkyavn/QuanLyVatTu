@@ -81,11 +81,16 @@ namespace Absoft.Repositories.Implimentations
         // khong len su dung vi anh huong den ban loai vat tu
         public async Task<bool> DeleteAsync(int id)
         {
-          
+            try
+            {
                 var hangmucvt = await db.HangMucVatTus.FindAsync(id);
                 db.HangMucVatTus.Remove(hangmucvt);
                 return await db.SaveChangesAsync() > 0;
-           
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }                          
         }
         public async Task<bool> IsDelete(int id)
         {

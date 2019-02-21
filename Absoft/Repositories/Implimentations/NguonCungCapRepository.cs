@@ -51,10 +51,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            var ncc = await db.NguonCungCaps.FindAsync(id);
-            db.NguonCungCaps.Remove(ncc);
-            return await db.SaveChangesAsync() > 0;
-
+            try
+            {
+                var ncc = await db.NguonCungCaps.FindAsync(id);
+                db.NguonCungCaps.Remove(ncc);
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;                
+            }
         }
         public async Task<List<NguonCungCapViewModel>> GetAllAsync()
         {

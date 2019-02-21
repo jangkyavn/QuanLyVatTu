@@ -1,5 +1,6 @@
 ﻿using Absoft.Helpers;
 using Absoft.ViewModels;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -23,5 +24,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> ChangStatus(int id);
         Task<bool> GetStatus(int id);
         Task<bool> IsDeleteMulti(List<int> listid);
+        Task<bool> ImportVT(IList<IFormFile> files);
     }
 }

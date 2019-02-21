@@ -53,11 +53,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            
+            try
+            {
                 var hangsanxuat = await db.HangSanXuats.FindAsync(id);
                 db.HangSanXuats.Remove(hangsanxuat);
                 return await db.SaveChangesAsync() > 0;
-                     
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }                                    
         }
         public async Task<List<HangSanXuatViewModel>> GetAllAsync()
         {

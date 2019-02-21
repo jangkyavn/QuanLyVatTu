@@ -73,7 +73,7 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _IKhoVatTuRepository.IsDelete(id);
+            var result = await _IKhoVatTuRepository.DeleteAsync(id);
             return Ok(result);
         }
     }

@@ -56,11 +56,16 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<bool> DeleteAsync(int id)
         {
-          
+            try
+            {
                 var ns = await db.NhanSus.FindAsync(id);
                 db.NhanSus.Remove(ns);
                 return await db.SaveChangesAsync() > 0;
-           
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }           
         }
         public async Task<List<NhanSuViewModel>> GetAllAsync()
         {
