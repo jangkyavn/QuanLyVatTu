@@ -13,6 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 
 namespace Absoft.Controllers
@@ -21,6 +22,9 @@ namespace Absoft.Controllers
     {
         IDonViTinhRepository _donViTinhRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
+
+        public List<int> JsonConnvert { get; private set; }
+
         public DonViTinhController(IDonViTinhRepository donViTinhRepository, IHostingEnvironment hostingEnvironment)
         {
             _donViTinhRepository = donViTinhRepository;
@@ -72,6 +76,14 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _donViTinhRepository.DeleteAsync(id);
+            return Ok(result);
+        }
+        [HttpDelete("DeleteAllAsync/{strIds}")]
+        public async Task<IActionResult> DeleteAllAsync(string strIds)
+        {
+            // strids [1,2,3,4,4,5,56,6]
+            List<int> listId = JsonConvert.DeserializeObject<List<int>>(strIds);
+            var result = await _donViTinhRepository.DeleteAllAsync(listId);
             return Ok(result);
         }
         [HttpPost]

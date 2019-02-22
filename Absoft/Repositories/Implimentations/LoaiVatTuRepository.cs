@@ -36,6 +36,29 @@ namespace Absoft.Repositories.Implimentations
                 return false;                
             }
         }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.LoaiVatTus.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.LoaiVatTus.Remove(dvt);
+                        }
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
+        }
         public async Task<List<LoaiVatTuViewModel>> GetAllAsync()
         {
             var query = from lvt in db.LoaiVatTus

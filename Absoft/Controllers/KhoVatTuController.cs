@@ -8,6 +8,7 @@ using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Absoft.Controllers
 {   
@@ -64,6 +65,14 @@ namespace Absoft.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _IKhoVatTuRepository.DeleteAsync(id);
+            return Ok(result);
+        }
+        [HttpDelete("DeleteAllAsync/{strIds}")]
+        public async Task<IActionResult> DeleteAllAsync(string strIds)
+        {
+            // strids [1,2,3,4,4,5,56,6]
+            List<int> listId = JsonConvert.DeserializeObject<List<int>>(strIds);
+            var result = await _IKhoVatTuRepository.DeleteAllAsync(listId);
             return Ok(result);
         }
     }

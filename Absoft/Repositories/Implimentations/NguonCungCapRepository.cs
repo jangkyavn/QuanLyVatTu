@@ -62,6 +62,29 @@ namespace Absoft.Repositories.Implimentations
                 return false;                
             }
         }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.NguonCungCaps.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.NguonCungCaps.Remove(dvt);
+                        }
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
+        }
         public async Task<List<NguonCungCapViewModel>> GetAllAsync()
         {
             return await db.NguonCungCaps.Where(x => x.Status == true)

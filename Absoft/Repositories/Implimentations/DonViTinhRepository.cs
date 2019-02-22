@@ -63,10 +63,9 @@ namespace Absoft.Repositories.Implimentations
                 catch (Exception)
                 {
                     return false;
-                }                
-            }            
+                }
+            }
         }
-
         public async Task<bool> UpdateAsync(DonViTinhViewModel mdonvitinh)
         {
             var entity = mp.Map<DonViTinh>(mdonvitinh);
@@ -96,7 +95,30 @@ namespace Absoft.Repositories.Implimentations
             catch (DbUpdateException)
             {
                 return false;
-            }          
+            }
+        }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.DonViTinhs.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.DonViTinhs.Remove(dvt);
+                        }                      
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
         }
         public async Task<bool> IsDelete(int id)
         {
@@ -183,7 +205,7 @@ namespace Absoft.Repositories.Implimentations
         }
 
         public async Task<bool> ImportDVT(IList<IFormFile> files)
-        {           
+        {
             var upload = new UploadFile(_hostingEnvironment);
             var fileUrl = upload.InsertFile(files);
             if (!String.IsNullOrEmpty(fileUrl))
@@ -203,7 +225,7 @@ namespace Absoft.Repositories.Implimentations
                                 TenDVT = workSheet.Cells[i, 1].Value.ToString(),
                                 Status = true,
                             });
-                        }                                  
+                        }
                         var rs = await this.InsertListAsync(List);
                         if (rs == true)
                         {
@@ -221,7 +243,7 @@ namespace Absoft.Repositories.Implimentations
             else
             {
                 return false;
-            }            
+            }
         }
         public bool ExportDVT()
         {

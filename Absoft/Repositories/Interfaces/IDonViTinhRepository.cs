@@ -22,5 +22,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InsertListAsync(List<DonViTinhViewModel> mdonvitinh);
         Task<bool> ImportDVT(IList<IFormFile> files);
         bool ExportDVT();
+        Task<bool> DeleteAllAsync(List<int> listId);
     }
 }

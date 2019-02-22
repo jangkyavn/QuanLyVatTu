@@ -92,6 +92,29 @@ namespace Absoft.Repositories.Implimentations
                 return false;                
             }                          
         }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.HangMucVatTus.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.HangMucVatTus.Remove(dvt);
+                        }                        
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
+        }
         public async Task<bool> IsDelete(int id)
         {
             var entity = await db.HangMucVatTus.FindAsync(id);

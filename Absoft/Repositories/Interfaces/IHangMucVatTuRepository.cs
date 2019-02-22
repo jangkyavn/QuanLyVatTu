@@ -18,5 +18,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> ChangStatus(int id);
         Task<bool> GetStatus(int id);
         Task<bool> IsDeleteMulti(List<int> listid);
+        Task<bool> DeleteAllAsync(List<int> listId);
     }
 }

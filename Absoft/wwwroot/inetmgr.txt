@@ -1,0 +1,16 @@
+   public async Task<List<VatTuViewModel>> GetByMaHM(int maHM)
+        {
+            var listMaLoaiVT = await db.LoaiVatTus.Where(x => x.MaHM == maHM).Select(x=>x.MaLoaiVatTu).ToListAsync();
+            var listVT =await db.VatTus.Where(o => listMaLoaiVT.Contains(o.MaLoaiVatTu)).ToListAsync();
+            var listmVT = mp.Map<List<VatTuViewModel>>(listVT);
+            return listmVT;
+        }
+
+ Task<List<VatTuViewModel>> GetByMaHM(int maHM);
+
+  [HttpGet("GetByMaHM/{maHM}")]
+        public async Task<IActionResult> GetByMaHM(int maHM)
+        {
+            var models = await _IVatTuRepository.GetByMaHM(maHM);
+            return Ok(models);
+        }     

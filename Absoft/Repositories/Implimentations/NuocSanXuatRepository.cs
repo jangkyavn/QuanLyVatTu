@@ -63,6 +63,29 @@ namespace Absoft.Repositories.Implimentations
                 return false;                
             }
         }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.NuocSanXuats.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.NuocSanXuats.Remove(dvt);
+                        }
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
+        }
         public async Task<List<NuocSanXuatViewModel>> GetAllAsync()
         {
             return await db.NuocSanXuats.Where(x => x.Status == true)

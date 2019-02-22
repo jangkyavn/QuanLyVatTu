@@ -51,6 +51,29 @@ namespace Absoft.Repositories.Implimentations
                 return false;
             }
         }
+        public async Task<bool> DeleteAllAsync(List<int> listId)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var id in listId)
+                    {
+                        var dvt = await db.VatTus.FindAsync(id);
+                        if (dvt != null)
+                        {
+                            db.VatTus.Remove(dvt);
+                        }
+                    }
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+            }
+        }
         // delete all by maloaivt use transaction 
         public async Task<bool> DeleteByMaLoaiVTAsync(int MaloaiVT)
         {
@@ -297,16 +320,16 @@ namespace Absoft.Repositories.Implimentations
                         List<VatTuViewModel> List = new List<VatTuViewModel>();
                         for (int i = 2; i <= totalRows; i++)
                         {
-                            if ((workSheet.Cells[i, 1].Value) != null && (workSheet.Cells[i, 2].Value) != null && (workSheet.Cells[i, 4].Value) != null)
+                            if ((workSheet.Cells[i, 1].Value) != null && (workSheet.Cells[i, 2].Value) != null && (workSheet.Cells[i, 3].Value) != null)
                             {
-                                if ((workSheet.Cells[i, 3].Value) == null) workSheet.Cells[i, 3].Value = "";
+                                if ((workSheet.Cells[i, 4].Value) == null) workSheet.Cells[i, 4].Value = "";
                                 if ((workSheet.Cells[i, 5].Value) == null) workSheet.Cells[i, 5].Value = "";
                                 List.Add(new VatTuViewModel
                                 {
-                                    TenVT = workSheet.Cells[i, 1].Value.ToString(),
+                                    TenHM = workSheet.Cells[i, 1].Value.ToString(),                                    
                                     TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString(),
-                                    TenDVT = workSheet.Cells[i, 3].Value.ToString(),
-                                    TenHM = workSheet.Cells[i, 4].Value.ToString(),
+                                    TenVT = workSheet.Cells[i, 3].Value.ToString(),
+                                    TenDVT = workSheet.Cells[i, 4].Value.ToString(),                                   
                                     GhiChu = workSheet.Cells[i, 5].Value.ToString(),
                                     Status = true,
                                 });
@@ -319,70 +342,59 @@ namespace Absoft.Repositories.Implimentations
                             {
                                 try
                                 {
-                                    var MaVT = await CheckTonTai(item.TenVT);
-                                    if (MaVT == -1 && item.TenLoaiVatTu != null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM != null && !string.IsNullOrEmpty(item.TenHM))
+                                    var MaHM = await _hangMucVatTuRepository.CheckTonTai(item.TenHM);
+                                    if (MaHM != -1)
                                     {
-                                        var MaHM = await _hangMucVatTuRepository.CheckTonTai(item.TenHM);
-                                        if (MaHM == -1)
+                                        var MaVT = await CheckTonTai(item.TenVT);
+                                        if (MaVT == -1 && item.TenLoaiVatTu != null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM != null && !string.IsNullOrEmpty(item.TenHM))
                                         {
-                                            // them moi hang muc
-                                            HangMucVatTuViewModel model = new HangMucVatTuViewModel()
+                                            var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
+                                            if (MaLoaiVatTu == -1)
                                             {
-                                                TenHM = item.TenHM
-                                            };
-                                            var rsHM = await _hangMucVatTuRepository.InsertAsync(model);
-                                            // lay MaHM moi
-                                            if (rsHM == true)
-                                            {
-                                                MaHM = (await db.HangMucVatTus.FirstOrDefaultAsync(x => x.TenHM == item.TenHM)).MaHM;
-                                            }
-                                        }
-                                        var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
-                                        if (MaLoaiVatTu == -1)
-                                        {
-                                            // them moi loai vat tu
-                                            LoaiVatTuViewModel model = new LoaiVatTuViewModel()
-                                            {
-                                                TenLoai = item.TenLoaiVatTu,
-                                                MaHM = MaHM
-                                            };
-                                            var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
-                                            if (rsLVT == true)
-                                            {
-                                                // lay MaLoaiVatTu moi
-                                                MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
-                                            }
-                                        }
-                                        int? MaDVT = null;
-                                        if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT != null)
-                                        {
-                                            MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
-                                            if (MaDVT == -1)
-                                            {
-                                                // them moi don vi tinh
-                                                DonViTinhViewModel model = new DonViTinhViewModel()
+                                                // them moi loai vat tu
+                                                LoaiVatTuViewModel model = new LoaiVatTuViewModel()
                                                 {
-                                                    TenDVT = item.TenDVT
+                                                    TenLoai = item.TenLoaiVatTu,
+                                                    MaHM = MaHM
                                                 };
-                                                var rsDVT = await _donViTinhRepository.InsertAsync(model);
-                                                if (rsDVT == true)
+                                                var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
+                                                if (rsLVT == true)
                                                 {
-                                                    // lay MaDVT moi
-                                                    MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
+                                                    // lay MaLoaiVatTu moi
+                                                    MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
                                                 }
                                             }
+                                            int? MaDVT = null;
+                                            if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT != null)
+                                            {
+                                                MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
+                                                if (MaDVT == -1)
+                                                {
+                                                    // them moi don vi tinh
+                                                    DonViTinhViewModel model = new DonViTinhViewModel()
+                                                    {
+                                                        TenDVT = item.TenDVT
+                                                    };
+                                                    var rsDVT = await _donViTinhRepository.InsertAsync(model);
+                                                    if (rsDVT == true)
+                                                    {
+                                                        // lay MaDVT moi
+                                                        MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
+                                                    }
+                                                }
+                                            }
+                                            VatTuViewModel vt = new VatTuViewModel()
+                                            {
+                                                TenVT = item.TenVT,
+                                                MaDVT = MaDVT,
+                                                MaLoaiVatTu = MaLoaiVatTu,
+                                                GhiChu = item.GhiChu
+                                            };
+                                            var rsVT = await this.InsertAsync(vt);
                                         }
-                                        VatTuViewModel vt = new VatTuViewModel()
-                                        {
-                                            TenVT = item.TenVT,
-                                            MaDVT = MaDVT,
-                                            MaLoaiVatTu = MaLoaiVatTu,
-                                            GhiChu = item.GhiChu
-                                        };
-                                        var rsVT = await this.InsertAsync(vt);
-                                    }
-                                    transaction.Commit();
-                                    await db.SaveChangesAsync();
+                                        transaction.Commit();
+                                        await db.SaveChangesAsync();
+                                    }                                   
                                 }
                                 catch (Exception)
                                 {
@@ -435,19 +447,18 @@ namespace Absoft.Repositories.Implimentations
 
                     ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("VatTu");
                     int totalRows = List.Count();
-
-                    worksheet.Cells[1, 1].Value = "TenVT";
+                    worksheet.Cells[1, 1].Value = "TenHM";                   
                     worksheet.Cells[1, 2].Value = "TenLoaiVatTu";
-                    worksheet.Cells[1, 3].Value = "TenDVT";
-                    worksheet.Cells[1, 4].Value = "TenHM";
+                    worksheet.Cells[1, 3].Value = "TenVT";
+                    worksheet.Cells[1, 4].Value = "TenDVT";                   
                     worksheet.Cells[1, 5].Value = "GhiChu";
                     int i = 0;
                     for (int row = 2; row <= totalRows + 1; row++)
                     {
-                        worksheet.Cells[row, 1].Value = List[i].TenVT;
+                        worksheet.Cells[row, 1].Value = List[i].TenHM;
                         worksheet.Cells[row, 2].Value = List[i].TenLoaiVatTu;
-                        worksheet.Cells[row, 3].Value = List[i].TenDVT;
-                        worksheet.Cells[row, 4].Value = List[i].TenHM;
+                        worksheet.Cells[row, 3].Value = List[i].TenVT;
+                        worksheet.Cells[row, 4].Value = List[i].TenDVT;
                         worksheet.Cells[row, 5].Value = List[i].GhiChu;
                         i++;
                     }
