@@ -150,7 +150,7 @@ namespace Absoft.Repositories.Implimentations
                               MaNguon = ncc.MaNguon,
                               TenNguon = ncc.TenNguon,
                               GhiChu = ncc.GhiChu,
-                              Status = ncc.Status
+                              Status = ncc.Status,
                           };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))

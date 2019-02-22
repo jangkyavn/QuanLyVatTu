@@ -1,4 +1,6 @@
-﻿namespace Absoft.ViewModels
+﻿using System.ComponentModel;
+
+namespace Absoft.ViewModels
 {
     public class NguonCungCapViewModel
     {
@@ -18,5 +20,8 @@
             }
         }
         public bool Status { set; get; }
+
+        [DefaultValue(false)]
+        public bool Checked { get; set; }
     }
 }
