@@ -107,11 +107,11 @@ namespace Absoft.Controllers
             var result = await _IVatTuRepository.ImportVT(files);
             return Ok(result);
         }
-        [HttpGet]
+        [HttpPost]
         [Route("ExportVT")]
-        public IActionResult ExportVT()
+        public IActionResult ExportVT(List<VatTuViewModel> vatTuViewModels)
         {
-            var result = _IVatTuRepository.ExportVT();
+            var result = _IVatTuRepository.ExportVT(vatTuViewModels);
             return Ok(result);
         }
         [HttpGet]

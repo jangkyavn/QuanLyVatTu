@@ -418,7 +418,7 @@ namespace Absoft.Repositories.Implimentations
                 return false;
             }
         }
-        public object ExportVT()
+        public object ExportVT(List<VatTuViewModel> vatTuViewModels)
         {
             try
             {
@@ -431,8 +431,9 @@ namespace Absoft.Repositories.Implimentations
                 using (ExcelPackage package = new ExcelPackage(file))
                 {
 
-                    // IList<VatTu> List = db.VatTus.ToList();
-                    var listvt = from vt in db.VatTus
+                    // IList<VatTu> List = db.VatTus.ToList();\
+                    var vts = mp.Map<List<VatTu>>(vatTuViewModels);
+                    var listvt = from vt in vts
                                  join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpdonvitinh
                                  join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
                                  join hmvt in db.HangMucVatTus on lvt.MaHM equals hmvt.MaHM

@@ -25,7 +25,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> GetStatus(int id);
         Task<bool> IsDeleteMulti(List<int> listid);
         Task<bool> ImportVT(IList<IFormFile> files);
-        object ExportVT();
+        object ExportVT(List<VatTuViewModel> vatTuViewModels);
         bool DeleteFileVTAfterExport(string filename);
         Task<bool> DeleteAllAsync(List<int> listId);
     }
