@@ -210,6 +210,14 @@ namespace Absoft.Repositories.Implimentations
             }
             else return -1;
         }
+        public async Task<bool> CheckSuDung(int mavt)
+        {
+            if (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt) != null) return true;
+            if (await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt) != null) return true;
+            if (await db.KhoHangs.FirstOrDefaultAsync(x => x.MaVatTu == mavt) != null) return true;
+            return false;
+
+        }
         public async Task<bool> ChangStatus(int id)
         {
             var model = await db.VatTus.FindAsync(id);
@@ -320,17 +328,20 @@ namespace Absoft.Repositories.Implimentations
                         List<VatTuViewModel> List = new List<VatTuViewModel>();
                         for (int i = 2; i <= totalRows; i++)
                         {
-                            if ((workSheet.Cells[i, 1].Value) != null && (workSheet.Cells[i, 2].Value) != null && (workSheet.Cells[i, 3].Value) != null)
+                            //var test = workSheet.Cells[i, 3].Value.ToString().ToTrim();
+                            //var test1 = workSheet.Cells[i, 3].Value.ToString().Trim();
+                            //var test2 = workSheet.Cells[i, 3].Value.ToString().Length;                            
+                            if ((workSheet.Cells[i, 1].Value) != null && (workSheet.Cells[i, 2].Value) != null && (workSheet.Cells[i, 3].Value) != null && (workSheet.Cells[i, 1].Value.ToString().ToTrim() != "") && (workSheet.Cells[i, 2].Value.ToString().ToTrim() != "") && (workSheet.Cells[i, 3].Value.ToString().ToTrim() != ""))
                             {
                                 if ((workSheet.Cells[i, 4].Value) == null) workSheet.Cells[i, 4].Value = "";
                                 if ((workSheet.Cells[i, 5].Value) == null) workSheet.Cells[i, 5].Value = "";
                                 List.Add(new VatTuViewModel
                                 {
-                                    TenHM = workSheet.Cells[i, 1].Value.ToString(),                                    
-                                    TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString(),
-                                    TenVT = workSheet.Cells[i, 3].Value.ToString(),
-                                    TenDVT = workSheet.Cells[i, 4].Value.ToString(),                                   
-                                    GhiChu = workSheet.Cells[i, 5].Value.ToString(),
+                                    TenHM = workSheet.Cells[i, 1].Value.ToString().Trim(),
+                                    TenLoaiVatTu = workSheet.Cells[i, 2].Value.ToString().Trim(),
+                                    TenVT = workSheet.Cells[i, 3].Value.ToString().Trim(),
+                                    TenDVT = workSheet.Cells[i, 4].Value.ToString().Trim(),
+                                    GhiChu = workSheet.Cells[i, 5].Value.ToString().Trim(),
                                     Status = true,
                                 });
                             }
@@ -346,12 +357,11 @@ namespace Absoft.Repositories.Implimentations
                                     if (MaHM != -1)
                                     {
                                         var MaVT = await CheckTonTai(item.TenVT);
-                                        if (MaVT == -1 && item.TenLoaiVatTu != null && !string.IsNullOrEmpty(item.TenLoaiVatTu) && item.TenHM != null && !string.IsNullOrEmpty(item.TenHM))
+                                        if (MaVT == -1) // insert vật tư mới
                                         {
                                             var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
-                                            if (MaLoaiVatTu == -1)
-                                            {
-                                                // them moi loai vat tu
+                                            if (MaLoaiVatTu == -1) // thêm loại vật tư mới
+                                            {                                                
                                                 LoaiVatTuViewModel model = new LoaiVatTuViewModel()
                                                 {
                                                     TenLoai = item.TenLoaiVatTu,
@@ -359,13 +369,18 @@ namespace Absoft.Repositories.Implimentations
                                                 };
                                                 var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
                                                 if (rsLVT == true)
-                                                {
-                                                    // lay MaLoaiVatTu moi
+                                                {                                                   
                                                     MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
                                                 }
                                             }
+                                            else // cập nhật loại vật tư vào danh mục
+                                            {
+                                                var entity = await db.LoaiVatTus.FindAsync(MaLoaiVatTu);
+                                                entity.MaHM = MaHM;
+                                                await db.SaveChangesAsync();
+                                            }
                                             int? MaDVT = null;
-                                            if (!string.IsNullOrEmpty(item.TenDVT) && item.TenDVT != null)
+                                            if ((item.TenDVT.Trim())!="" && item.TenDVT != null)
                                             {
                                                 MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
                                                 if (MaDVT == -1)
@@ -381,20 +396,77 @@ namespace Absoft.Repositories.Implimentations
                                                         // lay MaDVT moi
                                                         MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
                                                     }
-                                                }
+                                                }                                               
                                             }
                                             VatTuViewModel vt = new VatTuViewModel()
                                             {
                                                 TenVT = item.TenVT,
                                                 MaDVT = MaDVT,
                                                 MaLoaiVatTu = MaLoaiVatTu,
-                                                GhiChu = item.GhiChu
+                                                GhiChu = item.GhiChu                   // status mặc định = true                                
                                             };
                                             var rsVT = await this.InsertAsync(vt);
                                         }
+                                        else // update vật tư
+                                        {
+                                            // check xem được sử dụng, nếu chưa thì cho update
+                                            if (await CheckSuDung(MaVT) == false)
+                                            {
+                                                var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
+                                                if (MaLoaiVatTu == -1)
+                                                {
+                                                    // them moi loai vat tu
+                                                    LoaiVatTuViewModel model = new LoaiVatTuViewModel()
+                                                    {
+                                                        TenLoai = item.TenLoaiVatTu,
+                                                        MaHM = MaHM
+                                                    };
+                                                    var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
+                                                    if (rsLVT == true)
+                                                    {
+                                                        // lay MaLoaiVatTu moi
+                                                        MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
+                                                    }
+                                                }
+                                                else // update loại vào danh mục 
+                                                {
+                                                    var entity = await db.LoaiVatTus.FindAsync(MaLoaiVatTu);
+                                                    entity.MaHM = MaHM;
+                                                    await db.SaveChangesAsync();
+                                                }
+                                                int? MaDVT = null;
+                                                if (item.TenDVT.Trim())!="" && item.TenDVT != null)
+                                                {
+                                                    MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
+                                                    if (MaDVT == -1)
+                                                    {
+                                                        // them moi don vi tinh
+                                                        DonViTinhViewModel model = new DonViTinhViewModel()
+                                                        {
+                                                            TenDVT = item.TenDVT
+                                                        };
+                                                        var rsDVT = await _donViTinhRepository.InsertAsync(model);
+                                                        if (rsDVT == true)
+                                                        {
+                                                            // lay MaDVT moi
+                                                            MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
+                                                        }
+                                                    }
+                                                }
+                                                VatTuViewModel vt = new VatTuViewModel()
+                                                {
+                                                    MaVatTu = MaVT,
+                                                    TenVT = item.TenVT,
+                                                    MaDVT = MaDVT,
+                                                    MaLoaiVatTu = MaLoaiVatTu,
+                                                    GhiChu = item.GhiChu      // status mặc định = true                                             
+                                                };
+                                                var rsVT = await this.UpdateAsync(vt);
+                                            }
+                                        }
                                         transaction.Commit();
                                         await db.SaveChangesAsync();
-                                    }                                   
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -450,10 +522,10 @@ namespace Absoft.Repositories.Implimentations
 
                     ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("VatTu");
                     int totalRows = List.Count();
-                    worksheet.Cells[1, 1].Value = "TenHM";                   
+                    worksheet.Cells[1, 1].Value = "TenHM";
                     worksheet.Cells[1, 2].Value = "TenLoaiVatTu";
                     worksheet.Cells[1, 3].Value = "TenVT";
-                    worksheet.Cells[1, 4].Value = "TenDVT";                   
+                    worksheet.Cells[1, 4].Value = "TenDVT";
                     worksheet.Cells[1, 5].Value = "GhiChu";
                     int i = 0;
                     for (int row = 2; row <= totalRows + 1; row++)
@@ -480,7 +552,7 @@ namespace Absoft.Repositories.Implimentations
                 }
                 return (new
                 {
-                   url =  url + "/" + fileName,
+                    url = url + "/" + fileName,
                     fileName
                 });
             }
@@ -492,18 +564,18 @@ namespace Absoft.Repositories.Implimentations
         }
 
         public bool DeleteFileVTAfterExport(string filename)
-        {                       
+        {
             if (!String.IsNullOrEmpty(filename))
             {
-                string rootFolder = _hostingEnvironment.WebRootPath;              
+                string rootFolder = _hostingEnvironment.WebRootPath;
 
                 FileInfo file = new FileInfo(Path.Combine(rootFolder, filename));
                 try
-                {                  
+                {
                     using (ExcelPackage package = new ExcelPackage(file))
-                    {                        
-                            file.Delete();
-                            return true;                       
+                    {
+                        file.Delete();
+                        return true;
                     }
                 }
                 catch (Exception)

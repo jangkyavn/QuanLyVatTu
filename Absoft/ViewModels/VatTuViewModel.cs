@@ -6,7 +6,6 @@
         {
             Status = true;
         }
-
         public int? MaVatTu { get; set; }
         public int MaLoaiVatTu { get; set; }
         public int? MaDVT { get; set; }
