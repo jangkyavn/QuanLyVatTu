@@ -435,7 +435,7 @@ namespace Absoft.Repositories.Implimentations
                                                     await db.SaveChangesAsync();
                                                 }
                                                 int? MaDVT = null;
-                                                if (item.TenDVT.Trim())!="" && item.TenDVT != null)
+                                                if ((item.TenDVT.Trim())!="" && item.TenDVT != null)
                                                 {
                                                     MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
                                                     if (MaDVT == -1)
