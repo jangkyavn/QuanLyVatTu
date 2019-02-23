@@ -76,30 +76,50 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<XuatVatTuParams> GetDetailAsync(int maPX)
         {
-            var px = await db.XuatVatTus.FindAsync(maPX);
-            var chiTietVM = from ct in db.XuatChiTiets
-                            join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
-                            join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
-                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                            where ct.MaPhieuXuat == maPX
-                            select new XuatChiTietViewModel
+            var px = await (from xvt in db.XuatVatTus
+                            join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
+                            join ns in db.NhanSus on xvt.MaNS equals ns.MaNS
+                            where xvt.MaPhieuXuat == maPX
+                            select new XuatVatTuViewModel
                             {
-                                MaPhieuXuat = ct.MaPhieuXuat,
-                                MaPhieuNhap = ct.MaPhieuNhap,
-                                MaVatTu = ct.MaVatTu,
-                                TenVT = vt.TenVT,
-                                TenDVT = dvt.TenDVT,
-                                DonGia = ct.DonGia,
-                                SoLuongXuat = ct.SoLuongXuat,
-                                GhiChu = ct.GhiChu,
-                                Status = ct.Status
-                            };
+                                MaPhieuXuat = xvt.MaPhieuXuat,
+                                SoPhieuXuat = xvt.SoPhieuXuat,
+                                MaKho = xvt.MaKho,
+                                TenKho = kvt.TenKho,
+                                MaNS = xvt.MaNS,
+                                TenNS = ns.HoTen,
+                                ChietKhau = xvt.ChietKhau,
+                                NgayNhap = xvt.NgayNhap,
+                                GhiChu = xvt.GhiChu,
+                                Status = xvt.Status,
+                                TongSoLuong = xvt.TongSoLuong,
+                                TongSoTien = xvt.TongSoTien,
+                                ThanhTien = xvt.TongSoTien * (1 - (xvt.ChietKhau / 100))
+                            }).FirstOrDefaultAsync();
+
+            var chiTietVM = await (from ct in db.XuatChiTiets
+                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                                   join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                                   from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                   where ct.MaPhieuXuat == maPX
+                                   select new XuatChiTietViewModel
+                                   {
+                                       MaPhieuXuat = ct.MaPhieuXuat,
+                                       MaPhieuNhap = ct.MaPhieuNhap,
+                                       MaVatTu = ct.MaVatTu,
+                                       TenVT = vt.TenVT,
+                                       TenDVT = dvt.TenDVT,
+                                       DonGia = ct.DonGia,
+                                       SoLuongXuat = ct.SoLuongXuat,
+                                       GhiChu = ct.GhiChu,
+                                       Status = ct.Status
+                                   }).ToListAsync();
 
             var mpx = mp.Map<XuatVatTuViewModel>(px);
             return new XuatVatTuParams()
             {
                 mxuatvattu = mpx,
-                listxuatchitiet = chiTietVM.ToList()
+                listxuatchitiet = chiTietVM
             };
         }
         public async Task<XuatVatTuParams> GetByMaPNAsync(int maPN)
@@ -304,7 +324,7 @@ namespace Absoft.Repositories.Implimentations
             xuatVatTuViewModel.TongSoTien = 0;
             var px = mp.Map<XuatVatTu>(xuatVatTuViewModel);
             await db.XuatVatTus.AddAsync(px);
-            await db.SaveChangesAsync();         
+            await db.SaveChangesAsync();
             return px.MaPhieuXuat;
         }
 
@@ -476,7 +496,7 @@ namespace Absoft.Repositories.Implimentations
             var viewModel = mp.Map<XuatVatTu>(xuatVatTuViewModel);
             db.XuatVatTus.Update(viewModel);
             await db.SaveChangesAsync();
-            var rs =await this.SumTongLuongTongTien(xuatVatTuViewModel.MaPhieuXuat);
+            var rs = await this.SumTongLuongTongTien(xuatVatTuViewModel.MaPhieuXuat);
             return rs;
         }
         public async Task<bool> SumTongLuongTongTien(int id)

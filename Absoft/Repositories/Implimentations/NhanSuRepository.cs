@@ -160,6 +160,16 @@ namespace Absoft.Repositories.Implimentations
                               NgaySinh = ns.NgaySinh,
                               QueQuan = GetAddress(ns.QueQuan),
                               DanToc = GetNation(ns.DanToc),
+                              TonGiao = ns.TonGiao,
+                              CapBacSHSQ = ns.CapBacSHSQ,
+                              ChucVu = ns.ChucVu,
+                              NgayNhapNguTuyenDung = ns.NgayNhapNguTuyenDung,
+                              Dang = ns.Dang,
+                              XuatThan = ns.XuatThan,
+                              BanThan = ns.BanThan,
+                              QuaTrinhHocTap = ns.QuaTrinhHocTap,
+                              ThanNhan = ns.ThanNhan,
+                              GhiChu = ns.GhiChu,
                               Status = ns.Status
                           };
 

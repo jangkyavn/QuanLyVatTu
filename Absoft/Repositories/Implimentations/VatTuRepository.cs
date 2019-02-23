@@ -13,8 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Implimentations
@@ -108,6 +106,7 @@ namespace Absoft.Repositories.Implimentations
                         join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
                         where vt.Status == true
+                        orderby vt.MaVatTu descending
                         select new VatTuViewModel
                         {
                             MaVatTu = vt.MaVatTu,
@@ -228,6 +227,7 @@ namespace Absoft.Repositories.Implimentations
                         join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
                         from dvt in tmpDonViTinhs.DefaultIfEmpty()
                         where vt.Status == true
+                        orderby vt.MaVatTu descending
                         select new VatTuViewModel
                         {
                             MaVatTu = vt.MaVatTu,
@@ -408,6 +408,8 @@ namespace Absoft.Repositories.Implimentations
                 }
                 catch (Exception ex)
                 {
+                    FileInfo fileInfo = new FileInfo(fileUrl);
+                    fileInfo.Delete();
                     throw ex;
                 }
             }
