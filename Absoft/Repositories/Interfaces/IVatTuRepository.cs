@@ -28,5 +28,9 @@ namespace Absoft.Repositories.Interfaces
         object ExportVT(List<VatTuViewModel> vatTuViewModels);
         bool DeleteFileVTAfterExport(string filename);
         Task<bool> DeleteAllAsync(List<int> listId);
+
+        Task<List<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(int mavt);
+        Task<List<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(int mavt);
+        Task<PagedList<KhoHangViewModel>> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt);
     }
 }

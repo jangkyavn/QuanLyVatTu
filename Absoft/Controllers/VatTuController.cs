@@ -121,5 +121,27 @@ namespace Absoft.Controllers
             var result = _IVatTuRepository.DeleteFileVTAfterExport(filename);
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("ThongKeVatTuNhapByMaVT/{Id}")]
+        public async Task<IActionResult> ThongKeVatTuNhapByMaVT(int Id)
+        {
+            var result =await _IVatTuRepository.ThongKeVatTuNhapByMaVT(Id);
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("ThongKeVatTuXuatpByMaVT/{Id}")]
+        public async Task<IActionResult> ThongKeVatTuXuatpByMaVT(int Id)
+        {
+            var result = await _IVatTuRepository.ThongKeVatTuXuatpByMaVT(Id);
+            return Ok(result);
+        }
+        [HttpGet("ThongKeVatTuTonKhoByMaVT")]
+        public async Task<IActionResult> ThongKeVatTuTonKhoByMaVT([FromQuery]PagingParams pagingParams, int Id)
+        {
+            var paged = await _IVatTuRepository.ThongKeVatTuTonKhoByMaVT(pagingParams, Id);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
     }
 }
