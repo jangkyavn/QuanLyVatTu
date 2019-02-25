@@ -70,26 +70,30 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<PagedList<UserListViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
-            var usersQuery = (from user in _dataContext.Users
-                              orderby user.UserName
-                              select new UserListViewModel
-                              {
-                                  Id = user.Id,
-                                  UserName = user.UserName,
-                                  Email = user.Email,
-                                  FullName = user.FullName,
-                                  Status = user.Status,
-                                  Roles = (from userRole in user.UserRoles
-                                           join role in _dataContext.Roles
-                                           on userRole.RoleId equals role.Id
-                                           select role.Name).ToList()
-                              });
+            var usersQuery = from user in _dataContext.Users
+                             orderby user.UserName
+                             select new UserListViewModel
+                             {
+                                 Id = user.Id,
+                                 UserName = user.UserName,
+                                 Email = user.Email,
+                                 FullName = user.FullName,
+                                 Status = user.Status,
+                                 Roles = (from userRole in user.UserRoles
+                                          join role in _dataContext.Roles
+                                          on userRole.RoleId equals role.Id
+                                          select role.Name).ToList(),
+                                 RolesOfUser = string.Join(",", (from userRole in user.UserRoles
+                                                                 join role in _dataContext.Roles
+                                                                 on userRole.RoleId equals role.Id
+                                                                 select role.Name).ToList())
+                             };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                usersQuery = usersQuery.Where(x => 
+                usersQuery = usersQuery.Where(x =>
                     x.UserName.ToUpper().Contains(keyword) ||
                     x.FullName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                     x.FullName.ToUpper().Contains(keyword) ||

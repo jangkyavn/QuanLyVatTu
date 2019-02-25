@@ -11,5 +11,6 @@ namespace Absoft.ViewModels
         public string FullName { get; set; }
         public bool Status { get; set; }
         public List<string> Roles { get; set; }
+        public string RolesOfUser { get; set; }
     }
 }
