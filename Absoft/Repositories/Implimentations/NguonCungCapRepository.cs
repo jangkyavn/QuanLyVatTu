@@ -149,7 +149,7 @@ namespace Absoft.Repositories.Implimentations
                           {
                               MaNguon = ncc.MaNguon,
                               TenNguon = ncc.TenNguon,
-                              GhiChu = ncc.GhiChu,
+                              GhiChu = ncc.GhiChu ?? String.Empty,
                               Status = ncc.Status,
                           };
 

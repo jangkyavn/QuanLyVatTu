@@ -151,7 +151,7 @@ namespace Absoft.Repositories.Implimentations
                           {
                               MaHang = hsx.MaHang,
                               TenHang = hsx.TenHang,
-                              GhiChu = hsx.GhiChu,
+                              GhiChu = hsx.GhiChu ?? string.Empty,
                               Status = hsx.Status
                           };
 

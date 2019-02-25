@@ -148,7 +148,7 @@ namespace Absoft.Repositories.Implimentations
                         {
                             MaHM = hmvt.MaHM,
                             TenHM = hmvt.TenHM,
-                            GhiChu = hmvt.GhiChu,
+                            GhiChu = hmvt.GhiChu ?? string.Empty,
                             Status = hmvt.Status
                         };
 

@@ -242,7 +242,7 @@ namespace Absoft.Repositories.Implimentations
                             MaLoaiVatTu = vt.MaLoaiVatTu,
                             MaDVT = vt.MaDVT,
                             TenVT = vt.TenVT,
-                            GhiChu = vt.GhiChu,
+                            GhiChu = vt.GhiChu ?? string.Empty,
                             TenDVT = dvt.TenDVT,
                             TenLoaiVatTu = lvt.TenLoai
                         };
@@ -361,15 +361,15 @@ namespace Absoft.Repositories.Implimentations
                                         {
                                             var MaLoaiVatTu = await _loaiVatTuRepository.CheckTonTai(item.TenLoaiVatTu);
                                             if (MaLoaiVatTu == -1) // thêm loại vật tư mới
-                                            {                                                
+                                            {
                                                 LoaiVatTuViewModel model = new LoaiVatTuViewModel()
                                                 {
                                                     TenLoai = item.TenLoaiVatTu,
-                                                    MaHM = MaHM
+                                                    MaHM = MaHM,                                                    
                                                 };
                                                 var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
                                                 if (rsLVT == true)
-                                                {                                                   
+                                                {
                                                     MaLoaiVatTu = (await db.LoaiVatTus.FirstOrDefaultAsync(x => x.TenLoai == item.TenLoaiVatTu)).MaLoaiVatTu;
                                                 }
                                             }
@@ -380,7 +380,7 @@ namespace Absoft.Repositories.Implimentations
                                                 await db.SaveChangesAsync();
                                             }
                                             int? MaDVT = null;
-                                            if ((item.TenDVT.Trim())!="" && item.TenDVT != null)
+                                            if ((item.TenDVT.Trim()) != "" && item.TenDVT != null)
                                             {
                                                 MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
                                                 if (MaDVT == -1)
@@ -396,7 +396,7 @@ namespace Absoft.Repositories.Implimentations
                                                         // lay MaDVT moi
                                                         MaDVT = (await db.DonViTinhs.FirstOrDefaultAsync(x => x.TenDVT == item.TenDVT)).MaDVT;
                                                     }
-                                                }                                               
+                                                }
                                             }
                                             VatTuViewModel vt = new VatTuViewModel()
                                             {
@@ -419,7 +419,7 @@ namespace Absoft.Repositories.Implimentations
                                                     LoaiVatTuViewModel model = new LoaiVatTuViewModel()
                                                     {
                                                         TenLoai = item.TenLoaiVatTu,
-                                                        MaHM = MaHM
+                                                        MaHM = MaHM,                                                      
                                                     };
                                                     var rsLVT = await _loaiVatTuRepository.InsertAsync(model);
                                                     if (rsLVT == true)
@@ -435,7 +435,7 @@ namespace Absoft.Repositories.Implimentations
                                                     await db.SaveChangesAsync();
                                                 }
                                                 int? MaDVT = null;
-                                                if ((item.TenDVT.Trim())!="" && item.TenDVT != null)
+                                                if ((item.TenDVT.Trim()) != "" && item.TenDVT != null)
                                                 {
                                                     MaDVT = await _donViTinhRepository.CheckTonTai(item.TenDVT);
                                                     if (MaDVT == -1)

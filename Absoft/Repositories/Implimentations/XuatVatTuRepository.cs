@@ -341,7 +341,7 @@ namespace Absoft.Repositories.Implimentations
                             NgayNhap = xvt.NgayNhap,
                             TongSoTien = xvt.TongSoTien,
                             TongSoLuong = xvt.TongSoLuong,
-                            GhiChu = xvt.GhiChu,
+                            GhiChu = xvt.GhiChu ?? string.Empty,
                             Status = xvt.Status,
                             TenKho = kvt.TenKho,
                             TenNS = ns.HoTen,

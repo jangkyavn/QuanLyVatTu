@@ -102,7 +102,7 @@ namespace Absoft.Repositories.Implimentations
                             TongSoLuong = nvt.TongSoLuong,
                             ChietKhau = nvt.ChietKhau,
                             ThanhTien = nvt.TongSoTien * (1 - (nvt.ChietKhau / 100)),
-                            GhiChu = nvt.GhiChu,
+                            GhiChu = nvt.GhiChu ?? string.Empty,
                             Status = nvt.Status
                         };
 

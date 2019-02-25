@@ -60,8 +60,8 @@ namespace Absoft.Repositories.Implimentations
             }
             catch (DbUpdateException)
             {
-                return false;                
-            }                        
+                return false;
+            }
         }
         public async Task<bool> DeleteAllAsync(List<int> listId)
         {
@@ -75,7 +75,7 @@ namespace Absoft.Repositories.Implimentations
                         if (dvt != null)
                         {
                             db.KhoVatTus.Remove(dvt);
-                        }                        
+                        }
                     }
                     transaction.Commit();
                     return await db.SaveChangesAsync() > 0;
@@ -88,15 +88,15 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<KhoVatTuViewModel>> GetAllAsync()
         {
-            return await db.KhoVatTus.Where(x=>x.Status==true)
+            return await db.KhoVatTus.Where(x => x.Status == true)
                 .ProjectTo<KhoVatTuViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }
 
         public async Task<KhoVatTuViewModel> GetByIdAsync(int id)
         {
-            return mp.Map<KhoVatTuViewModel> (await db.KhoVatTus.FindAsync(id));
-            
+            return mp.Map<KhoVatTuViewModel>(await db.KhoVatTus.FindAsync(id));
+
         }
 
         public async Task<bool> InsertAsync(KhoVatTuViewModel mkhovattu)
@@ -147,14 +147,14 @@ namespace Absoft.Repositories.Implimentations
             var query = from hvt in db.KhoVatTus
                         where hvt.Status == true
                         select new KhoVatTuViewModel
-                          {
-                              MaKho = hvt.MaKho,
-                              TenKho = hvt.TenKho,
-                              DienThoai = hvt.DienThoai,
-                              DiaChi = hvt.DiaChi,
-                              GhiChu = hvt.GhiChu,
-                              Status = hvt.Status
-                          };
+                        {
+                            MaKho = hvt.MaKho,
+                            TenKho = hvt.TenKho,
+                            DienThoai = hvt.DienThoai ?? string.Empty,
+                            DiaChi = hvt.DiaChi ?? string.Empty,
+                            GhiChu = hvt.GhiChu ?? string.Empty,
+                            Status = hvt.Status
+                        };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {

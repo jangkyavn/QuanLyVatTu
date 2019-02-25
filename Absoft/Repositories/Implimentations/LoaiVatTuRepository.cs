@@ -200,7 +200,7 @@ namespace Absoft.Repositories.Implimentations
                         {
                             MaLoaiVatTu = lvt.MaLoaiVatTu,
                             TenLoai = lvt.TenLoai,
-                            GhiChu = lvt.GhiChu,
+                            GhiChu = lvt.GhiChu ?? String.Empty,
                             MaHM = lvt.MaHM,
                             TenHM = hm.TenHM
                         };

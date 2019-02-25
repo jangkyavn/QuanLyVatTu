@@ -156,10 +156,10 @@ namespace Absoft.Repositories.Implimentations
                           select new NhanSuViewModel
                           {
                               MaNS = ns.MaNS,
-                              HoTen = ns.HoTen,
-                              NgaySinh = ns.NgaySinh,
-                              QueQuan = GetAddress(ns.QueQuan),
-                              DanToc = GetNation(ns.DanToc),
+                              HoTen = ns.HoTen ?? string.Empty,
+                              NgaySinh = ns.NgaySinh ?? string.Empty,
+                              QueQuan = GetAddress(ns.QueQuan) ?? string.Empty,
+                              DanToc = GetNation(ns.DanToc) ?? string.Empty,
                               TonGiao = ns.TonGiao,
                               CapBacSHSQ = ns.CapBacSHSQ,
                               ChucVu = ns.ChucVu,
