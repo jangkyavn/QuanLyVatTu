@@ -128,9 +128,26 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<VatTuViewModel> GetByIdAsync(int id)
         {
-            var vt = await db.VatTus.FindAsync(id);
-            var mvt = mp.Map<VatTuViewModel>(vt);
-            return mvt;
+            var query =await (from vt in db.VatTus
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                        where vt.MaVatTu == id
+                        select new VatTuViewModel
+                        {
+                            MaVatTu = vt.MaVatTu,
+                            MaDVT = vt.MaDVT,
+                            MaLoaiVatTu = lvt.MaLoaiVatTu,
+                            TenDVT = dvt.TenDVT,
+                            TenLoaiVatTu = lvt.TenLoai,
+                            TenHM = hm.TenHM,
+                            TenVT = vt.TenVT,
+                            GhiChu = vt.GhiChu,
+                            Status = vt.Status
+                        }).FirstOrDefaultAsync();
+            return query;
+
         }
         public async Task<List<VatTuViewModel>> GetByMaHM(int maHM)
         {
@@ -588,29 +605,13 @@ namespace Absoft.Repositories.Implimentations
             }
         }
         public async Task<List<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(int mavt)
-        {
-            var query = from vt in db.VatTus
-
-                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
-
+        {           
+            var query = from vt in db.VatTus                                              
                         join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
-                        join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap
-
+                        join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap                        
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
-                        {
-                            MaVatTu = vt.MaVatTu,
-                            MaLoaiVatTu = vt.MaLoaiVatTu,
-                            MaHM = lvt.MaHM,
-                            MaDVT = vt.MaDVT,
-
-                            TenVT = vt.TenVT,
-                            TenLoaiVatTu = lvt.TenLoai,
-                            TenHM = hm.TenHM,
-                            TenDVT = dvt.TenDVT,
-
+                        {                           
                             MaPN = nct.MaPhieuNhap,
                             NgayNhap = nvt.NgayNhap,
                             SoLuong = nct.SoLuong,
@@ -624,28 +625,12 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<List<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(int mavt)
         {
-            var query = from vt in db.VatTus
-
-                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT
-
+            var query = from vt in db.VatTus                      
                         join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
-                        join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat
-
+                        join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat                       
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
-                        {
-                            MaVatTu = vt.MaVatTu,
-                            MaLoaiVatTu = vt.MaLoaiVatTu,
-                            MaHM = lvt.MaHM,
-                            MaDVT = vt.MaDVT,
-
-                            TenVT = vt.TenVT,
-                            TenLoaiVatTu = lvt.TenLoai,
-                            TenHM = hm.TenHM,
-                            TenDVT = dvt.TenDVT,
-
+                        {                            
                             MaPX = xct.MaPhieuXuat,
                             NgayXuat = xvt.NgayNhap,
                             SoLuong = xct.SoLuongXuat,

@@ -32,7 +32,6 @@ namespace Absoft.Helpers
         public decimal?TongTien { get; set; }
         public decimal? ChietKhau { get; set; }
         public decimal? ThanhTien { get; set; }
-      
-
+              
     }
 }
