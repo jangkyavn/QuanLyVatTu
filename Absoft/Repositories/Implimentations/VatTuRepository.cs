@@ -618,7 +618,7 @@ namespace Absoft.Repositories.Implimentations
                             SoLuong = nct.SoLuong,
                             DonGia = nct.DonGia,
                             ChietKhau = nvt.ChietKhau,
-                            ThanhTien = nct.SoLuong * nct.DonGia * (1 - (nvt.ChietKhau / 100))
+                            ThanhTien = (nct.SoLuong * nct.DonGia) * (1 - (nvt.ChietKhau / 100))
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -723,7 +723,7 @@ namespace Absoft.Repositories.Implimentations
                             SoLuong = xct.SoLuongXuat,
                             DonGia = xct.DonGia,
                             ChietKhau = xvt.ChietKhau,
-                            ThanhTien = xct.SoLuongXuat * xct.DonGia * (1 - (xvt.ChietKhau / 100))
+                            ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100))
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
