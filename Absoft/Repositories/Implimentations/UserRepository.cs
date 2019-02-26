@@ -83,10 +83,6 @@ namespace Absoft.Repositories.Implimentations
                                           join role in _dataContext.Roles
                                           on userRole.RoleId equals role.Id
                                           select role.Name).ToList(),
-                                 RolesOfUser = string.Join(",", (from userRole in user.UserRoles
-                                                                 join role in _dataContext.Roles
-                                                                 on userRole.RoleId equals role.Id
-                                                                 select role.Name).ToList())
                              };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))

@@ -29,8 +29,8 @@ namespace Absoft.Repositories.Interfaces
         bool DeleteFileVTAfterExport(string filename);
         Task<bool> DeleteAllAsync(List<int> listId);
 
-        Task<List<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(int mavt);
-        Task<List<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(int mavt);
+        Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(PagingParams pagingParams, int mavt);
+        Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(PagingParams pagingParams, int mavt);
         Task<PagedList<KhoHangViewModel>> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt);
     }
 }

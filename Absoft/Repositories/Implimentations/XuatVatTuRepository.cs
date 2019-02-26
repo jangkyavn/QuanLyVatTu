@@ -59,6 +59,7 @@ namespace Absoft.Repositories.Implimentations
             var model = from xvt in db.XuatVatTus
                         join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
                         join ns in db.NhanSus on xvt.MaNS equals ns.MaNS
+                        orderby xvt.NgayNhap descending
                         select new XuatVatTuViewModel
                         {
                             MaPhieuXuat = xvt.MaPhieuXuat,
@@ -333,6 +334,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from xvt in db.XuatVatTus
                         join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
                         join ns in db.NhanSus on xvt.MaNS equals ns.MaNS
+                        orderby xvt.NgayNhap descending
                         select new XuatVatTuViewModel
                         {
                             MaPhieuXuat = xvt.MaPhieuXuat,
@@ -355,7 +357,7 @@ namespace Absoft.Repositories.Implimentations
 
                 if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
                 {
-                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == DateTime.Parse(x.NgayNhap).Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
+                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == date.Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
                 }
                 else
                 {

@@ -90,6 +90,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<HangSanXuatViewModel>> GetAllAsync()
         {
             return await db.HangSanXuats.Where(x => x.Status == true)
+                .OrderByDescending(x => x.MaHang)
                 .ProjectTo<HangSanXuatViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }

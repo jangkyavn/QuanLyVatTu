@@ -64,6 +64,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from lvt in db.LoaiVatTus
                         join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
                         where lvt.Status == true
+                        orderby lvt.MaLoaiVatTu descending
                         select new LoaiVatTuViewModel
                         {
                             MaLoaiVatTu = lvt.MaLoaiVatTu,
@@ -196,6 +197,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from lvt in db.LoaiVatTus
                         join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
                         where lvt.Status == true
+                        orderby lvt.MaLoaiVatTu descending
                         select new LoaiVatTuViewModel
                         {
                             MaLoaiVatTu = lvt.MaLoaiVatTu,

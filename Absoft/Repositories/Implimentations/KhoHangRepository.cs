@@ -27,6 +27,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from kh in db.KhoHangs
                         join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        orderby kh.MaKho descending
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,
@@ -136,6 +137,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from kh in db.KhoHangs
                         join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        orderby kh.MaKho descending
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,

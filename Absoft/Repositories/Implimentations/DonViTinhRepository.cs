@@ -31,6 +31,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<DonViTinhViewModel>> GetAllAsync()
         {
             return await db.DonViTinhs.Where(x => x.Status == true)
+                .OrderByDescending(x => x.MaDVT)
                 .ProjectTo<DonViTinhViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }
@@ -170,12 +171,14 @@ namespace Absoft.Repositories.Implimentations
         {
             var query = from dvt in db.DonViTinhs
                         where dvt.Status == true
+                        orderby dvt.MaDVT descending
                         select new DonViTinhViewModel
                         {
                             MaDVT = dvt.MaDVT,
                             TenDVT = dvt.TenDVT,
                             Status = dvt.Status
                         };
+
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();

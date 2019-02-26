@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -128,24 +129,24 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<VatTuViewModel> GetByIdAsync(int id)
         {
-            var query =await (from vt in db.VatTus
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
-                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                        join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
-                        where vt.MaVatTu == id
-                        select new VatTuViewModel
-                        {
-                            MaVatTu = vt.MaVatTu,
-                            MaDVT = vt.MaDVT,
-                            MaLoaiVatTu = lvt.MaLoaiVatTu,
-                            TenDVT = dvt.TenDVT,
-                            TenLoaiVatTu = lvt.TenLoai,
-                            TenHM = hm.TenHM,
-                            TenVT = vt.TenVT,
-                            GhiChu = vt.GhiChu,
-                            Status = vt.Status
-                        }).FirstOrDefaultAsync();
+            var query = await (from vt in db.VatTus
+                               join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                               from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                               join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                               join hm in db.HangMucVatTus on lvt.MaHM equals hm.MaHM
+                               where vt.MaVatTu == id
+                               select new VatTuViewModel
+                               {
+                                   MaVatTu = vt.MaVatTu,
+                                   MaDVT = vt.MaDVT,
+                                   MaLoaiVatTu = lvt.MaLoaiVatTu,
+                                   TenDVT = dvt.TenDVT,
+                                   TenLoaiVatTu = lvt.TenLoai,
+                                   TenHM = hm.TenHM,
+                                   TenVT = vt.TenVT,
+                                   GhiChu = vt.GhiChu,
+                                   Status = vt.Status
+                               }).FirstOrDefaultAsync();
             return query;
 
         }
@@ -604,43 +605,215 @@ namespace Absoft.Repositories.Implimentations
                 return false;
             }
         }
-        public async Task<List<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(int mavt)
-        {           
-            var query = from vt in db.VatTus                                              
+        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(PagingParams pagingParams, int mavt)
+        {
+            var query = from vt in db.VatTus
                         join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
-                        join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap                        
+                        join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
-                        {                           
+                        {
                             MaPN = nct.MaPhieuNhap,
                             NgayNhap = nvt.NgayNhap,
                             SoLuong = nct.SoLuong,
                             DonGia = nct.DonGia,
                             ChietKhau = nvt.ChietKhau,
-                            TongTien =  nct.SoLuong * nct.DonGia,
-                            ThanhTien = (nct.SoLuong * nct.DonGia) * (1-(nvt.ChietKhau /100))
+                            ThanhTien = nct.SoLuong * nct.DonGia * (1 - (nvt.ChietKhau / 100))
                         };
-            var model =await query.ToListAsync();
-            return model;
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == date.Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.MaPN.ToString().Equals(keyword) ||
+                                        x.SoLuong.ToString().Equals(keyword) ||
+                                        x.DonGia.ToString().Equals(keyword) ||
+                                        x.ChietKhau.ToString().Equals(keyword) ||
+                                        x.ThanhTien.ToString().Equals(keyword));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "maPN":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPN);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPN);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
+                        }
+                        break;
+                    case "soLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuong);
+                        }
+                        break;
+                    case "donGia":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.DonGia);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.DonGia);
+                        }
+                        break;
+                    case "chietKhau":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ChietKhau);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ChietKhau);
+                        }
+                        break;
+                    case "thanhTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ThanhTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ThanhTien);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
-        public async Task<List<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(int mavt)
+        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(PagingParams pagingParams, int mavt)
         {
-            var query = from vt in db.VatTus                      
+            var query = from vt in db.VatTus
                         join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
-                        join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat                       
+                        join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
-                        {                            
+                        {
                             MaPX = xct.MaPhieuXuat,
                             NgayXuat = xvt.NgayNhap,
                             SoLuong = xct.SoLuongXuat,
                             DonGia = xct.DonGia,
                             ChietKhau = xvt.ChietKhau,
-                            TongTien = xct.SoLuongXuat * xct.DonGia,
-                            ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100))
+                            ThanhTien = xct.SoLuongXuat * xct.DonGia * (1 - (xvt.ChietKhau / 100))
                         };
-            var model = await query.ToListAsync();
-            return model;
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgayXuat).Day == date.Day && DateTime.Parse(x.NgayXuat).Month == date.Month && DateTime.Parse(x.NgayXuat).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.MaPX.ToString().Equals(keyword) ||
+                                        x.SoLuong.ToString().Equals(keyword) ||
+                                        x.DonGia.ToString().Equals(keyword) ||
+                                        x.ChietKhau.ToString().Equals(keyword) ||
+                                        x.ThanhTien.ToString().Equals(keyword));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "maPX":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPX);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPX);
+                        }
+                        break;
+                    case "ngayXuat":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayXuat);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayXuat);
+                        }
+                        break;
+                    case "soLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuong);
+                        }
+                        break;
+                    case "donGia":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.DonGia);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.DonGia);
+                        }
+                        break;
+                    case "chietKhau":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ChietKhau);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ChietKhau);
+                        }
+                        break;
+                    case "thanhTien":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ThanhTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ThanhTien);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
         public async Task<PagedList<KhoHangViewModel>> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt)
         {

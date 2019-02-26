@@ -88,6 +88,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<NguonCungCapViewModel>> GetAllAsync()
         {
             return await db.NguonCungCaps.Where(x => x.Status == true)
+                .OrderByDescending(x => x.MaNguon)
                 .ProjectTo<NguonCungCapViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }
@@ -145,6 +146,7 @@ namespace Absoft.Repositories.Implimentations
         {
             var query = from ncc in db.NguonCungCaps
                           where ncc.Status == true
+                          orderby ncc.MaNguon descending
                           select new NguonCungCapViewModel
                           {
                               MaNguon = ncc.MaNguon,

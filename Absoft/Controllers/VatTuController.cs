@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Absoft.Extentions;
+﻿using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -123,19 +120,23 @@ namespace Absoft.Controllers
         }
 
         [HttpGet]
-        [Route("ThongKeVatTuNhapByMaVT/{Id}")]
-        public async Task<IActionResult> ThongKeVatTuNhapByMaVT(int Id)
+        [Route("ThongKeVatTuNhapByMaVT")]
+        public async Task<IActionResult> ThongKeVatTuNhapByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
-            var result =await _IVatTuRepository.ThongKeVatTuNhapByMaVT(Id);
-            return Ok(result);
+            var result =await _IVatTuRepository.ThongKeVatTuNhapByMaVT(pagingParams, Id);
+            Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result.Items);
         }
+
         [HttpGet]
-        [Route("ThongKeVatTuXuatpByMaVT/{Id}")]
-        public async Task<IActionResult> ThongKeVatTuXuatpByMaVT(int Id)
+        [Route("ThongKeVatTuXuatpByMaVT")]
+        public async Task<IActionResult> ThongKeVatTuXuatpByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
-            var result = await _IVatTuRepository.ThongKeVatTuXuatpByMaVT(Id);
-            return Ok(result);
+            var result = await _IVatTuRepository.ThongKeVatTuXuatpByMaVT(pagingParams, Id);
+            Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result.Items);
         }
+
         [HttpGet("ThongKeVatTuTonKhoByMaVT")]
         public async Task<IActionResult> ThongKeVatTuTonKhoByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {

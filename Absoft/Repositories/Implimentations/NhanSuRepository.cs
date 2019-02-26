@@ -65,7 +65,7 @@ namespace Absoft.Repositories.Implimentations
             catch (DbUpdateException)
             {
                 return false;
-            }           
+            }
         }
         public async Task<bool> DeleteAllAsync(List<int> listId)
         {
@@ -93,8 +93,9 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<NhanSuViewModel>> GetAllAsync()
         {
             return await db.NhanSus.Where(x => x.Status == true)
-               .ProjectTo<NhanSuViewModel>(mp.ConfigurationProvider)
-               .ToListAsync();
+                .OrderByDescending(x => x.MaNS)
+                .ProjectTo<NhanSuViewModel>(mp.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public async Task<NhanSuViewModel> GetByIdAsync(int id)
@@ -152,26 +153,27 @@ namespace Absoft.Repositories.Implimentations
             var ss = "311,2".Split(',')[1];
 
             var query = from ns in db.NhanSus
-                          where ns.Status == true
-                          select new NhanSuViewModel
-                          {
-                              MaNS = ns.MaNS,
-                              HoTen = ns.HoTen ?? string.Empty,
-                              NgaySinh = ns.NgaySinh ?? string.Empty,
-                              QueQuan = GetAddress(ns.QueQuan) ?? string.Empty,
-                              DanToc = GetNation(ns.DanToc) ?? string.Empty,
-                              TonGiao = ns.TonGiao,
-                              CapBacSHSQ = ns.CapBacSHSQ,
-                              ChucVu = ns.ChucVu,
-                              NgayNhapNguTuyenDung = ns.NgayNhapNguTuyenDung,
-                              Dang = ns.Dang,
-                              XuatThan = ns.XuatThan,
-                              BanThan = ns.BanThan,
-                              QuaTrinhHocTap = ns.QuaTrinhHocTap,
-                              ThanNhan = ns.ThanNhan,
-                              GhiChu = ns.GhiChu,
-                              Status = ns.Status
-                          };
+                        where ns.Status == true
+                        orderby ns.MaNS descending
+                        select new NhanSuViewModel
+                        {
+                            MaNS = ns.MaNS,
+                            HoTen = ns.HoTen ?? string.Empty,
+                            NgaySinh = ns.NgaySinh ?? string.Empty,
+                            QueQuan = GetAddress(ns.QueQuan) ?? string.Empty,
+                            DanToc = GetNation(ns.DanToc) ?? string.Empty,
+                            TonGiao = ns.TonGiao,
+                            CapBacSHSQ = ns.CapBacSHSQ,
+                            ChucVu = ns.ChucVu,
+                            NgayNhapNguTuyenDung = ns.NgayNhapNguTuyenDung,
+                            Dang = ns.Dang,
+                            XuatThan = ns.XuatThan,
+                            BanThan = ns.BanThan,
+                            QuaTrinhHocTap = ns.QuaTrinhHocTap,
+                            ThanNhan = ns.ThanNhan,
+                            GhiChu = ns.GhiChu,
+                            Status = ns.Status
+                        };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {

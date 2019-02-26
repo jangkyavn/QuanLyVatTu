@@ -89,6 +89,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<NuocSanXuatViewModel>> GetAllAsync()
         {
             return await db.NuocSanXuats.Where(x => x.Status == true)
+                .OrderByDescending(x => x.MaNuoc)
                .ProjectTo<NuocSanXuatViewModel>(mp.ConfigurationProvider)
                .ToListAsync();
         }
@@ -147,6 +148,7 @@ namespace Absoft.Repositories.Implimentations
         {
             var query = from nsx in db.NuocSanXuats
                         where nsx.Status == true
+                        orderby nsx.MaNuoc descending
                         select new NuocSanXuatViewModel
                         {
                             MaNuoc = nsx.MaNuoc,

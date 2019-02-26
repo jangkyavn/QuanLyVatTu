@@ -89,6 +89,7 @@ namespace Absoft.Repositories.Implimentations
         public async Task<List<KhoVatTuViewModel>> GetAllAsync()
         {
             return await db.KhoVatTus.Where(x => x.Status == true)
+                .OrderByDescending(x => x.MaKho)
                 .ProjectTo<KhoVatTuViewModel>(mp.ConfigurationProvider)
                 .ToListAsync();
         }
@@ -146,6 +147,7 @@ namespace Absoft.Repositories.Implimentations
         {
             var query = from hvt in db.KhoVatTus
                         where hvt.Status == true
+                        orderby hvt.MaKho descending
                         select new KhoVatTuViewModel
                         {
                             MaKho = hvt.MaKho,

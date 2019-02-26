@@ -64,6 +64,7 @@ namespace Absoft.Repositories.Implimentations
             var model = from nvt in db.NhapVatTus
                         join hm in db.HangMucVatTus on nvt.MaHM equals hm.MaHM
                         join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
+                        orderby nvt.NgayNhap descending
                         select new NhapVatTuViewModel
                         {
                             MaPhieuNhap = nvt.MaPhieuNhap,
@@ -113,7 +114,7 @@ namespace Absoft.Repositories.Implimentations
 
                 if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
                 {
-                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == DateTime.Parse(x.NgayNhap).Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
+                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == date.Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
                 }
                 else
                 {
