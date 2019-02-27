@@ -137,6 +137,14 @@ namespace Absoft.Controllers
             return Ok(result.Items);
         }
 
+        [HttpGet("ThongKeVatTuThanhLyByMaVT")]
+        public async Task<IActionResult> ThongKeVatTuThanhLyByMaVT([FromQuery]PagingParams pagingParams, int Id)
+        {
+            var paged = await _IVatTuRepository.ThongKeVatTuThanhLyByMaVT(pagingParams, Id);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
         [HttpGet("ThongKeVatTuTonKhoByMaVT")]
         public async Task<IActionResult> ThongKeVatTuTonKhoByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {

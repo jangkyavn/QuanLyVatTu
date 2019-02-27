@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Absoft.Data.Entities
@@ -16,5 +17,10 @@ namespace Absoft.Data.Entities
 
         public virtual LoaiVatTu LoaiVatTu { get; set; }
         public virtual DonViTinh DonViTinh { get; set; }
+
+        public ICollection<ThanhLyChiTiet> ThanhLyChiTiets { get; set; }
+        public ICollection<KhoHang> KhoHangs { get; set; }
+        public ICollection<XuatChiTiet> XuatChiTiets { get; set; }
+        public ICollection<NhapChiTiet> NhapChiTiets { get; set; }
     }
 }

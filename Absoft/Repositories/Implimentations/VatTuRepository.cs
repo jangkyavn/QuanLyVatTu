@@ -893,5 +893,98 @@ namespace Absoft.Repositories.Implimentations
             }
             return await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
+
+        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuThanhLyByMaVT(PagingParams pagingParams, int mavt)
+        {
+            var query = from vt in db.VatTus
+                        join tlct in db.ThanhLyChiTiets on vt.MaVatTu equals tlct.MaVatTu
+                        join tlvt in db.ThanhLyVatTus on tlct.MaPhieuThanhLy equals tlvt.MaPhieuThanhLy
+                        where vt.MaVatTu == mavt
+                        select new ThongKeVatTuParam
+                        {
+                            MaPTL = tlvt.MaPhieuThanhLy,
+                            NgayThanhLy = tlvt.NgayThanhLy,
+                            SoLuong = tlct.SoLuongThanhLy,
+                            DienGiai = tlct.DienGiai,
+                            GhiChu = tlct.GhiChu
+                        };
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgayThanhLy).Day == date.Day && DateTime.Parse(x.NgayThanhLy).Month == date.Month && DateTime.Parse(x.NgayThanhLy).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.MaPTL.ToString().Equals(keyword) ||
+                                        x.SoLuong.ToString().Equals(keyword) ||                                     
+                                        x.DienGiai.ToString().ToUpper().Contains(keyword.ToUpper()) || 
+                                        x.DienGiai.ToString().ToUpper().ToUnSign().Contains(keyword.ToUpper().ToUnSign()));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "MaPTL":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPTL);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPTL);
+                        }
+                        break;
+                    case "ngayThanhLy":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayThanhLy);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayThanhLy);
+                        }
+                        break;
+                    case "soLuong":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuong);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuong);
+                        }
+                        break;
+                    case "dienGiai":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.DienGiai);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.DienGiai);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
     }
 }

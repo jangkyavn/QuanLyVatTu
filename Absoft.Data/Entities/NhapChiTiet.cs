@@ -26,8 +26,12 @@ namespace Absoft.Data.Entities
         public string GhiChu { get; set; }
         public bool Status { set; get; }
 
+
+        public NhapVatTu NhapVatTu { get; set; }
+        public VatTu VatTu { get; set; }
         public NuocSanXuat NuocSanXuat { get; set; }
         public HangSanXuat HangSanXuat { get; set; }
         public NguonCungCap NguonCungCap { get; set; }
+
     }
 }
