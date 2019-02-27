@@ -82,7 +82,7 @@ namespace Absoft.Repositories.Implimentations
                                  Roles = (from userRole in user.UserRoles
                                           join role in _dataContext.Roles
                                           on userRole.RoleId equals role.Id
-                                          select role.Name).ToList(),
+                                          select role.Name).AsQueryable()
                              };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -93,7 +93,8 @@ namespace Absoft.Repositories.Implimentations
                     x.UserName.ToUpper().Contains(keyword) ||
                     x.FullName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                     x.FullName.ToUpper().Contains(keyword) ||
-                    x.Email.ToUpper().Contains(keyword));
+                    x.Email.ToUpper().Contains(keyword) || 
+                    x.Roles.Any(y => y.ToUpper().Equals(keyword)));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

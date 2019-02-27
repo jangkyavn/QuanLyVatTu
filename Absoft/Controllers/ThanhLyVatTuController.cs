@@ -133,8 +133,8 @@ namespace Absoft.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetXuatChiTiet{maptl}/{mapn}/{mavt}")]
-        public async Task<IActionResult> GetXuatChiTiet(int maptl, int mapn, int mavt)
+        [HttpGet("getThanhLyChiTiet{maptl}/{mapn}/{mavt}")]
+        public async Task<IActionResult> GetThanhLyChiTiet(int maptl, int mapn, int mavt)
         {
             var result = await __IThanhLyVatTuRepository.GetThanhLyChiTiet(maptl, mapn, mavt);
             return Ok(result);
