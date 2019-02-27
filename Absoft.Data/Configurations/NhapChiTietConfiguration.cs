@@ -11,6 +11,16 @@ namespace Absoft.Data.Configurations
         {
             entity.HasKey(x => new { x.MaPhieuNhap, x.MaVatTu });
 
+            entity.HasOne(n => n.NhapVatTu)
+             .WithMany(k => k.NhapChiTiets)
+             .HasForeignKey(n => n.MaPhieuNhap)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(n => n.VatTu)
+             .WithMany(k => k.NhapChiTiets)
+             .HasForeignKey(n => n.MaVatTu)
+             .OnDelete(DeleteBehavior.Restrict);
+
             entity.HasOne(n => n.NuocSanXuat)
                 .WithMany(k => k.NhapChiTiets)
                 .HasForeignKey(n => n.MaNuoc)

@@ -154,7 +154,6 @@ namespace Absoft.Repositories.Implimentations
             }
             return true;
         }
-
         public async Task<int> CheckTonTaiVTChitiet(int maphieunhap, int mavt)
         {
             var model = await db.NhapChiTiets.Where(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap).FirstOrDefaultAsync();

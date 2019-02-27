@@ -4,14 +4,16 @@ using Absoft.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Absoft.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190227015541_inserThanhLyVatTu")]
+    partial class inserThanhLyVatTu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,10 +83,6 @@ namespace Absoft.Data.Migrations
                     b.Property<bool>("Status");
 
                     b.HasKey("MaKho", "MaPhieuNhap", "MaVatTu");
-
-                    b.HasIndex("MaPhieuNhap");
-
-                    b.HasIndex("MaVatTu");
 
                     b.ToTable("KhoHang");
                 });
@@ -315,8 +313,6 @@ namespace Absoft.Data.Migrations
 
                     b.HasIndex("MaNuoc");
 
-                    b.HasIndex("MaVatTu");
-
                     b.ToTable("NhapChiTiet");
                 });
 
@@ -502,10 +498,6 @@ namespace Absoft.Data.Migrations
 
                     b.HasKey("MaPhieuXuat", "MaPhieuNhap", "MaVatTu");
 
-                    b.HasIndex("MaPhieuNhap");
-
-                    b.HasIndex("MaVatTu");
-
                     b.ToTable("XuatChiTiet");
                 });
 
@@ -612,24 +604,6 @@ namespace Absoft.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Absoft.Data.Entities.KhoHang", b =>
-                {
-                    b.HasOne("Absoft.Data.Entities.KhoVatTu", "KhoVatTu")
-                        .WithMany("KhoHangs")
-                        .HasForeignKey("MaKho")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.NhapVatTu", "NhapVatTu")
-                        .WithMany("KhoHangs")
-                        .HasForeignKey("MaPhieuNhap")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.VatTu", "VaTu")
-                        .WithMany("KhoHangs")
-                        .HasForeignKey("MaVatTu")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Absoft.Data.Entities.LoaiVatTu", b =>
                 {
                     b.HasOne("Absoft.Data.Entities.HangMucVatTu", "HangMucVatTu")
@@ -654,16 +628,6 @@ namespace Absoft.Data.Migrations
                         .WithMany("NhapChiTiets")
                         .HasForeignKey("MaNuoc")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.NhapVatTu", "NhapVatTu")
-                        .WithMany("NhapChiTiets")
-                        .HasForeignKey("MaPhieuNhap")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.VatTu", "VatTu")
-                        .WithMany("NhapChiTiets")
-                        .HasForeignKey("MaVatTu")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.NhapVatTu", b =>
@@ -684,17 +648,17 @@ namespace Absoft.Data.Migrations
                     b.HasOne("Absoft.Data.Entities.NhapVatTu", "NhapVatTu")
                         .WithMany("ThanhLyChiTiets")
                         .HasForeignKey("MaPhieuNhap")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Absoft.Data.Entities.ThanhLyVatTu", "ThanhLyVatTu")
                         .WithMany("ThanhLyChiTiets")
                         .HasForeignKey("MaPhieuThanhLy")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Absoft.Data.Entities.VatTu", "VatTu")
                         .WithMany("ThanhLyChiTiets")
                         .HasForeignKey("MaVatTu")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.ThanhLyVatTu", b =>
@@ -733,24 +697,6 @@ namespace Absoft.Data.Migrations
                     b.HasOne("Absoft.Data.Entities.LoaiVatTu", "LoaiVatTu")
                         .WithMany("VatTus")
                         .HasForeignKey("MaLoaiVatTu")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Absoft.Data.Entities.XuatChiTiet", b =>
-                {
-                    b.HasOne("Absoft.Data.Entities.NhapVatTu", "NhapVatTu")
-                        .WithMany("XuatChiTiets")
-                        .HasForeignKey("MaPhieuNhap")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.XuatVatTu", "XuatVatTu")
-                        .WithMany("XuatChiTiets")
-                        .HasForeignKey("MaPhieuXuat")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.VatTu", "VatTu")
-                        .WithMany("XuatChiTiets")
-                        .HasForeignKey("MaVatTu")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
