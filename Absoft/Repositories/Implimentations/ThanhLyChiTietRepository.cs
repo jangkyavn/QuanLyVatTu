@@ -16,8 +16,8 @@ namespace Absoft.Repositories.Implimentations
     {
         DataContext db;
         IMapper mp;
-        KhoHangRepository _ikhohang;
-        public ThanhLyChiTietRepository(DataContext dataContext, IMapper mapper, KhoHangRepository khoHangRepository)
+        IKhoHangRepository _ikhohang;
+        public ThanhLyChiTietRepository(DataContext dataContext, IMapper mapper, IKhoHangRepository khoHangRepository)
         {
             this.db = dataContext;
             this.mp = mapper;

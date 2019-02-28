@@ -25,6 +25,8 @@ namespace Absoft.AutoMapper
             CreateMap<NhapVatTu, NhapVatTuViewModel>();
             CreateMap<XuatVatTu, XuatVatTuViewModel>();
             CreateMap<XuatChiTiet, XuatChiTietViewModel>();
+            CreateMap<ThanhLyVatTu, ThanhLyVatTuViewModel>();
+            CreateMap<ThanhLyChiTiet, ThanhLyChiTietViewModel>();
         }
     }
 }

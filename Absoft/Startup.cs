@@ -110,6 +110,8 @@ namespace Absoft
             services.AddScoped<INhapChiTietRepository, NhapChiTietRepository>();
             services.AddScoped<IXuatVatTuRepository, XuatVatTuRepository>();
             services.AddScoped<IXuatChiTietRepository, XuatChiTietRepository>();
+            services.AddScoped<IThanhLyVatTuRepository, ThanhLyVatTuRepository>();
+            services.AddScoped<IThanhLyChiTietRepository, ThanhLyChiTietRepository>();
 
             services.AddSwaggerGen(c =>
             {
