@@ -66,7 +66,7 @@ namespace Absoft.Controllers
             return Ok(models);
         }
         [HttpPost("InsertThanhLyChiTiet")]
-        public async Task<IActionResult> InsertXuatChiTiet(ThanhLyChiTietlParams param)
+        public async Task<IActionResult> InsertThanhLyChiTiet(ThanhLyChiTietlParams param)
         {
             var models = await _IThanhLyChiTietRepository.InsertThanhLyChiTiet(param.thanhlychitiet, param.maPTL);
             return Ok(models);
@@ -105,13 +105,13 @@ namespace Absoft.Controllers
         }      
 
         [HttpPut("updateThanhLyVatTuAsync")]
-        public async Task<IActionResult> UpdateXuatVatTu(ThanhLyVatTuViewModel thanhLyVatTuViewModel)
+        public async Task<IActionResult> UpdateThanhLyVatTuAsync(ThanhLyVatTuViewModel thanhLyVatTuViewModel)
         {
             var models = await __IThanhLyVatTuRepository.UpdateThanhLyVatTuAsync(thanhLyVatTuViewModel);
             return Ok(models);
         }
         [HttpPut("updateThanhLyChiTietAsync")]
-        public async Task<IActionResult> UpdateXuatChiTietAsync(ThanhLyChiTietlParams param)
+        public async Task<IActionResult> UpdateThanhLyChiTietAsync(ThanhLyChiTietlParams param)
         {
             var models = await _IThanhLyChiTietRepository.UpdateThanhLyChiTietAsync(param.thanhlychitiet, param.maPTL, param.maKho);
             return Ok(models);

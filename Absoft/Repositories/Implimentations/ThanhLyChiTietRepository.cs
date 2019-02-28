@@ -38,7 +38,7 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> CheckTonTaiVTChitiet(int maptl, int maphieunhap, int mavt)
         {
-            var model = await db.ThanhLyChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap && x.MaPhieuThanhLy==maptl);
+            var model = await db.ThanhLyChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap && x.MaPhieuThanhLy == maptl);
             if (model != null) return model.SoLuongThanhLy.Value;
             else return -1;
         }
@@ -52,7 +52,7 @@ namespace Absoft.Repositories.Implimentations
                     foreach (var item in list)
                     {
                         var res = await this.DeleteThanhLyChiTietAsync(item.MaPhieuThanhLy, item.MaPhieuNhap, item.MaVatTu, maKho);
-                    }                  
+                    }
                     transaction.Commit();
                     // await db.SaveChangesAsync();
                     return true;
@@ -62,7 +62,7 @@ namespace Absoft.Repositories.Implimentations
                     // TODO: Handle failure                         
                 }
             }
-            return false;           
+            return false;
         }
         public async Task<bool> DeleteThanhLyChiTietAsync(int maPTL, int maPN, int maVT, int maKho)
         {
@@ -126,8 +126,8 @@ namespace Absoft.Repositories.Implimentations
                 catch (Exception)
                 {
                     throw;
-                }                 
-            }                                  
+                }
+            }
         }
         public async Task<bool> SumSLTT(ThanhLyChiTietViewModel thanhLyChiTietViewModel, int maPTL)
         {
@@ -146,11 +146,14 @@ namespace Absoft.Repositories.Implimentations
             if (soluongtonmoi >= 0)
             {
                 // update tong so luong, tong tien
-                tlvt.TongSoLuong += model.SoLuongThanhLy;
-                tlvt.TongSoLuong -= soluongthanhlycu;                
+                tlvt.TongSoLuong += model.SoLuongThanhLy.Value;
+                tlvt.TongSoLuong -= soluongthanhlycu;
                 //up date chi tiet
-                var entity = mp.Map<ThanhLyChiTiet>(model);
-                db.Entry(entity).CurrentValues.SetValues(model);
+
+                // var xuatchitiet = mp.Map<ThanhLyChiTiet>(model);
+                db.Entry(tlct).CurrentValues.SetValues(model);
+                //var rs =  db.Update(entity);
+
                 //update sl moi trong kho
                 var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu && x.MaKho == makho);
                 kh.SoLuongTon = soluongtonmoi;
