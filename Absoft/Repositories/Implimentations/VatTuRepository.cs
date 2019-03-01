@@ -907,8 +907,8 @@ namespace Absoft.Repositories.Implimentations
                             MaPTL = tlvt.MaPhieuThanhLy,
                             NgayThanhLy = tlvt.NgayThanhLy,
                             SoLuong = tlct.SoLuongThanhLy,
-                            DienGiai = tlct.DienGiai,
-                            GhiChu = tlct.GhiChu
+                            DienGiai = tlct.DienGiai ?? string.Empty,
+                            GhiChu = tlct.GhiChu ?? string.Empty
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
