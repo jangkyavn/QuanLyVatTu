@@ -487,6 +487,12 @@ MIT
 ng-zorro-antd
 MIT
 
+ngx-spinner
+MIT
+
+ng-connection-service
+MIT
+
 @ant-design/icons-angular
 MIT
 

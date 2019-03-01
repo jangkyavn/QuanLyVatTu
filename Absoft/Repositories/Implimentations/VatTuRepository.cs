@@ -920,8 +920,10 @@ namespace Absoft.Repositories.Implimentations
                 {
                     query = query.Where(x => x.MaPTL.ToString().Equals(keyword) ||
                                         x.SoLuong.ToString().Equals(keyword) ||                                     
-                                        x.DienGiai.ToString().ToUpper().Contains(keyword.ToUpper()) || 
-                                        x.DienGiai.ToString().ToUpper().ToUnSign().Contains(keyword.ToUpper().ToUnSign()));
+                                        x.DienGiai.ToUpper().Contains(keyword) || 
+                                        x.DienGiai.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()));
                 }
             }
 
