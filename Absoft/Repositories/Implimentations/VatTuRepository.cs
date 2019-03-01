@@ -908,6 +908,7 @@ namespace Absoft.Repositories.Implimentations
                             DienGiai = tlct.DienGiai,
                             GhiChu = tlct.GhiChu
                         };
+
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
@@ -919,8 +920,8 @@ namespace Absoft.Repositories.Implimentations
                 else
                 {
                     query = query.Where(x => x.MaPTL.ToString().Equals(keyword) ||
-                                        x.SoLuong.ToString().Equals(keyword) ||                                     
-                                        x.DienGiai.ToUpper().Contains(keyword) || 
+                                        x.SoLuong.ToString().Equals(keyword) ||
+                                        x.DienGiai.ToUpper().Contains(keyword) ||
                                         x.DienGiai.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.GhiChu.ToUpper().Contains(keyword) ||
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()));
@@ -987,6 +988,67 @@ namespace Absoft.Repositories.Implimentations
             }
 
             return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        public async Task<TongLuongParams> GetTongCong(int mavt, TimKiemVatTuEnums enums)
+        {
+            IQueryable<ThongKeVatTuParam> query = null;
+
+            switch (enums)
+            {
+                case TimKiemVatTuEnums.NhapVatTu:
+                    query = from vt in db.VatTus
+                            join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
+                            join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap
+                            where vt.MaVatTu == mavt
+                            select new ThongKeVatTuParam
+                            {
+                                SoLuong = nct.SoLuong,
+                                ThanhTien = (nct.SoLuong * nct.DonGia) * (1 - (nvt.ChietKhau / 100))
+                            };
+                    break;
+                case TimKiemVatTuEnums.XuatVatTu:
+                    query = from vt in db.VatTus
+                            join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
+                            join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat
+                            where vt.MaVatTu == mavt
+                            select new ThongKeVatTuParam
+                            {
+                                SoLuong = xct.SoLuongXuat,
+                                ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100))
+                            };
+                    break;
+                case TimKiemVatTuEnums.ThanhLyVatTu:
+                    query = from vt in db.VatTus
+                            join tlct in db.ThanhLyChiTiets on vt.MaVatTu equals tlct.MaVatTu
+                            join tlvt in db.ThanhLyVatTus on tlct.MaPhieuThanhLy equals tlvt.MaPhieuThanhLy
+                            where vt.MaVatTu == mavt
+                            select new ThongKeVatTuParam
+                            {
+                                SoLuong = tlct.SoLuongThanhLy
+                            };
+                    break;
+                case TimKiemVatTuEnums.KhoVatTu:
+                    query = from kh in db.KhoHangs
+                            join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
+                            join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                            where vt.MaVatTu == mavt
+                            select new ThongKeVatTuParam
+                            {
+                                SoLuong = kh.SoLuongTon
+                            };
+                    break;
+                default:
+                    break;
+            }
+
+            var data = await query.ToListAsync();
+
+            return new TongLuongParams()
+            {
+                TongLuong = data.Sum(x => x.SoLuong).Value,
+                TongTien = data.Sum(x => x.ThanhTien).Value
+            };
         }
     }
 }

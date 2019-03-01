@@ -152,5 +152,12 @@ namespace Absoft.Controllers
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
         }
+
+        [HttpGet("getTongCong/{maVT}/{loai}")]
+        public async Task<IActionResult> GetTongCong(int maVT, int loai)
+        {
+            var result = await _IVatTuRepository.GetTongCong(maVT, (TimKiemVatTuEnums)loai);
+            return Ok(result);
+        }
     }
 }
