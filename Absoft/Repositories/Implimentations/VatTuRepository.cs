@@ -631,11 +631,12 @@ namespace Absoft.Repositories.Implimentations
                 }
                 else
                 {
-                    query = query.Where(x => x.MaPN.ToString().Equals(keyword) ||
-                                        x.SoLuong.ToString().Equals(keyword) ||
-                                        x.DonGia.ToString().Equals(keyword) ||
-                                        x.ChietKhau.ToString().Equals(keyword) ||
-                                        x.ThanhTien.ToString().Equals(keyword));
+                    query = query.Where(x => x.MaPN.ToString().Contains(keyword) ||
+                                        x.SoLuong.ToString().Contains(keyword) ||
+                                        x.NgayNhap.Contains(keyword) ||
+                                        x.DonGia.ToString().Contains(keyword) ||
+                                        x.ChietKhau.ToString().Contains(keyword) ||
+                                        x.ThanhTien.ToString().Contains(keyword));
                 }
             }
 
@@ -736,11 +737,12 @@ namespace Absoft.Repositories.Implimentations
                 }
                 else
                 {
-                    query = query.Where(x => x.MaPX.ToString().Equals(keyword) ||
-                                        x.SoLuong.ToString().Equals(keyword) ||
-                                        x.DonGia.ToString().Equals(keyword) ||
-                                        x.ChietKhau.ToString().Equals(keyword) ||
-                                        x.ThanhTien.ToString().Equals(keyword));
+                    query = query.Where(x => x.MaPX.ToString().Contains(keyword) ||
+                                        x.SoLuong.ToString().Contains(keyword) ||
+                                        x.DonGia.ToString().Contains(keyword) ||
+                                        x.NgayXuat.Contains(keyword) ||
+                                        x.ChietKhau.ToString().Contains(keyword) ||
+                                        x.ThanhTien.ToString().Contains(keyword));
                 }
             }
 
@@ -839,8 +841,8 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
-                                        x.MaPhieuNhap.Equals(keyword) ||
-                                        x.SoLuongTon.Equals(keyword));
+                                        x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.SoLuongTon.ToString().Contains(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
@@ -919,8 +921,9 @@ namespace Absoft.Repositories.Implimentations
                 }
                 else
                 {
-                    query = query.Where(x => x.MaPTL.ToString().Equals(keyword) ||
-                                        x.SoLuong.ToString().Equals(keyword) ||
+                    query = query.Where(x => x.MaPTL.ToString().Contains(keyword) ||
+                                        x.SoLuong.ToString().Contains(keyword) ||
+                                        x.NgayThanhLy.Contains(keyword) ||
                                         x.DienGiai.ToUpper().Contains(keyword) ||
                                         x.DienGiai.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.GhiChu.ToUpper().Contains(keyword) ||

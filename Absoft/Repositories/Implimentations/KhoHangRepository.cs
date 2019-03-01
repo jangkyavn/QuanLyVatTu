@@ -156,8 +156,8 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
-                                        x.MaPhieuNhap.Equals(keyword) ||
-                                        x.SoLuongTon.Equals(keyword));
+                                        x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.SoLuongTon.ToString().Contains(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

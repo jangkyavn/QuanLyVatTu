@@ -85,8 +85,9 @@ namespace Absoft.Repositories.Implimentations
                     query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                        x.TenNS.ToUpper().Contains(keyword) ||                                       
-                                        x.TongSoLuong.ToString().Equals(keyword));
+                                        x.TenNS.ToUpper().Contains(keyword) ||        
+                                        x.NgayThanhLy.Contains(keyword) ||
+                                        x.TongSoLuong.ToString().Contains(keyword));
                 }
             }
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
@@ -286,8 +287,8 @@ namespace Absoft.Repositories.Implimentations
 
                 model = model.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
-                                        x.MaPhieuNhap.ToString().Equals(keyword) ||
-                                        x.SoLuongTon.ToString().Equals(keyword));
+                                        x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.SoLuongTon.ToString().Contains(keyword));
             }
 
             return await model.ToListAsync();

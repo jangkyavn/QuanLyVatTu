@@ -365,10 +365,11 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenNS.ToUpper().Contains(keyword) ||
-                                        x.TongSoTien.ToString().Equals(keyword) ||
-                                        x.TongSoLuong.ToString().Equals(keyword) ||
-                                        x.ChietKhau.ToString().Equals(keyword) ||
-                                        x.ThanhTien.ToString().Equals(keyword));
+                                        x.NgayNhap.Contains(keyword) ||
+                                        x.TongSoTien.ToString().Contains(keyword) ||
+                                        x.TongSoLuong.ToString().Contains(keyword) ||
+                                        x.ChietKhau.ToString().Contains(keyword) ||
+                                        x.ThanhTien.ToString().Contains(keyword));
                 }
             }
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
@@ -480,8 +481,8 @@ namespace Absoft.Repositories.Implimentations
 
                 model = model.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
-                                        x.MaPhieuNhap.ToString().Equals(keyword) ||
-                                        x.SoLuongTon.ToString().Equals(keyword));
+                                        x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.SoLuongTon.ToString().Contains(keyword));
             }
 
             return await model.ToListAsync();

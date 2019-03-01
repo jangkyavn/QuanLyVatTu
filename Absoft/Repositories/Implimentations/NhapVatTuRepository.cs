@@ -122,10 +122,11 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenHM.ToUpper().Contains(keyword) ||
-                                        x.TongSoTien.ToString().Equals(keyword) ||
-                                        x.TongSoLuong.ToString().Equals(keyword) ||
-                                        x.ChietKhau.ToString().Equals(keyword) ||
-                                        x.ThanhTien.ToString().Equals(keyword));
+                                        x.NgayNhap.Contains(keyword) ||
+                                        x.TongSoTien.ToString().Contains(keyword) ||
+                                        x.TongSoLuong.ToString().Contains(keyword) ||
+                                        x.ChietKhau.ToString().Contains(keyword) ||
+                                        x.ThanhTien.ToString().Contains(keyword));
                 }
             }
 
