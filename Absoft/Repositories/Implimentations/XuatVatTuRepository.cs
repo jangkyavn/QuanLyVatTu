@@ -461,9 +461,9 @@ namespace Absoft.Repositories.Implimentations
         }
 
 
-        public async Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword)
+        public async Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho)
         {
-            var model = from kh in db.KhoHangs
+            var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
                         where kh.MaKho == makho
                         select new KhoHangViewModel
@@ -475,18 +475,59 @@ namespace Absoft.Repositories.Implimentations
                             SoLuongTon = kh.SoLuongTon
                         };
 
+            string keyword = pagingParams.Keyword;
             if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
             {
                 keyword = keyword.ToUpper().ToTrim();
 
-                model = model.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                query = query.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
                                         x.MaPhieuNhap.ToString().Contains(keyword) ||
                                         x.SoLuongTon.ToString().Contains(keyword));
             }
 
-            return await model.ToListAsync();
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenVatTu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenVatTu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenVatTu);
+                        }
+                        break;
+                    case "maPhieuNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPhieuNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPhieuNhap);
+                        }
+                        break;
+                    case "soLuongTon":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuongTon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuongTon);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
+
         public async Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt)
         {
             var entity = await db.XuatChiTiets.Where(x => x.MaPhieuXuat == mapx && x.MaPhieuNhap == mapn && x.MaVatTu == mavt).ToListAsync();

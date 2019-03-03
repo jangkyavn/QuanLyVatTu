@@ -9,7 +9,6 @@ namespace Absoft.Repositories.Interfaces
     {
         Task<List<XuatVatTuViewModel>> GetAllAsync();
         Task<PagedList<XuatVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams);
-
         Task<int> InsertAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet);
         Task<bool> DeleteAsync(int maPX);
         Task<int> UpdateAsync(XuatVatTuViewModel mxuatvt, List<XuatChiTietViewModel> listxuatchitiet);        
@@ -20,7 +19,7 @@ namespace Absoft.Repositories.Interfaces
         Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho);
         Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT);
         Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel);
-        Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword);
+        Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho);
         Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt);
         Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel);
         Task<bool> SumTongLuongTongTien(int id);

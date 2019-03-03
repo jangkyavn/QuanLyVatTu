@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -179,13 +180,20 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                query = query.Where(x => x.HoTen.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                {
+                    query = query.Where(x => DateTime.Parse(x.NgaySinh).Day == date.Day && DateTime.Parse(x.NgaySinh).Month == date.Month && DateTime.Parse(x.NgaySinh).Year == date.Year);
+                }
+                else
+                {
+                    query = query.Where(x => x.HoTen.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.HoTen.ToUpper().Contains(keyword) ||
-                                        x.NgaySinh.Contains(keyword) ||
+                                        x.NgaySinh.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.QueQuan.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.QueQuan.ToUpper().Contains(keyword) ||
                                         x.DanToc.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.DanToc.ToUpper().Contains(keyword));
+                }
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

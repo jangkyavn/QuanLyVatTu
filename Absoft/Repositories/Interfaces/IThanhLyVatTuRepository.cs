@@ -19,7 +19,7 @@ namespace Absoft.Repositories.Interfaces
         Task<ThanhLyVatTuParams> GetDetailAsync(int maPTL);
         Task<List<VatTuViewModel>> GetListVTByMaPNAsync(int maPN);
         Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT);
-        Task<List<KhoHangViewModel>> GetListByMaKho(int makho, string keyword);
+        Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho);
         Task<ThanhLyChiTietViewModel> GetThanhLyChiTiet(int maptl, int mapn, int mavt);
     }
 }

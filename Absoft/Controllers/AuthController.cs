@@ -63,7 +63,7 @@ namespace Absoft.Controllers
                 return Ok(new LoginResult(true, await GenerateJwtAsync(userModel), userSession));
             }
 
-            return Ok(new LoginResult(false, "Mật khẩu không đúng!"));
+            return Ok(new LoginResult(false, "Tài khoản hoặc mật khẩu không đúng!"));
         }
         #endregion
 

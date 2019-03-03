@@ -123,11 +123,12 @@ namespace Absoft.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetListByMaKho/{makho}/{keyword}")]
-        public async Task<IActionResult> GetListByMaKho(int makho, string keyword)
+        [HttpGet("GetListByMaKho")]
+        public async Task<IActionResult> GetListByMaKho([FromQuery]PagingParams pagingParams, int maKho)
         {
-            var result = await __IThanhLyVatTuRepository.GetListByMaKho(makho, keyword);
-            return Ok(result);
+            var result = await __IThanhLyVatTuRepository.GetListByMaKho(pagingParams, maKho);
+            Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result.Items);
         }
 
         [HttpGet("getThanhLyChiTiet{maptl}/{mapn}/{mavt}")]

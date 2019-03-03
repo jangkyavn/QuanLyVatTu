@@ -122,7 +122,7 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenHM.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenHM.ToUpper().Contains(keyword) ||
-                                        x.NgayNhap.Contains(keyword) ||
+                                        x.NgayNhap.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.TongSoTien.ToString().Contains(keyword) ||
                                         x.TongSoLuong.ToString().Contains(keyword) ||
                                         x.ChietKhau.ToString().Contains(keyword) ||

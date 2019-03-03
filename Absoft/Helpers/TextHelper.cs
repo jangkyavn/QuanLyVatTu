@@ -48,5 +48,17 @@ namespace Absoft.Helpers
 
             return str.ToUpper();
         }
+
+        public static string ToConvertFullDateFormat(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            var arr = value.Split("-");
+
+            return $"{arr[2]}/{arr[1]}/{arr[0]}";
+        }
     }
 }
