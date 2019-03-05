@@ -639,6 +639,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.ThanhTien.ToString().Contains(keyword));
                 }
             }
+            if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
+            {
+                var fromDate = pagingParams.fromDate;
+                var toDate = pagingParams.toDate;
+                query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(toDate));
+            }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
@@ -745,7 +751,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.ThanhTien.ToString().Contains(keyword));
                 }
             }
-
+            if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
+            {
+                var fromDate = pagingParams.fromDate;
+                var toDate = pagingParams.toDate;
+                query = query.Where(x => DateTime.Parse(x.NgayXuat) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayXuat) <= DateTime.Parse(toDate));
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
@@ -930,7 +941,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()));
                 }
             }
-
+            if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
+            {
+                var fromDate = pagingParams.fromDate;
+                var toDate = pagingParams.toDate;
+                query = query.Where(x => DateTime.Parse(x.NgayThanhLy) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(toDate));
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
