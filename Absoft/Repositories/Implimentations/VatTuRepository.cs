@@ -1009,49 +1009,67 @@ namespace Absoft.Repositories.Implimentations
             return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
-        public async Task<TongLuongParams> GetTongCong(int mavt, TimKiemVatTuEnums enums)
+        public async Task<TongLuongParams> GetTongCong(TotalWholeParams wholeParams)
         {
             IQueryable<ThongKeVatTuParam> query = null;
-
-            switch (enums)
+            var maVT = wholeParams.MaterialId;
+            switch (wholeParams.Enums)
             {
                 case TimKiemVatTuEnums.NhapVatTu:
                     query = from vt in db.VatTus
                             join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
                             join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap
-                            where vt.MaVatTu == mavt
+                            where vt.MaVatTu == maVT
                             select new ThongKeVatTuParam
                             {
+                                NgayNhap = nvt.NgayNhap,
                                 SoLuong = nct.SoLuong,
                                 ThanhTien = (nct.SoLuong * nct.DonGia) * (1 - (nvt.ChietKhau / 100))
                             };
+
+                    if (!string.IsNullOrEmpty(wholeParams.FromDate) && !string.IsNullOrEmpty(wholeParams.ToDate))
+                    {
+                        query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(wholeParams.FromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(wholeParams.ToDate));
+                    }
                     break;
                 case TimKiemVatTuEnums.XuatVatTu:
                     query = from vt in db.VatTus
                             join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
                             join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat
-                            where vt.MaVatTu == mavt
+                            where vt.MaVatTu == maVT
                             select new ThongKeVatTuParam
                             {
+                                NgayXuat = xvt.NgayNhap,
                                 SoLuong = xct.SoLuongXuat,
                                 ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100))
                             };
+
+                    if (!string.IsNullOrEmpty(wholeParams.FromDate) && !string.IsNullOrEmpty(wholeParams.ToDate))
+                    {
+                        query = query.Where(x => DateTime.Parse(x.NgayXuat) >= DateTime.Parse(wholeParams.FromDate) && DateTime.Parse(x.NgayXuat) <= DateTime.Parse(wholeParams.ToDate));
+                    }
                     break;
                 case TimKiemVatTuEnums.ThanhLyVatTu:
                     query = from vt in db.VatTus
                             join tlct in db.ThanhLyChiTiets on vt.MaVatTu equals tlct.MaVatTu
                             join tlvt in db.ThanhLyVatTus on tlct.MaPhieuThanhLy equals tlvt.MaPhieuThanhLy
-                            where vt.MaVatTu == mavt
+                            where vt.MaVatTu == maVT
                             select new ThongKeVatTuParam
                             {
+                                NgayThanhLy = tlvt.NgayThanhLy,
                                 SoLuong = tlct.SoLuongThanhLy
                             };
+
+                    if (!string.IsNullOrEmpty(wholeParams.FromDate) && !string.IsNullOrEmpty(wholeParams.ToDate))
+                    {
+                        query = query.Where(x => DateTime.Parse(x.NgayThanhLy) >= DateTime.Parse(wholeParams.FromDate) && DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(wholeParams.ToDate));
+                    }
                     break;
                 case TimKiemVatTuEnums.KhoVatTu:
                     query = from kh in db.KhoHangs
                             join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
                             join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
-                            where vt.MaVatTu == mavt
+                            where vt.MaVatTu == maVT
                             select new ThongKeVatTuParam
                             {
                                 SoLuong = kh.SoLuongTon

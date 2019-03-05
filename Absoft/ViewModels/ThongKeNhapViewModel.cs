@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Absoft.ViewModels
+﻿namespace Absoft.ViewModels
 {
     public class ThongKeNhapViewModel
     {
         public int MaVatTu { get; set; }
         public string TenVT { get; set; }
-        public int? TongNhap { get; set; }
+        public int? TongLuongNhap { get; set; }
     }
 }

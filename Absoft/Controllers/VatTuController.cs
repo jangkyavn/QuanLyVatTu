@@ -123,7 +123,7 @@ namespace Absoft.Controllers
         [Route("ThongKeVatTuNhapByMaVT")]
         public async Task<IActionResult> ThongKeVatTuNhapByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
-            var result =await _IVatTuRepository.ThongKeVatTuNhapByMaVT(pagingParams, Id);
+            var result = await _IVatTuRepository.ThongKeVatTuNhapByMaVT(pagingParams, Id);
             Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
             return Ok(result.Items);
         }
@@ -153,10 +153,10 @@ namespace Absoft.Controllers
             return Ok(paged.Items);
         }
 
-        [HttpGet("getTongCong/{maVT}/{loai}")]
-        public async Task<IActionResult> GetTongCong(int maVT, int loai)
+        [HttpGet("getTongCong")]
+        public async Task<IActionResult> GetTongCong([FromQuery]TotalWholeParams wholeParams)
         {
-            var result = await _IVatTuRepository.GetTongCong(maVT, (TimKiemVatTuEnums)loai);
+            var result = await _IVatTuRepository.GetTongCong(wholeParams);
             return Ok(result);
         }
     }
