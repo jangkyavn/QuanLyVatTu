@@ -77,8 +77,29 @@ namespace Absoft.Repositories.Implimentations
                     nvt.TongSoTien -= nct.SoLuong * nct.DonGia;
 
                     // update nhapchitet
-                    var nhapChiTiet = mp.Map<NhapChiTiet>(mnhapchitiet);
-                    db.Entry(nct).CurrentValues.SetValues(nhapChiTiet);
+                    //var entity = mp.Map<NhapChiTiet>(mnhapchitiet);
+                    //db.Entry(nct).CurrentValues.SetValues(entity);
+                    // db.Update(entity);
+                    nct.MaNuoc = mnhapchitiet.MaNuoc;
+                    nct.MaHang = mnhapchitiet.MaHang;
+                    nct.Model = mnhapchitiet.Model;
+                    nct.Seri = mnhapchitiet.Seri;
+                    nct.SoKhung = mnhapchitiet.SoKhung;
+                    nct.SoMay = mnhapchitiet.SoMay;
+                    nct.SoDangKy = mnhapchitiet.SoDangKy;
+                    nct.DotMua = mnhapchitiet.DotMua;
+                    nct.NamSX = mnhapchitiet.NamSX;
+                    nct.PhanCap = mnhapchitiet.PhanCap;
+                    nct.MaNguon = mnhapchitiet.MaNguon;
+                    nct.SoLuong = mnhapchitiet.SoLuong;
+                    nct.BietDuoc = mnhapchitiet.BietDuoc;
+                    nct.SoLo = mnhapchitiet.SoLo;
+                    nct.HanDung = mnhapchitiet.HanDung;
+                    nct.DonGia = mnhapchitiet.DonGia;
+                    nct.GhiChu = mnhapchitiet.GhiChu;
+
+
+                    nct.SoDangKy = mnhapchitiet.SoDangKy;
                     // update sl trong kho
                     var kh = await db.KhoHangs.Where(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mnhapchitiet.MaVatTu && x.MaKho == makho).FirstOrDefaultAsync();
                     kh.SoLuongTon = soluongtonmoi;

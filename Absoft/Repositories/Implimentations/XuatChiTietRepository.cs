@@ -87,12 +87,17 @@ namespace Absoft.Repositories.Implimentations
             {
                 // update tong so luong, tong tien
                 xvt.TongSoLuong += mxuatchitiet.SoLuongXuat;
-                xvt.TongSoLuong -= soluongxuatcu; 
+                xvt.TongSoLuong -= soluongxuatcu;
                 xvt.TongSoTien += mxuatchitiet.SoLuongXuat * mxuatchitiet.DonGia;
                 xvt.TongSoTien -= xct.SoLuongXuat * xct.DonGia;
-                //up date chi tiet
-                var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
-                db.Entry(xct).CurrentValues.SetValues(xuatchitiet);                
+                //up date chi tiet            
+                //var xuatchitiet = mp.Map<XuatChiTiet>(mxuatchitiet);
+                //db.Entry(xct).CurrentValues.SetValues(mxuatchitiet);
+                //var entity = mp.Map<XuatChiTiet>(mxuatchitiet);
+                //db.Update(entity);
+                xct.SoLuongXuat = mxuatchitiet.SoLuongXuat;
+                xct.GhiChu = mxuatchitiet.GhiChu;
+                xct.DonGia = mxuatchitiet.DonGia;
                 //update sl moi trong kho
                 var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaPhieuNhap == mxuatchitiet.MaPhieuNhap && x.MaVatTu == mxuatchitiet.MaVatTu && x.MaKho == makho);
                 kh.SoLuongTon = soluongtonmoi;
@@ -101,7 +106,7 @@ namespace Absoft.Repositories.Implimentations
                 return soluongtonmoi;
             }
             else return -1;
-        }     
+        }
         public async Task<CheckSoLuongParams> CheckSoLuongXuatChiTietAsync(int maphieunhap, int mvt, int sl)
         {
             int slct = (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maphieunhap && x.MaVatTu == mvt)).SoLuong.Value;
@@ -119,7 +124,7 @@ namespace Absoft.Repositories.Implimentations
                 var xct = mp.Map<XuatChiTiet>(xuatChiTietViewModel);
                 await db.XuatChiTiets.AddAsync(xct);
                 await db.SaveChangesAsync();
-                await this.SumSLTT(xuatChiTietViewModel, mapx);              
+                await this.SumSLTT(xuatChiTietViewModel, mapx);
                 // set status = fales khong cho xoa nhapchitiet cua mat hang nay vi da xuat
                 var mkh = new KhoHangViewModel()
                 {
@@ -144,7 +149,7 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<int> CheckTonTaiVTChitiet(int maphieuxuat, int maphieunhap, int mavt)
         {
-            var model = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap);
+            var model = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaVatTu == mavt && x.MaPhieuNhap == maphieunhap && x.MaPhieuXuat == maphieuxuat);
             if (model != null) return model.SoLuongXuat.Value;
             else return -1;
         }

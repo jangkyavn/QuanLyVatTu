@@ -150,10 +150,14 @@ namespace Absoft.Repositories.Implimentations
                 tlvt.TongSoLuong -= soluongthanhlycu;
                 //up date chi tiet
 
+                //var entity = mp.Map<ThanhLyChiTiet>(model);
+                //db.Update(entity);
                 // var xuatchitiet = mp.Map<ThanhLyChiTiet>(model);
-                db.Entry(tlct).CurrentValues.SetValues(model);
+                // db.Entry(tlct).CurrentValues.SetValues(model);
                 //var rs =  db.Update(entity);
-
+                tlct.SoLuongThanhLy = model.SoLuongThanhLy;
+                tlct.DienGiai = model.DienGiai;
+                tlct.GhiChu = model.GhiChu;
                 //update sl moi trong kho
                 var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu && x.MaKho == makho);
                 kh.SoLuongTon = soluongtonmoi;
