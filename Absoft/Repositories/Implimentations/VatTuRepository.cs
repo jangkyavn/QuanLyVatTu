@@ -248,22 +248,32 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
+            var querytmp = from vt in db.VatTus
+                           join kh in db.KhoHangs on vt.MaVatTu equals kh.MaVatTu
+                           group kh by vt.MaVatTu into g
+                           select new
+                           {
+                               MaVatTu = g.Key,
+                               TongTon = g.Sum(x => x.SoLuongTon)
+                           };
             var query = from vt in db.VatTus
-                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
-                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                        where vt.Status == true
-                        orderby vt.MaVatTu descending
-                        select new VatTuViewModel
-                        {
-                            MaVatTu = vt.MaVatTu,
-                            MaLoaiVatTu = vt.MaLoaiVatTu,
-                            MaDVT = vt.MaDVT,
-                            TenVT = vt.TenVT,
-                            GhiChu = vt.GhiChu ?? string.Empty,
-                            TenDVT = dvt.TenDVT,
-                            TenLoaiVatTu = lvt.TenLoai
-                        };
+                           join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                           join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                           join q in querytmp on vt.MaVatTu equals q.MaVatTu
+                           from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                           where vt.Status == true
+                           orderby vt.MaVatTu descending
+                           select new VatTuViewModel
+                           {
+                               MaVatTu = vt.MaVatTu,
+                               MaLoaiVatTu = vt.MaLoaiVatTu,
+                               MaDVT = vt.MaDVT,
+                               TenVT = vt.TenVT,
+                               GhiChu = vt.GhiChu ?? string.Empty,
+                               TenDVT = dvt.TenDVT,
+                               TenLoaiVatTu = lvt.TenLoai,
+                               TongTon = q.TongTon
+                           };            
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
@@ -734,7 +744,7 @@ namespace Absoft.Repositories.Implimentations
                             DonGia = xct.DonGia,
                             ChietKhau = xvt.ChietKhau,
                             ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100)),
-                            TenKho= kvt.TenKho
+                            TenKho = kvt.TenKho
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))

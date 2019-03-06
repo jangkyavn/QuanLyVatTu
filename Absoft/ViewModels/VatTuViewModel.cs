@@ -23,5 +23,6 @@
         public string TenLoaiVatTu { get; set; }
         public bool Status { set; get; }
         public string TenHM { get; set; }
+        public int? TongTon { get; set; }
     }
 }
