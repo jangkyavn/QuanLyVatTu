@@ -610,6 +610,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from vt in db.VatTus
                         join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
                         join nvt in db.NhapVatTus on nct.MaPhieuNhap equals nvt.MaPhieuNhap
+                        join kvt in db.KhoVatTus on nvt.MaKho equals kvt.MaKho
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
                         {
@@ -618,7 +619,8 @@ namespace Absoft.Repositories.Implimentations
                             SoLuong = nct.SoLuong,
                             DonGia = nct.DonGia,
                             ChietKhau = nvt.ChietKhau,
-                            ThanhTien = (nct.SoLuong * nct.DonGia) * (1 - (nvt.ChietKhau / 100))
+                            ThanhTien = (nct.SoLuong * nct.DonGia) * (1 - (nvt.ChietKhau / 100)),
+                            TenKho = kvt.TenKho
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -722,6 +724,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from vt in db.VatTus
                         join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
                         join xvt in db.XuatVatTus on xct.MaPhieuXuat equals xvt.MaPhieuXuat
+                        join kvt in db.KhoVatTus on xvt.MaKho equals kvt.MaKho
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
                         {
@@ -730,7 +733,8 @@ namespace Absoft.Repositories.Implimentations
                             SoLuong = xct.SoLuongXuat,
                             DonGia = xct.DonGia,
                             ChietKhau = xvt.ChietKhau,
-                            ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100))
+                            ThanhTien = (xct.SoLuongXuat * xct.DonGia) * (1 - (xvt.ChietKhau / 100)),
+                            TenKho= kvt.TenKho
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -912,6 +916,7 @@ namespace Absoft.Repositories.Implimentations
             var query = from vt in db.VatTus
                         join tlct in db.ThanhLyChiTiets on vt.MaVatTu equals tlct.MaVatTu
                         join tlvt in db.ThanhLyVatTus on tlct.MaPhieuThanhLy equals tlvt.MaPhieuThanhLy
+                        join kvt in db.KhoVatTus on tlvt.MaKho equals kvt.MaKho
                         where vt.MaVatTu == mavt
                         select new ThongKeVatTuParam
                         {
@@ -919,7 +924,8 @@ namespace Absoft.Repositories.Implimentations
                             NgayThanhLy = tlvt.NgayThanhLy,
                             SoLuong = tlct.SoLuongThanhLy,
                             DienGiai = tlct.DienGiai ?? string.Empty,
-                            GhiChu = tlct.GhiChu ?? string.Empty
+                            GhiChu = tlct.GhiChu ?? string.Empty,
+                            TenKho = kvt.TenKho
                         };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
