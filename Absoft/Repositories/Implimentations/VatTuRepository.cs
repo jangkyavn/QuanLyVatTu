@@ -246,7 +246,7 @@ namespace Absoft.Repositories.Implimentations
         {
             return (await db.VatTus.FindAsync(id)).Status;
         }
-        public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        public async Task<PagedList<VatTuViewModel>> GetAllPagingWithTongTonAsync(PagingParams pagingParams)
         {
             var querytmp = from vt in db.VatTus
                            join kh in db.KhoHangs on vt.MaVatTu equals kh.MaVatTu
@@ -257,9 +257,93 @@ namespace Absoft.Repositories.Implimentations
                                TongTon = g.Sum(x => x.SoLuongTon)
                            };
             var query = from vt in db.VatTus
+                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                        join q in querytmp on vt.MaVatTu equals q.MaVatTu
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        where vt.Status == true
+                        orderby vt.MaVatTu descending
+                        select new VatTuViewModel
+                        {
+                            MaVatTu = vt.MaVatTu,
+                            MaLoaiVatTu = vt.MaLoaiVatTu,
+                            MaDVT = vt.MaDVT,
+                            TenVT = vt.TenVT,
+                            GhiChu = vt.GhiChu ?? string.Empty,
+                            TenDVT = dvt.TenDVT,
+                            TenLoaiVatTu = lvt.TenLoai,
+                            TongTon = q.TongTon
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVT.ToUpper().Contains(keyword) ||
+                                        x.TenLoaiVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenLoaiVatTu.ToUpper().Contains(keyword) ||
+                                        x.TenDVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenDVT.ToUpper().Contains(keyword) ||
+                                        x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.GhiChu.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenVT":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenVT);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenVT);
+                        }
+                        break;
+                    case "tenLoaiVatTu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoaiVatTu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoaiVatTu);
+                        }
+                        break;
+                    case "tenDVT":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenDVT);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenDVT);
+                        }
+                        break;
+                    case "ghiChu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.GhiChu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.GhiChu);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return await PagedList<VatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+        public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {         
+            var query = from vt in db.VatTus
                            join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                           join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
-                           join q in querytmp on vt.MaVatTu equals q.MaVatTu
+                           join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs                       
                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
                            where vt.Status == true
                            orderby vt.MaVatTu descending
@@ -271,8 +355,7 @@ namespace Absoft.Repositories.Implimentations
                                TenVT = vt.TenVT,
                                GhiChu = vt.GhiChu ?? string.Empty,
                                TenDVT = dvt.TenDVT,
-                               TenLoaiVatTu = lvt.TenLoai,
-                               TongTon = q.TongTon
+                               TenLoaiVatTu = lvt.TenLoai                               
                            };            
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))

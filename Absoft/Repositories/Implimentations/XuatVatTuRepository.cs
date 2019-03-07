@@ -461,18 +461,21 @@ namespace Absoft.Repositories.Implimentations
         }
 
 
-        public async Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho)
-        {
+        public async Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho, string ngayxuat)
+        {           
+
             var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
-                        where kh.MaKho == makho
+                        join nvt in db.NhapVatTus on kh.MaPhieuNhap equals nvt.MaPhieuNhap
+                        where (kh.MaKho == makho && DateTime.Parse(nvt.NgayNhap) <= DateTime.Parse(ngayxuat))
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,
                             MaPhieuNhap = kh.MaPhieuNhap,
                             MaVatTu = vt.MaVatTu,
                             TenVatTu = vt.TenVT,
-                            SoLuongTon = kh.SoLuongTon
+                            SoLuongTon = kh.SoLuongTon,
+                            NgayNhap = nvt.NgayNhap
                         };
 
             string keyword = pagingParams.Keyword;

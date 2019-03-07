@@ -13,5 +13,6 @@
         public string TenKho { get; set; }
         public string TenVatTu { get; set; }        
         public bool Status { get; set; }
+        public string NgayNhap { get; set; }
     }
 }

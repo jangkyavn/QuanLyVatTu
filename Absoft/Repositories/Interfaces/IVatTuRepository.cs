@@ -10,6 +10,7 @@ namespace Absoft.Repositories.Interfaces
     {
         Task<List<VatTuViewModel>> GetAllAsync();
         Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams);
+        Task<PagedList<VatTuViewModel>> GetAllPagingWithTongTonAsync(PagingParams pagingParams);
         Task<VatTuViewModel> GetByIdAsync(int id);
         Task<List<VatTuViewModel>> GetByMaLoaiVTAsync(int MaloaiVT);
         Task<List<VatTuViewModel>> GetByMaDVAsync(int MADV);

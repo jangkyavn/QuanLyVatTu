@@ -32,6 +32,14 @@ namespace Absoft.Controllers
             return Ok(paged.Items);
         }
 
+        [HttpGet("getAllPagingWithTongTon")]
+        public async Task<IActionResult> GetAllPagingWithTongTonAsync([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _IVatTuRepository.GetAllPagingWithTongTonAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
+        }
+
         [HttpGet("getTotalCount")]
         public async Task<IActionResult> GetTotalCount()
         {

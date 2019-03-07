@@ -19,7 +19,7 @@ namespace Absoft.Repositories.Interfaces
         Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho);
         Task<List<NhapChiTietViewModel>> GetListNhapChiTietByMaVTAsync(int maVT);
         Task<int> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel);
-        Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho);
+        Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho, string ngayxuat);
         Task<XuatChiTietViewModel> GetXuatChiTiet(int mapx, int mapn, int mavt);
         Task<bool> UpdateXuatVatTuAsync(XuatVatTuViewModel xuatVatTuViewModel);
         Task<bool> SumTongLuongTongTien(int id);

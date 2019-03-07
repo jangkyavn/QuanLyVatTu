@@ -412,6 +412,17 @@ namespace Absoft.Repositories.Implimentations
             var result = await this.SumTongLuongTongTien(nhapVatTuViewModel.MaPhieuNhap.Value);
             return result;
         }
+
+        public async Task<bool> CheckUpdateNgayNhap(int MaPN)
+        {
+            var rs = await db.XuatChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == MaPN);
+            if (rs!=null) return true ;
+            var rs1 = await db.ThanhLyChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == MaPN);
+            if (rs1 != null) return true;
+            return false;
+        }
+
+
         public async Task<bool> SumTongLuongTongTien(int id)
         {
             int tongluong = 0;

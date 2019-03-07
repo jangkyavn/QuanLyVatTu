@@ -124,9 +124,9 @@ namespace Absoft.Controllers
         }
 
         [HttpGet("GetListByMaKho")]
-        public async Task<IActionResult> GetListByMaKho([FromQuery]PagingParams pagingParams, int maKho)
+        public async Task<IActionResult> GetListByMaKho([FromQuery]PagingParams pagingParams, int maKho, string ngaythanhly)
         {
-            var result = await __IThanhLyVatTuRepository.GetListByMaKho(pagingParams, maKho);
+            var result = await __IThanhLyVatTuRepository.GetListByMaKho(pagingParams, maKho, ngaythanhly);
             Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
             return Ok(result.Items);
         }

@@ -129,5 +129,11 @@ namespace Absoft.Controllers
             var result = await _INhapChiTietRepository.CheckTonTaiVTChitiet(maphieunhap, mavt);
             return Ok(result);
         }
+        [HttpGet("CheckUpdateNgayNhap/{maphieunhap}")]
+        public async Task<IActionResult> CheckUpdateNgayNhap(int maphieunhap)
+        {
+            var result = await _INhapVatTuRepository.CheckUpdateNgayNhap(maphieunhap);
+            return Ok(result); // true da xuat hoac thanh ly khong cho sua ngay nhap
+        }
     }
 }
