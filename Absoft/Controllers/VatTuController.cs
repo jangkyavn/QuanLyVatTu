@@ -173,11 +173,11 @@ namespace Absoft.Controllers
         public async Task<IActionResult> ThongKeVatTuTonKhoByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
             var result = await _IVatTuRepository.ThongKeVatTuTonKhoByMaVT(pagingParams, Id);
-            Response.AddPagination(result.pl.CurrentPage, result.pl.PageSize, result.pl.TotalCount, result.pl.TotalPages);
+            Response.AddPagination(result.plkho.CurrentPage, result.plkho.PageSize, result.plkho.TotalCount, result.plkho.TotalPages);
             return Ok(
                new
                {
-                   result.pl.Items,
+                   result.plkho.Items,
                    result.tongluong
                });
         }
