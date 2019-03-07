@@ -132,8 +132,14 @@ namespace Absoft.Controllers
         public async Task<IActionResult> ThongKeVatTuNhapByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
             var result = await _IVatTuRepository.ThongKeVatTuNhapByMaVT(pagingParams, Id);
-            Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
-            return Ok(result.Items);
+            Response.AddPagination(result.pl.CurrentPage, result.pl.PageSize, result.pl.TotalCount, result.pl.TotalPages);
+            return Ok(
+                new
+                {
+                    result.pl.Items,
+                    result.tongluong,
+                    result.tongtien
+                });
         }
 
         [HttpGet]
@@ -141,24 +147,39 @@ namespace Absoft.Controllers
         public async Task<IActionResult> ThongKeVatTuXuatpByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
             var result = await _IVatTuRepository.ThongKeVatTuXuatpByMaVT(pagingParams, Id);
-            Response.AddPagination(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
-            return Ok(result.Items);
+            Response.AddPagination(result.pl.CurrentPage, result.pl.PageSize, result.pl.TotalCount, result.pl.TotalPages);
+            return Ok(
+                new
+                {
+                    result.pl.Items,
+                    result.tongluong,
+                    result.tongtien
+                });
         }
 
         [HttpGet("ThongKeVatTuThanhLyByMaVT")]
         public async Task<IActionResult> ThongKeVatTuThanhLyByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
-            var paged = await _IVatTuRepository.ThongKeVatTuThanhLyByMaVT(pagingParams, Id);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(paged.Items);
+            var result = await _IVatTuRepository.ThongKeVatTuThanhLyByMaVT(pagingParams, Id);
+            Response.AddPagination(result.pl.CurrentPage, result.pl.PageSize, result.pl.TotalCount, result.pl.TotalPages);
+            return Ok(
+                new
+                {
+                    result.pl.Items,
+                    result.tongluong            
+                });
         }
-
         [HttpGet("ThongKeVatTuTonKhoByMaVT")]
         public async Task<IActionResult> ThongKeVatTuTonKhoByMaVT([FromQuery]PagingParams pagingParams, int Id)
         {
-            var paged = await _IVatTuRepository.ThongKeVatTuTonKhoByMaVT(pagingParams, Id);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(paged.Items);
+            var result = await _IVatTuRepository.ThongKeVatTuTonKhoByMaVT(pagingParams, Id);
+            Response.AddPagination(result.pl.CurrentPage, result.pl.PageSize, result.pl.TotalCount, result.pl.TotalPages);
+            return Ok(
+               new
+               {
+                   result.pl.Items,
+                   result.tongluong
+               });
         }
 
         [HttpGet("getTongCong")]

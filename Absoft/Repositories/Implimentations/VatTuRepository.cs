@@ -340,23 +340,23 @@ namespace Absoft.Repositories.Implimentations
             return await PagedList<VatTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
         public async Task<PagedList<VatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
-        {         
+        {
             var query = from vt in db.VatTus
-                           join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
-                           join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs                       
-                           from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                           where vt.Status == true
-                           orderby vt.MaVatTu descending
-                           select new VatTuViewModel
-                           {
-                               MaVatTu = vt.MaVatTu,
-                               MaLoaiVatTu = vt.MaLoaiVatTu,
-                               MaDVT = vt.MaDVT,
-                               TenVT = vt.TenVT,
-                               GhiChu = vt.GhiChu ?? string.Empty,
-                               TenDVT = dvt.TenDVT,
-                               TenLoaiVatTu = lvt.TenLoai                               
-                           };            
+                        join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
+                        join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        where vt.Status == true
+                        orderby vt.MaVatTu descending
+                        select new VatTuViewModel
+                        {
+                            MaVatTu = vt.MaVatTu,
+                            MaLoaiVatTu = vt.MaLoaiVatTu,
+                            MaDVT = vt.MaDVT,
+                            TenVT = vt.TenVT,
+                            GhiChu = vt.GhiChu ?? string.Empty,
+                            TenDVT = dvt.TenDVT,
+                            TenLoaiVatTu = lvt.TenLoai
+                        };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
@@ -698,7 +698,7 @@ namespace Absoft.Repositories.Implimentations
                 return false;
             }
         }
-        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuNhapByMaVT(PagingParams pagingParams, int mavt)
+        public async Task<PagedListParam> ThongKeVatTuNhapByMaVT(PagingParams pagingParams, int mavt)
         {
             var query = from vt in db.VatTus
                         join nct in db.NhapChiTiets on vt.MaVatTu equals nct.MaVatTu
@@ -809,10 +809,14 @@ namespace Absoft.Repositories.Implimentations
                         break;
                 }
             }
-
-            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            return new PagedListParam
+            {
+                pl = await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize),
+                tongluong = query.Sum(x => x.SoLuong),
+                tongtien = query.Sum(x => x.ThanhTien)
+            };
         }
-        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuXuatpByMaVT(PagingParams pagingParams, int mavt)
+        public async Task<PagedListParam> ThongKeVatTuXuatpByMaVT(PagingParams pagingParams, int mavt)
         {
             var query = from vt in db.VatTus
                         join xct in db.XuatChiTiets on vt.MaVatTu equals xct.MaVatTu
@@ -922,10 +926,14 @@ namespace Absoft.Repositories.Implimentations
                         break;
                 }
             }
-
-            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            return new PagedListParam
+            {
+                pl = await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize),
+                tongluong = query.Sum(x => x.SoLuong),
+                tongtien = query.Sum(x => x.ThanhTien)
+            };
         }
-        public async Task<PagedList<KhoHangViewModel>> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt)
+        public async Task<PagedListParam> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt)
         {
             var query = from kh in db.KhoHangs
                         join kvt in db.KhoVatTus on kh.MaKho equals kvt.MaKho
@@ -1001,10 +1009,15 @@ namespace Absoft.Repositories.Implimentations
                         break;
                 }
             }
-            return await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+
+            return new PagedListParam
+            {
+                plkho = await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize),
+                tongluong = query.Sum(x => x.SoLuongTon),
+            };
         }
 
-        public async Task<PagedList<ThongKeVatTuParam>> ThongKeVatTuThanhLyByMaVT(PagingParams pagingParams, int mavt)
+        public async Task<PagedListParam> ThongKeVatTuThanhLyByMaVT(PagingParams pagingParams, int mavt)
         {
             var query = from vt in db.VatTus
                         join tlct in db.ThanhLyChiTiets on vt.MaVatTu equals tlct.MaVatTu
@@ -1105,7 +1118,11 @@ namespace Absoft.Repositories.Implimentations
                 }
             }
 
-            return await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            return new PagedListParam
+            {
+                pl = await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize),
+                tongluong = query.Sum(x => x.SoLuong)               
+            };
         }
 
         public async Task<TongLuongParams> GetTongCong(TotalWholeParams wholeParams)
