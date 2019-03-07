@@ -44,7 +44,7 @@ namespace Absoft.Repositories.Implimentations
             }
         }
 
-        public async Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho)
+        public async Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho, int? maVatTu)
         {
             using (var sqlConnection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -55,6 +55,7 @@ namespace Absoft.Repositories.Implimentations
                 parameters.Add("@maLoaiVT", maLoaiVT);
                 parameters.Add("@MaHM", maHM);
                 parameters.Add("@maKho", maKho);
+                parameters.Add("@maVatTu", maVatTu);
 
                 try
                 {

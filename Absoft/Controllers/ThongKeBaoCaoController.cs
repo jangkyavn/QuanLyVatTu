@@ -38,7 +38,7 @@ namespace Absoft.Controllers
         [HttpGet("ThongKeNhapXuatTon")]
         public async Task<IActionResult> ThongKeNhapXuatTon([FromQuery]ThongKeParams thongKeParams)
         {
-            var models = await _IThongKeRepository.ThongKeNhapXuatTon(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho);
+            var models = await _IThongKeRepository.ThongKeNhapXuatTon(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho, thongKeParams.maVatTu);
             return Ok(models);
         }
     }

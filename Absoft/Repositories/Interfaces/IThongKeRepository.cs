@@ -11,6 +11,6 @@ namespace Absoft.Repositories.Interfaces
         Task<IEnumerable<ThongKeNhapViewModel>> ThongKeNhap(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
         Task<IEnumerable<ThongKeXuatViewModel>> ThongKeXuat(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
         Task<IEnumerable<ThongKeThanhLyViewModel>> ThongKeThanhLy(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
-        Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
+        Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho, int? maVatTu);
     }
 }
