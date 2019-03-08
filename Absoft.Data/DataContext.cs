@@ -33,6 +33,8 @@ namespace Absoft.Data
         public DbSet<XuatChiTiet> XuatChiTiets { get; set; }
         public DbSet<ThanhLyVatTu> ThanhLyVatTus { get; set; }
         public DbSet<ThanhLyChiTiet> ThanhLyChiTiets { get; set; }
+        public DbSet<KiemKeVatTu> KiemKeVatTus { get; set; }
+        public DbSet<KiemKeChiTiet> KiemKeChiTiets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +52,8 @@ namespace Absoft.Data
             modelBuilder.AddConfiguration(new XuatVatTuConfiguration());
             modelBuilder.AddConfiguration(new ThanhLyVatTuConfiguration());
             modelBuilder.AddConfiguration(new ThanhLyChiTietConfiguration());
+            modelBuilder.AddConfiguration(new KiemKeVatTuConfiguration());
+            modelBuilder.AddConfiguration(new KiemKeChiTietConfiguration());
         }
 
         public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataContext>

@@ -27,5 +27,6 @@ namespace Absoft.Data.Entities
 
         public ICollection<XuatVatTu> XuatVatTus { get; set; }
         public ICollection<ThanhLyVatTu> ThanhLyVatTus { get; set; }
+        public ICollection<KiemKeVatTu> KiemKeVatTus { get; set; }
     }
 }
