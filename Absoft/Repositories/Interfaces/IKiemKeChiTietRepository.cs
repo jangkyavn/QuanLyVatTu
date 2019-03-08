@@ -9,7 +9,8 @@ namespace Absoft.Repositories.Interfaces
     public interface IKiemKeChiTietRepository
     {
         Task<bool> DeleteKiemKeChiTietAsync(int maPKK, int maPN, int maVT, int maKho);
-        Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK);
-        Task<int> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho);
+        Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho);
+        Task<bool> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho);
+        Task<int> GetSoLuongTheoDoi(int maKho, int maPN, int maVT);
     }
 }
