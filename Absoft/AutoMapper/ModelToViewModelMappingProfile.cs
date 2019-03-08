@@ -29,6 +29,7 @@ namespace Absoft.AutoMapper
             CreateMap<ThanhLyChiTiet, ThanhLyChiTietViewModel>();
             CreateMap<KiemKeVatTu, KiemKeVatTuViewModel>();
             CreateMap<KiemKeChiTiet, KiemKeChiTietViewModel>();
+            CreateMap<VaiTro, RoleViewModel>();
         }
     }
 }
