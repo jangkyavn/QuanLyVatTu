@@ -60,7 +60,7 @@ namespace Absoft.Controllers
         //    return Ok(models);
         //}
         [HttpPost("InserThanhLyVatTu")]
-        public async Task<IActionResult> InsertXuatVatTu(ThanhLyVatTuViewModel model)
+        public async Task<IActionResult> InserThanhLyVatTu(ThanhLyVatTuViewModel model)
         {
             var models = await __IThanhLyVatTuRepository.InserThanhLyVatTu(model);
             return Ok(models);

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Absoft.Data.Entities
+namespace Absoft.ViewModels
 {
-    [Table("KiemKeVatTu")]
-    public class KiemKeVatTu
+    public class KiemKeVatTuViewModel
     {
-        [Key]
+        public KiemKeVatTuViewModel()
+        {
+            Status = true;
+        }
         public int MaPhieuKiemKe { get; set; }
         public string SoPhieuKiemKe { get; set; }
         public int MaKho { get; set; }
@@ -19,9 +20,7 @@ namespace Absoft.Data.Entities
         public int? TongThucTon { get; set; }
         public bool Status { set; get; }
 
-        public KhoVatTu KhoVatTu { get; set; }
-        public NhanSu NhanSu { get; set; }
-
-        public ICollection<KiemKeChiTiet> KiemKeChiTiets { get; set; }
+        public string TenKho { get; set; }
+        public string TenNS { get; set; }
     }
 }
