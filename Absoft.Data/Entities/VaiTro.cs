@@ -7,5 +7,6 @@ namespace Absoft.Data.Entities
     public class VaiTro : IdentityRole<Guid>
     {
         public virtual ICollection<VaiTroNguoiDung> UserRoles { get; set; }
+        public ICollection<PhanQuyen> PhanQuyens { get; set; }
     }
 }

@@ -30,6 +30,8 @@ namespace Absoft.AutoMapper
             CreateMap<KiemKeVatTu, KiemKeVatTuViewModel>();
             CreateMap<KiemKeChiTiet, KiemKeChiTietViewModel>();
             CreateMap<VaiTro, RoleViewModel>();
+            CreateMap<ChucNang, ChucNangViewModel>();
+            CreateMap<PhanQuyen, PhanQuyenViewModel>();
         }
     }
 }

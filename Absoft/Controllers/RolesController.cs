@@ -2,8 +2,11 @@
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Absoft.Controllers
@@ -30,6 +33,24 @@ namespace Absoft.Controllers
             var paged = await _roleRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
+        }
+
+        [HttpGet("getListPermissionByRoleId/{roleId}")]
+        public async Task<IActionResult> GetListPermissionByRoleId(Guid? roleId)
+        {
+            if (roleId == null)
+            {
+                return new BadRequestResult();
+            }
+
+            var model = await _roleRepository.GetByIdAsync(roleId);
+            if (model == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var models = await _roleRepository.GetListPermissionByRoleAsync(roleId.Value);
+            return Ok(models);
         }
 
         [HttpGet("{id}")]
@@ -86,6 +107,30 @@ namespace Absoft.Controllers
 
             var result = await _roleRepository.CheckNameExistsAsync(name);
             return Ok(result);
+        }
+
+        [HttpGet("checkPermission/{functionId}/{actionType}")]
+        public async Task<IActionResult> CheckPermission(string functionId, string actionType)
+        {
+            var rolesClaim = User.FindAll(ClaimTypes.Role);
+            List<string> roles = new List<string>();
+            foreach (var item in rolesClaim)
+            {
+                roles.Add(item.Value);
+            }
+
+            if (roles.Count > 0)
+            {
+                var result = await _roleRepository.CheckPermissionAsync(functionId, actionType, roles.ToArray());
+                if (result || roles.Contains("Admin"))
+                {
+                    return Ok(true);
+                }
+
+                return Ok(false);
+            }
+
+            return Ok(false);
         }
 
         [HttpPut("editRoles/{userName}")]

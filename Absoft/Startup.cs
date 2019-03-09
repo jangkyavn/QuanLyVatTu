@@ -1,4 +1,5 @@
-﻿using Absoft.Data;
+﻿using Absoft.Authorization;
+using Absoft.Data;
 using Absoft.Data.Entities;
 using Absoft.Extentions;
 using Absoft.Repositories.Implimentations;
@@ -93,6 +94,8 @@ namespace Absoft
 
             services.AddAutoMapper();
 
+            services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
+
             services.AddTransient<Seed>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -115,6 +118,7 @@ namespace Absoft
             services.AddScoped<IThongKeRepository, ThongKeRepository>();
             services.AddScoped<IKiemKeVatTuRepository, KiemKeVatTuRepository>();
             services.AddScoped<IKiemKeChiTietRepository, KiemKeChiTietRepository>();
+            services.AddScoped<IChucNangRepository, ChucNangRepository>();
 
             services.AddSwaggerGen(c =>
             {

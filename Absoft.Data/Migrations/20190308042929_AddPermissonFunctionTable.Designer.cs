@@ -4,14 +4,16 @@ using Absoft.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Absoft.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20190308042929_AddPermissonFunctionTable")]
+    partial class AddPermissonFunctionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,14 +30,6 @@ namespace Absoft.Data.Migrations
                     b.Property<string>("BieuTuong");
 
                     b.Property<string>("DuongDan");
-
-                    b.Property<bool>("HasCreate");
-
-                    b.Property<bool>("HasDelete");
-
-                    b.Property<bool>("HasRead");
-
-                    b.Property<bool>("HasUpdate");
 
                     b.Property<bool>("Status");
 
@@ -95,21 +89,6 @@ namespace Absoft.Data.Migrations
                     b.HasKey("MaHang");
 
                     b.ToTable("HangSanXuat");
-                });
-
-            modelBuilder.Entity("Absoft.Data.Entities.HanhDong", b =>
-                {
-                    b.Property<string>("MaHanhDong")
-                        .ValueGeneratedOnAdd()
-                        .IsUnicode(false);
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("TenHanhDong");
-
-                    b.HasKey("MaHanhDong");
-
-                    b.ToTable("HanhDong");
                 });
 
             modelBuilder.Entity("Absoft.Data.Entities.KhoHang", b =>
@@ -474,13 +453,17 @@ namespace Absoft.Data.Migrations
 
                     b.Property<string>("MaChucNang");
 
-                    b.Property<string>("MaHanhDong");
+                    b.Property<bool>("Sua");
 
-                    b.HasKey("MaVaiTro", "MaChucNang", "MaHanhDong");
+                    b.Property<bool>("Them");
+
+                    b.Property<bool>("Xem");
+
+                    b.Property<bool>("Xoa");
+
+                    b.HasKey("MaVaiTro", "MaChucNang");
 
                     b.HasIndex("MaChucNang");
-
-                    b.HasIndex("MaHanhDong");
 
                     b.ToTable("PhanQuyen");
                 });
@@ -830,11 +813,6 @@ namespace Absoft.Data.Migrations
                     b.HasOne("Absoft.Data.Entities.ChucNang", "ChucNang")
                         .WithMany("PhanQuyens")
                         .HasForeignKey("MaChucNang")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Absoft.Data.Entities.HanhDong", "HanhDong")
-                        .WithMany("PhanQuyens")
-                        .HasForeignKey("MaHanhDong")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Absoft.Data.Entities.VaiTro", "VaiTro")

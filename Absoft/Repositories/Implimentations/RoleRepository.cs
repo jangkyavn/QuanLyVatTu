@@ -1,4 +1,6 @@
-﻿using Absoft.Data.Entities;
+﻿using Absoft.Authorization;
+using Absoft.Data;
+using Absoft.Data.Entities;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
@@ -17,15 +19,18 @@ namespace Absoft.Repositories.Implimentations
     {
         private readonly UserManager<NguoiDung> _userManager;
         private readonly RoleManager<VaiTro> _roleManager;
+        private readonly DataContext _dataContext;
         private readonly IMapper _mapper;
 
         public RoleRepository(
             UserManager<NguoiDung> userManager,
             RoleManager<VaiTro> roleManager,
+            DataContext dataContext,
             IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _dataContext = dataContext;
             _mapper = mapper;
         }
 
@@ -42,9 +47,34 @@ namespace Absoft.Repositories.Implimentations
             return model != null;
         }
 
+        public async Task<bool> CheckPermissionAsync(string functionId, string action, string[] roles)
+        {
+            var query = from cn in _dataContext.ChucNangs
+                        join pq in _dataContext.PhanQuyens on cn.MaChucNang equals pq.MaChucNang
+                        join vt in _roleManager.Roles on pq.MaVaiTro equals vt.Id
+                        where roles.Contains(vt.Name) && cn.MaChucNang == functionId &&
+                        ((pq.MaHanhDong == nameof(Operations.Read).ToUpper() && action == nameof(Operations.Read)) ||
+                        (pq.MaHanhDong == nameof(Operations.Create).ToUpper() && action == nameof(Operations.Create)) ||
+                        (pq.MaHanhDong == nameof(Operations.Update).ToUpper() == true && action == nameof(Operations.Update)) ||
+                        (pq.MaHanhDong == nameof(Operations.Delete).ToUpper() == true && action == nameof(Operations.Delete)))
+                        select pq;
+
+            return await query.AnyAsync();
+        }
+
         public async Task<bool> DeleteAsync(Guid? id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
+
+            if (_dataContext.PhanQuyens.Any(x => x.MaVaiTro == id))
+            {
+                var permissions = _dataContext.PhanQuyens.Where(x => x.MaVaiTro == id).ToList();
+                if (permissions.Count > 0)
+                {
+                    _dataContext.PhanQuyens.RemoveRange(permissions);
+                }
+            }
+
             var result = await _roleManager.DeleteAsync(role);
             return result.Succeeded;
         }
@@ -130,12 +160,72 @@ namespace Absoft.Repositories.Implimentations
             return _mapper.Map<RoleViewModel>(role);
         }
 
+        public async Task<RoleViewModel> GetByNameAsync(string name)
+        {
+            var role = await _roleManager.FindByNameAsync(name);
+            return _mapper.Map<RoleViewModel>(role);
+        }
+
+        public async Task<List<PhanQuyenViewModel>> GetListPermissionByRoleAsync(Guid roleId)
+        {
+            var query = from cn in _dataContext.ChucNangs
+                        join pq in _dataContext.PhanQuyens on cn.MaChucNang equals pq.MaChucNang
+                        where pq.MaVaiTro == roleId
+                        orderby cn.ViTri
+                        select new PhanQuyenViewModel
+                        {
+                            MaVaiTro = roleId,
+                            MaChucNang = cn.MaChucNang,
+                            MaHanhDong = pq.MaHanhDong
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<PhanQuyenViewModel>> GetListPermissionByUserAsync(Guid? id)
+        {
+            var query = from cn in _dataContext.ChucNangs
+                        join pq in _dataContext.PhanQuyens on cn.MaChucNang equals pq.MaChucNang
+                        join ur in _dataContext.UserRoles on pq.MaVaiTro equals ur.RoleId
+                        join nd in _dataContext.Users on ur.UserId equals nd.Id
+                        where nd.Id == id
+                        orderby cn.ViTri
+                        select new PhanQuyenViewModel
+                        {
+                            MaVaiTro = pq.MaVaiTro,
+                            MaChucNang = cn.MaChucNang,
+                            MaHanhDong = pq.MaHanhDong
+                        };
+
+            return await query.ToListAsync();
+        }
+
         public async Task<bool> UpdateAsync(RoleViewModel roleViewModel)
         {
             var role = await _roleManager.FindByIdAsync(roleViewModel.Id.ToString());
             role.Name = roleViewModel.Name;
             var result = await _roleManager.UpdateAsync(role);
+
+            if (roleViewModel.PhanQuyens.Count() > 0)
+            {
+                return await SavePermissionsAsync(role.Id, roleViewModel.PhanQuyens);
+            }
+
             return result.Succeeded;
+        }
+
+        private async Task<bool> SavePermissionsAsync(Guid? roleId, List<PhanQuyenViewModel> permissions)
+        {
+            var oldPermissions = _dataContext.PhanQuyens.Where(x => x.MaVaiTro == roleId).ToList();
+            if (oldPermissions.Count > 0)
+            {
+                _dataContext.PhanQuyens.RemoveRange(oldPermissions);
+            }
+
+            var newPermissions = _mapper.Map<List<PhanQuyen>>(permissions);
+            await _dataContext.PhanQuyens.AddRangeAsync(newPermissions);
+            var result = await _dataContext.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

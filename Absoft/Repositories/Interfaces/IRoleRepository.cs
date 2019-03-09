@@ -10,11 +10,15 @@ namespace Absoft.Repositories.Interfaces
     {
         Task<List<RoleViewModel>> GetAllAsync();
         Task<PagedList<RoleViewModel>> GetAllPagingAsync(PagingParams pagingParams);
+        Task<List<PhanQuyenViewModel>> GetListPermissionByRoleAsync(Guid roleId);
+        Task<List<PhanQuyenViewModel>> GetListPermissionByUserAsync(Guid? id);
         Task<RoleViewModel> GetByIdAsync(Guid? id);
+        Task<RoleViewModel> GetByNameAsync(string name);
         Task<bool> AddAsync(RoleViewModel roleViewModel);
         Task<bool> UpdateAsync(RoleViewModel roleViewModel);
         Task<bool> DeleteAsync(Guid? id);
         Task<bool> EditRolesByUserAsync(string userName, RoleEditViewModel roleEditViewModel);
         Task<bool> CheckNameExistsAsync(string name);
+        Task<bool> CheckPermissionAsync(string functionId, string action, string[] roles);
     }
 }

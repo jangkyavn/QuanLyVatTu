@@ -1,5 +1,6 @@
 ﻿using Absoft.Data.Entities;
 using Absoft.Helpers;
+using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -22,16 +23,19 @@ namespace Absoft.Controllers
     {
         private readonly UserManager<NguoiDung> _userManager;
         private readonly SignInManager<NguoiDung> _signInManager;
+        private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
 
         public AuthController(UserManager<NguoiDung> userManager,
             SignInManager<NguoiDung> signInManager,
+            IRoleRepository roleRepository,
             IMapper mapper,
             IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleRepository = roleRepository;
             _mapper = mapper;
             _config = config;
         }
@@ -77,16 +81,13 @@ namespace Absoft.Controllers
             };
 
             var roles = await _userManager.GetRolesAsync(user);
-
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -95,9 +96,7 @@ namespace Absoft.Controllers
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
             return tokenHandler.WriteToken(token);
         }
         #endregion
