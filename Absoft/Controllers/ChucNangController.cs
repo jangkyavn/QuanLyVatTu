@@ -1,4 +1,6 @@
-﻿using Absoft.Repositories.Interfaces;
+﻿using Absoft.Extentions;
+using Absoft.Helpers;
+using Absoft.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,6 +20,14 @@ namespace Absoft.Controllers
         {
             var models = await _chucNangRepository.GetAllAsync();
             return Ok(models);
+        }
+
+        [HttpGet("getAllPaging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
+        {
+            var paged = await _chucNangRepository.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
     }
 }

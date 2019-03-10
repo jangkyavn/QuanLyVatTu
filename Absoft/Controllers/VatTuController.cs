@@ -1,7 +1,9 @@
-﻿using Absoft.Extentions;
+﻿using Absoft.Authorization;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,13 +15,21 @@ namespace Absoft.Controllers
     public class VatTuController : BaseController
     {
         IVatTuRepository _IVatTuRepository;
-        public VatTuController(IVatTuRepository IVatTuRepository)
+        private readonly IAuthorizationService _authorizationService;
+
+        public VatTuController(IVatTuRepository IVatTuRepository,
+            IAuthorizationService authorizationService)
         {
             _IVatTuRepository = IVatTuRepository;
+            _authorizationService = authorizationService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IVatTuRepository.GetAllAsync();
             return Ok(models);
         }
@@ -27,6 +37,10 @@ namespace Absoft.Controllers
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _IVatTuRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -35,6 +49,10 @@ namespace Absoft.Controllers
         [HttpGet("getAllPagingWithTongTon")]
         public async Task<IActionResult> GetAllPagingWithTongTonAsync([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _IVatTuRepository.GetAllPagingWithTongTonAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -50,30 +68,50 @@ namespace Absoft.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailById(int id)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IVatTuRepository.GetByIdAsync(id);
             return Ok(models);
         }
         [HttpGet("getByMaLoaiVT/{maLoaiVT}")]
         public async Task<IActionResult> GetByMaLoaiVTAsync(int maLoaiVT)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IVatTuRepository.GetByMaLoaiVTAsync(maLoaiVT);
             return Ok(models);
         }
         [HttpGet("getByMaDV/{maDVT}")]
         public async Task<IActionResult> GetByMaDVAsync(int maDVT)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IVatTuRepository.GetByMaDVAsync(maDVT);
             return Ok(models);
         }
         [HttpPut]
         public async Task<IActionResult> Update(VatTuViewModel VatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _IVatTuRepository.UpdateAsync(VatTuViewModel);
             return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> Insert(VatTuViewModel VatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var id = await _IVatTuRepository.CheckTonTai(VatTuViewModel.TenVT);
             if (id == -1)
             {
@@ -88,12 +126,20 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _IVatTuRepository.DeleteAsync(id);
             return Ok(result);
         }
         [HttpDelete("DeleteAllAsync/{strIds}")]
         public async Task<IActionResult> DeleteAllAsync(string strIds)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             // strids [1,2,3,4,4,5,56,6]
             List<int> listId = JsonConvert.DeserializeObject<List<int>>(strIds);
             var result = await _IVatTuRepository.DeleteAllAsync(listId);
@@ -109,6 +155,11 @@ namespace Absoft.Controllers
         [Route("ImportVT")]
         public async Task<IActionResult> ImportVT(IList<IFormFile> files)
         {
+            var authCreate = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Create);
+            var authUpdate = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Update);
+            if (authCreate.Succeeded == false || authUpdate.Succeeded == false)
+                return Unauthorized();
+
             var result = await _IVatTuRepository.ImportVT(files);
             return Ok(result);
         }
@@ -180,13 +231,6 @@ namespace Absoft.Controllers
                    result.plkho.Items,
                    result.tongluong
                });
-        }
-
-        [HttpGet("getTongCong")]
-        public async Task<IActionResult> GetTongCong([FromQuery]TotalWholeParams wholeParams)
-        {
-            var result = await _IVatTuRepository.GetTongCong(wholeParams);
-            return Ok(result);
         }
     }
 }

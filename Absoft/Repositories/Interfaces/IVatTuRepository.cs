@@ -34,6 +34,5 @@ namespace Absoft.Repositories.Interfaces
         Task<PagedListParam> ThongKeVatTuXuatpByMaVT(PagingParams pagingParams, int mavt);
         Task<PagedListParam> ThongKeVatTuThanhLyByMaVT(PagingParams pagingParams, int mavt);
         Task<PagedListParam> ThongKeVatTuTonKhoByMaVT(PagingParams pagingParams, int mavt);
-        Task<TongLuongParams> GetTongCong(TotalWholeParams wholeParams);
     }
 }

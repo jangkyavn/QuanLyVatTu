@@ -26,9 +26,9 @@ namespace Absoft.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var auth = await _authorizationService.AuthorizeAsync(User, "NGUON_CUNG_CAP", Operations.Read);
-            if (auth.Succeeded == false)
-                return Unauthorized();
+            //var auth = await _authorizationService.AuthorizeAsync(User, "NGUON_CUNG_CAP", Operations.Read);
+            //if (auth.Succeeded == false)
+            //    return Unauthorized();
 
             var models = await _INguonCungCapRepository.GetAllAsync();
             return Ok(models);

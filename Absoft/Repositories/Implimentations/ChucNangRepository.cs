@@ -1,4 +1,5 @@
 ﻿using Absoft.Data;
+using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -28,6 +29,55 @@ namespace Absoft.Repositories.Implimentations
                 .OrderBy(x => x.ViTri)
                 .ProjectTo<ChucNangViewModel>(_mapper.ConfigurationProvider)
                 .ToListAsync();
+        }
+
+        public async Task<PagedList<ChucNangViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        {
+            var query = from cn in _dataContext.ChucNangs
+                        where cn.Status == true
+                        orderby cn.ViTri
+                        select new ChucNangViewModel
+                        {
+                            MaChucNang = cn.MaChucNang,
+                            TenChucNang = cn.TenChucNang,
+                            ViTri = cn.ViTri,
+                            BieuTuong = cn.BieuTuong,
+                            DuongDan = cn.DuongDan,
+                            HasRead = cn.HasRead,
+                            HasCreate = cn.HasCreate,
+                            HasUpdate = cn.HasUpdate,
+                            HasDelete = cn.HasDelete,
+                            Status = cn.Status
+                        };
+
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
+            {
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenChucNang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenChucNang.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenChucNang":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenChucNang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenChucNang);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return await PagedList<ChucNangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }
