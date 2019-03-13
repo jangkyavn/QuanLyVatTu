@@ -33,45 +33,82 @@ namespace Absoft.Repositories.Implimentations
             var kkvt = await db.KiemKeVatTus.FindAsync(maPKK);
             kkvt.TongTheoDoi -= sltd;
             kkvt.TongThucTon -= sltt;
-            // cong sl nguoc lai kho
-            //var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
-            //kh.SoLuongTon += sltl;
-            //try
-            //{
-            //    if (kh.SoLuongTon == (await db.NhapChiTiets.FirstOrDefaultAsync(x => x.MaPhieuNhap == maPN && x.MaVatTu == maVT)).SoLuong)
-            //    {
-            //        kh.Status = true;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    throw ex;
-            //}
-            //db.KhoHangs.Update(kh);
+            // tra lai so luong theo doi vao kho
+            var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
+            kh.SoLuongTon = sltd;
             return await db.SaveChangesAsync() > 0;
         }
-
         public async Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
         {
-            var entity = mp.Map<KiemKeChiTiet>(model);
-            // entity.MaPhieuKiemKe = maPKK;
-            // entity.SoLuongTheoDoi =await GetSoLuongTheoDoi(maKho, model.MaPhieuNhap,model.MaVatTu);
-            await db.KiemKeChiTiets.AddAsync(entity);
-            return await db.SaveChangesAsync() > 0;
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // insert chi tiet, update tong kho, update tongsl
+                    // var pkk = await db.KiemKeVatTus.FindAsync(maPKK);            
+                    var entity = mp.Map<KiemKeChiTiet>(model);
+                    entity.MaPhieuKiemKe = maPKK;
+                    entity.SoLuongKiemKe = entity.SoLuongThucTon - entity.SoLuongTheoDoi;
+                    await db.KiemKeChiTiets.AddAsync(entity);
+                    await SumSL(model, maPKK);
+                    var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu);
+                    kh.SoLuongTon = model.SoLuongThucTon;
+                    kh.Status = false;
+
+                    transaction.Commit();
+                    return await db.SaveChangesAsync() > 0;                   
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
         }
         public async Task<bool> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
         {
-            var kkct = await db.KiemKeChiTiets.FindAsync(maPKK);
+            var kkvt = await db.KiemKeVatTus.FindAsync(maPKK);
+            
+            var kkct = await db.KiemKeChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuKiemKe == maPKK && x.MaPhieuNhap == model.MaPhieuNhap && x. MaVatTu == model.MaVatTu );
+            kkct.SoLuongTheoDoi = kkct.SoLuongTheoDoi;
             kkct.SoLuongThucTon = model.SoLuongThucTon;
+            kkct.SoLuongKiemKe = model.SoLuongThucTon - model.SoLuongTheoDoi;
+
             kkct.GhiChu = model.GhiChu;
+            var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu);
+            kh.SoLuongTon = model.SoLuongThucTon;
+
+            kkvt.TongTheoDoi += model.SoLuongTheoDoi;
+            kkvt.TongTheoDoi -= kkct.SoLuongTheoDoi;
+            kkvt.TongThucTon += model.SoLuongThucTon;
+            kkvt.TongThucTon -= kkct.SoLuongThucTon;
+
             return await db.SaveChangesAsync() > 0;
         }
-
         public async Task<int> GetSoLuongTheoDoi(int maKho, int maPN, int maVT)
         {
             var sl = (await db.KhoHangs.FirstOrDefaultAsync(x=>x.MaKho == maKho && x.MaPhieuNhap== maPN && x. MaVatTu== maVT)).SoLuongTon.Value;
             return sl;
+        }
+
+        public async Task<bool> CheckExistChiTiet(int maPKK)
+        {
+            var entity = await db.KiemKeChiTiets.FirstOrDefaultAsync(x=>x.MaPhieuKiemKe == maPKK);
+            if (entity != null) return false;
+            else return true;
+        }
+        public async Task<bool> SumSL(KiemKeChiTietViewModel model, int maPKK)
+        {
+            var entity = await db.KiemKeVatTus.FindAsync(maPKK);
+            entity.TongTheoDoi += model.SoLuongTheoDoi;
+            entity.TongThucTon += model.SoLuongThucTon;
+            return await db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<KiemKeChiTietViewModel> GetById(int maPKK, int maPN, int maVT)
+        {
+            var entity = await db.KiemKeChiTiets.FirstOrDefaultAsync(x => x.MaPhieuKiemKe == maPKK && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
+            var model = mp.Map<KiemKeChiTietViewModel>(entity);
+            return model;
         }
     }
 }

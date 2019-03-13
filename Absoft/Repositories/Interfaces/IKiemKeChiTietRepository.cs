@@ -12,5 +12,9 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho);
         Task<bool> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho);
         Task<int> GetSoLuongTheoDoi(int maKho, int maPN, int maVT);
+        Task<bool> CheckExistChiTiet(int maPKK);
+
+        Task<bool> SumSL(KiemKeChiTietViewModel model, int maPKK);
+        Task<KiemKeChiTietViewModel> GetById(int maPKK, int maPN, int maVT);
     }
 }

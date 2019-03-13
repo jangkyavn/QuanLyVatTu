@@ -16,6 +16,7 @@ namespace Absoft.ViewModels
         public int MaVatTu { get; set; }
         public int? SoLuongTheoDoi { get; set; }
         public int? SoLuongThucTon { get; set; }
+        public int? SoLuongKiemKe { get; set; }
         public string GhiChu { get; set; }
         public bool Status { set; get; }
 

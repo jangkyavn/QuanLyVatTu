@@ -52,6 +52,44 @@ namespace Absoft.Repositories.Implimentations
             }
             return false;
         }
+        public async Task<bool> DisablePnPxPtl(string ngayKiemKe)
+        {
+            var listNhap = await db.NhapVatTus.Where(x => DateTime.Parse(x.NgayNhap) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iNhap in listNhap)
+            {
+                iNhap.Status = false;
+            }
+            var listXuat = await db.XuatVatTus.Where(x => DateTime.Parse(x.NgayNhap) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iXuat in listXuat)
+            {
+                iXuat.Status = false;
+            }
+            var listThanhLy = await db.ThanhLyVatTus.Where(x => DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iTl in listThanhLy)
+            {
+                iTl.Status = false;
+            }
+            return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> UnablePnPxPtl(string ngayKiemKe)
+        {
+            var listNhap = await db.NhapVatTus.Where(x => DateTime.Parse(x.NgayNhap) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iNhap in listNhap)
+            {
+                iNhap.Status = true;
+            }
+            var listXuat = await db.XuatVatTus.Where(x => DateTime.Parse(x.NgayNhap) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iXuat in listXuat)
+            {
+                iXuat.Status = true;
+            }
+            var listThanhLy = await db.ThanhLyVatTus.Where(x => DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(ngayKiemKe)).ToListAsync();
+            foreach (var iTl in listThanhLy)
+            {
+                iTl.Status = true;
+            }
+            return await db.SaveChangesAsync() > 0;
+        }
         public async Task<PagedList<KiemKeVatTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
         {
             var query = from kkvt in db.KiemKeVatTus
@@ -86,7 +124,7 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenNS.ToUpper().Contains(keyword) ||
                                         x.NgayKiemKe.Contains(keyword) ||
-                                        x.TongTheoDoi.ToString().Contains(keyword)||
+                                        x.TongTheoDoi.ToString().Contains(keyword) ||
                                         x.TongThucTon.ToString().Contains(keyword)
                                         );
                 }
@@ -166,7 +204,7 @@ namespace Absoft.Repositories.Implimentations
             await db.KiemKeVatTus.AddAsync(entity);
             await db.SaveChangesAsync();
             return entity.MaPhieuKiemKe;
-        }   
+        }
         public async Task<bool> UpdateAsync(KiemKeVatTuViewModel model)
         {
             var entity = mp.Map<KiemKeVatTu>(model);
@@ -192,5 +230,125 @@ namespace Absoft.Repositories.Implimentations
             return await db.SaveChangesAsync() > 0;
         }
 
+        public async Task<KiemKeVatTuViewModel> GetById(int maPKK)
+        {
+            var entity = await db.KiemKeVatTus.FindAsync(maPKK);
+            var model = mp.Map<KiemKeVatTuViewModel>(entity);
+            return model;
+        }
+
+        public async Task<List<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, bool status)
+        {
+            var query = from kh in db.KhoHangs
+                        join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
+                        join nvt in db.NhapVatTus on kh.MaPhieuNhap equals nvt.MaPhieuNhap
+                        where (kh.MaKho == maKho.Value)
+                        select new KhoHangViewModel
+                        {
+                            MaKho = kh.MaKho,
+                            MaPhieuNhap = kh.MaPhieuNhap,
+                            MaVatTu = vt.MaVatTu,
+                            TenVatTu = vt.TenVT,
+                            SoLuongTon = kh.SoLuongTon,
+                            NgayNhap = nvt.NgayNhap
+                        };
+            if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
+            if (maVT != null) query = query.Where(x => x.MaVatTu == maVT);
+            if (status == true) query = query.Where(x => x.SoLuongTon > 0);
+
+            string keyword = pagingParams.Keyword;
+            if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
+            {
+                keyword = keyword.ToUpper().ToTrim();
+
+                query = query.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenVatTu.ToUpper().Contains(keyword) ||
+                                        x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.SoLuongTon.ToString().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "tenVatTu":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenVatTu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenVatTu);
+                        }
+                        break;
+                    case "maPhieuNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPhieuNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPhieuNhap);
+                        }
+                        break;
+                    case "soLuongTon":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLuongTon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLuongTon);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return await PagedList<KhoHangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+        public async Task<KiemKeVatTuParams> GetDetailAsync(int maPKK)
+        {
+            var queryKiemKeVT = await (from kkvt in db.KiemKeVatTus
+                                       join kvt in db.KhoVatTus on kkvt.MaKho equals kvt.MaKho
+                                       join ns in db.NhanSus on kkvt.MaNS equals ns.MaNS
+                                       where kkvt.MaPhieuKiemKe == maPKK
+                                       select new KiemKeVatTuViewModel
+                                       {
+                                          MaPhieuKiemKe = kkvt.MaPhieuKiemKe,
+                                          SoPhieuKiemKe =kkvt.SoPhieuKiemKe,
+                                          MaKho = kkvt.MaKho,
+                                          MaNS = kkvt.MaNS,
+                                          NgayKiemKe =kkvt.NgayKiemKe,
+                                          TongTheoDoi = kkvt.TongTheoDoi,
+                                          TongThucTon =kkvt.TongThucTon,
+                                          Status = kkvt.Status,
+                                          TenKho= kvt.TenKho,
+                                          TenNS = ns.HoTen
+                                       }).FirstOrDefaultAsync();
+
+            var listkkct = await (from ct in db.KiemKeChiTiets
+                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu                                                                  
+                                   where ct.MaPhieuKiemKe == maPKK
+                                   select new KiemKeChiTietViewModel
+                                   {
+                                       MaPhieuKiemKe = ct.MaPhieuKiemKe,
+                                       MaPhieuNhap = ct.MaPhieuNhap,
+                                       MaVatTu = ct.MaVatTu,
+                                       SoLuongTheoDoi= ct.SoLuongTheoDoi,
+                                       SoLuongThucTon= ct.SoLuongThucTon,
+                                       SoLuongKiemKe = ct.SoLuongKiemKe,
+                                       GhiChu= ct.GhiChu,
+                                       Status= ct.Status,
+                                       TenVatTu= vt.TenVT
+                                       
+                                   }).ToListAsync();
+
+            return new KiemKeVatTuParams()
+            {
+                mKiemKeVatTu = queryKiemKeVT,
+                listKiemKeChiTiet = listkkct
+            };
+        }
     }
 }
