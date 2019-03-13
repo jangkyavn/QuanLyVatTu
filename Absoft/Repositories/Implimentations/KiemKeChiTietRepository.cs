@@ -49,6 +49,7 @@ namespace Absoft.Repositories.Implimentations
                     var entity = mp.Map<KiemKeChiTiet>(model);
                     entity.MaPhieuKiemKe = maPKK;
                     entity.SoLuongKiemKe = entity.SoLuongThucTon - entity.SoLuongTheoDoi;
+                    
                     await db.KiemKeChiTiets.AddAsync(entity);
                     await SumSL(model, maPKK);
                     var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu);
@@ -109,6 +110,6 @@ namespace Absoft.Repositories.Implimentations
             var entity = await db.KiemKeChiTiets.FirstOrDefaultAsync(x => x.MaPhieuKiemKe == maPKK && x.MaPhieuNhap == maPN && x.MaVatTu == maVT);
             var model = mp.Map<KiemKeChiTietViewModel>(entity);
             return model;
-        }
+        }     
     }
 }

@@ -4,7 +4,7 @@
     {
         public KhoHangViewModel()
         {
-            Status = true;
+            Status = true;           
         }
         public int MaKho { get; set; }
         public int MaPhieuNhap { get; set; }
@@ -14,5 +14,7 @@
         public string TenVatTu { get; set; }        
         public bool Status { get; set; }
         public string NgayNhap { get; set; }
+
+        public bool Inserted { get; set; }
     }
 }

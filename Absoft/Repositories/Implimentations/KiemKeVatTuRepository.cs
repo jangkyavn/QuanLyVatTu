@@ -237,7 +237,20 @@ namespace Absoft.Repositories.Implimentations
             return model;
         }
 
-        public async Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, bool status)
+        private bool CheckInserted(int maKho, int maPKK, int maPN, int maVT)
+        {
+            var query = (from kkct in db.KiemKeChiTiets
+                         join kkvt in db.KiemKeVatTus on kkct.MaPhieuKiemKe equals kkvt.MaPhieuKiemKe
+                         join kh in db.KhoHangs on kkvt.MaKho equals kh.MaKho
+                         where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == maPN && kkct.MaVatTu == maVT && kh.MaKho == maKho
+                         select new KiemKeChiTietViewModel
+                         {
+                             MaPhieuKiemKe = kkct.MaPhieuKiemKe
+                         }).ToList();
+            if (query != null) return true;
+            else return false;
+        }
+        public async Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, int? maPKK, bool status)
         {
             var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
@@ -250,7 +263,8 @@ namespace Absoft.Repositories.Implimentations
                             MaVatTu = vt.MaVatTu,
                             TenVatTu = vt.TenVT,
                             SoLuongTon = kh.SoLuongTon,
-                            NgayNhap = nvt.NgayNhap
+                            NgayNhap = nvt.NgayNhap,
+                            Inserted = CheckInserted(maKho.Value, maPKK.Value, maPN.Value, maVT.Value)
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
             if (maVT != null) query = query.Where(x => x.MaVatTu == maVT);
@@ -262,7 +276,7 @@ namespace Absoft.Repositories.Implimentations
             {
                 query = query.Where(x => x.SoLuongTon > 0);
             }
-            
+
 
             string keyword = pagingParams.Keyword;
             if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
@@ -323,34 +337,34 @@ namespace Absoft.Repositories.Implimentations
                                        where kkvt.MaPhieuKiemKe == maPKK
                                        select new KiemKeVatTuViewModel
                                        {
-                                          MaPhieuKiemKe = kkvt.MaPhieuKiemKe,
-                                          SoPhieuKiemKe =kkvt.SoPhieuKiemKe,
-                                          MaKho = kkvt.MaKho,
-                                          MaNS = kkvt.MaNS,
-                                          NgayKiemKe =kkvt.NgayKiemKe,
-                                          TongTheoDoi = kkvt.TongTheoDoi,
-                                          TongThucTon =kkvt.TongThucTon,
-                                          Status = kkvt.Status,
-                                          TenKho= kvt.TenKho,
-                                          TenNS = ns.HoTen
+                                           MaPhieuKiemKe = kkvt.MaPhieuKiemKe,
+                                           SoPhieuKiemKe = kkvt.SoPhieuKiemKe,
+                                           MaKho = kkvt.MaKho,
+                                           MaNS = kkvt.MaNS,
+                                           NgayKiemKe = kkvt.NgayKiemKe,
+                                           TongTheoDoi = kkvt.TongTheoDoi,
+                                           TongThucTon = kkvt.TongThucTon,
+                                           Status = kkvt.Status,
+                                           TenKho = kvt.TenKho,
+                                           TenNS = ns.HoTen
                                        }).FirstOrDefaultAsync();
 
             var listkkct = await (from ct in db.KiemKeChiTiets
-                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu                            
-                                   where ct.MaPhieuKiemKe == maPKK
-                                   select new KiemKeChiTietViewModel
-                                   {
-                                       MaPhieuKiemKe = ct.MaPhieuKiemKe,
-                                       MaPhieuNhap = ct.MaPhieuNhap,
-                                       MaVatTu = ct.MaVatTu,
-                                       SoLuongTheoDoi= ct.SoLuongTheoDoi,
-                                       SoLuongThucTon= ct.SoLuongThucTon,
-                                       SoLuongKiemKe = ct.SoLuongKiemKe,
-                                       GhiChu= ct.GhiChu,
-                                       Status= ct.Status,
-                                       TenVatTu= vt.TenVT
-                                       
-                                   }).ToListAsync();
+                                  join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu
+                                  where ct.MaPhieuKiemKe == maPKK
+                                  select new KiemKeChiTietViewModel
+                                  {
+                                      MaPhieuKiemKe = ct.MaPhieuKiemKe,
+                                      MaPhieuNhap = ct.MaPhieuNhap,
+                                      MaVatTu = ct.MaVatTu,
+                                      SoLuongTheoDoi = ct.SoLuongTheoDoi,
+                                      SoLuongThucTon = ct.SoLuongThucTon,
+                                      SoLuongKiemKe = ct.SoLuongKiemKe,
+                                      GhiChu = ct.GhiChu,
+                                      Status = ct.Status,
+                                      TenVatTu = vt.TenVT
+
+                                  }).ToListAsync();
 
             return new KiemKeVatTuParams()
             {

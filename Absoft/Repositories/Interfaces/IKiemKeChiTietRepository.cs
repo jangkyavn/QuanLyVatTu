@@ -16,5 +16,6 @@ namespace Absoft.Repositories.Interfaces
 
         Task<bool> SumSL(KiemKeChiTietViewModel model, int maPKK);
         Task<KiemKeChiTietViewModel> GetById(int maPKK, int maPN, int maVT);
+        
     }
 }
