@@ -50,5 +50,23 @@ namespace Absoft.Controllers
             var models = await _IKiemKeChiTietRepository.DeleteKiemKeChiTietAsync(maPKK.Value, maPN.Value, maVT.Value, maKho.Value);            
             return Ok(models);
         }
+        [HttpPost("inserKiemKeChiTietAsync")]
+        public async Task<IActionResult> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int? maPKK, int? maKho)
+        {
+            var models = await _IKiemKeChiTietRepository.InserKiemKeChiTietAsync(model, maPKK.Value, maKho.Value);
+            return Ok(models);
+        }
+        [HttpPut("updateKiemKeChiTietAsync")]
+        public async Task<IActionResult> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int? maPKK, int? maKho)
+        {
+            var models = await _IKiemKeChiTietRepository.UpdateKiemKeChiTietAsync(model, maPKK.Value, maKho.Value);
+            return Ok(models);
+        }
+        [HttpGet("getSoLuongTheoDoi/{maKho}/{maPN}/{maVT}")]
+        public async Task<IActionResult> GetSoLuongTheoDoi(int? maKho, int? maPN, int? maVT)
+        {
+            var result = await _IKiemKeChiTietRepository.GetSoLuongTheoDoi(maKho.Value, maPN.Value, maVT.Value);           
+            return Ok(result);
+        }
     }
 }

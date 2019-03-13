@@ -1,4 +1,5 @@
 ﻿using Absoft.Data;
+using Absoft.Data.Entities;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
@@ -51,14 +52,26 @@ namespace Absoft.Repositories.Implimentations
             return await db.SaveChangesAsync() > 0;
         }
 
-        public Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK)
+        public async Task<bool> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
         {
-            throw new NotImplementedException();
+            var entity = mp.Map<KiemKeChiTiet>(model);
+            // entity.MaPhieuKiemKe = maPKK;
+            // entity.SoLuongTheoDoi =await GetSoLuongTheoDoi(maKho, model.MaPhieuNhap,model.MaVatTu);
+            await db.KiemKeChiTiets.AddAsync(entity);
+            return await db.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
+        {
+            var kkct = await db.KiemKeChiTiets.FindAsync(maPKK);
+            kkct.SoLuongThucTon = model.SoLuongThucTon;
+            kkct.GhiChu = model.GhiChu;
+            return await db.SaveChangesAsync() > 0;
         }
 
-        public Task<int> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
+        public async Task<int> GetSoLuongTheoDoi(int maKho, int maPN, int maVT)
         {
-            throw new NotImplementedException();
+            var sl = (await db.KhoHangs.FirstOrDefaultAsync(x=>x.MaKho == maKho && x.MaPhieuNhap== maPN && x. MaVatTu== maVT)).SoLuongTon.Value;
+            return sl;
         }
     }
 }
