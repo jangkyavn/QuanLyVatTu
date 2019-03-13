@@ -2,7 +2,6 @@
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -138,6 +137,13 @@ namespace Absoft.Controllers
         {
             var result = await _roleRepository.EditRolesByUserAsync(userName, roleEditViewModel);
 
+            return Ok(result);
+        }
+
+        [HttpPost("savePermission")]
+        public async Task<IActionResult> SavePermission(PermissionParams permissionParams)
+        {
+            var result = await _roleRepository.SavePermission(permissionParams.RoleId, permissionParams.FunctionId, permissionParams.ActionId);
             return Ok(result);
         }
     }

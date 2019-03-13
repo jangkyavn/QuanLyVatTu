@@ -1,12 +1,11 @@
-﻿using Absoft.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Absoft.Helpers
 {
     public class PermissionParams
     {
-        public List<PhanQuyenViewModel> Permissions { get; set; }
         public Guid RoleId { get; set; }
+        public string FunctionId { get; set; }
+        public string ActionId { get; set; }
     }
 }

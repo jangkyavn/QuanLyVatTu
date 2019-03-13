@@ -119,6 +119,7 @@ namespace Absoft
             services.AddScoped<IKiemKeVatTuRepository, KiemKeVatTuRepository>();
             services.AddScoped<IKiemKeChiTietRepository, KiemKeChiTietRepository>();
             services.AddScoped<IChucNangRepository, ChucNangRepository>();
+            services.AddScoped<IHanhDongRepository, HanhDongRepository>();
 
             services.AddSwaggerGen(c =>
             {

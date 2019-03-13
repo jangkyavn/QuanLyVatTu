@@ -31,6 +31,7 @@ namespace Absoft.AutoMapper
             CreateMap<RoleViewModel, VaiTro>();
             CreateMap<ChucNangViewModel, ChucNang>();
             CreateMap<PhanQuyenViewModel, PhanQuyen>();
+            CreateMap<HanhDongViewModel, HanhDong>();
         }
     }
 }

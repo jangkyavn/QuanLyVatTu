@@ -72,16 +72,6 @@ namespace Absoft.Data
                        Status = true
                    },
                    new ChucNang() {
-                       MaChucNang = "PHAN_QUYEN",
-                       TenChucNang = "Phân quyền",
-                       ViTri = 2,
-                       HasRead = true,
-                       HasCreate = true,
-                       HasUpdate = true,
-                       HasDelete = true,
-                       Status = true
-                   },
-                   new ChucNang() {
                        MaChucNang = "NGUON_CUNG_CAP",
                        TenChucNang = "Nguồn cung cấp",
                        ViTri = 3,
@@ -277,11 +267,11 @@ namespace Absoft.Data
             {
                 var models = new List<HanhDong>()
                {
-                   new HanhDong() { MaHanhDong = "READ", TenHanhDong = "Xem", Status = true },
-                   new HanhDong() { MaHanhDong = "CREATE", TenHanhDong = "Thêm", Status = true },
-                   new HanhDong() { MaHanhDong = "UPDATE", TenHanhDong = "Sửa", Status = true },
-                   new HanhDong() { MaHanhDong = "DELETE", TenHanhDong = "Xóa", Status = true },
-                   new HanhDong() { MaHanhDong = "REPORT", TenHanhDong = "Báo cáo", Status = true },
+                   new HanhDong() { MaHanhDong = "READ", TenHanhDong = "Xem", ViTri = 1, Status = true },
+                   new HanhDong() { MaHanhDong = "CREATE", TenHanhDong = "Thêm", ViTri = 2, Status = true },
+                   new HanhDong() { MaHanhDong = "UPDATE", TenHanhDong = "Sửa", ViTri = 3, Status = true },
+                   new HanhDong() { MaHanhDong = "DELETE", TenHanhDong = "Xóa", ViTri = 4, Status = true },
+                   new HanhDong() { MaHanhDong = "REPORT", TenHanhDong = "Báo cáo", ViTri = 5, Status = true },
                };
                 _dataContext.HanhDongs.AddRange(models);
             }

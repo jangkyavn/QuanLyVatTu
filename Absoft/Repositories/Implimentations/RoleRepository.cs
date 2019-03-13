@@ -200,32 +200,35 @@ namespace Absoft.Repositories.Implimentations
             return await query.ToListAsync();
         }
 
+        public async Task<bool> SavePermission(Guid roleId, string functionId, string actionId)
+        {
+            var model = await _dataContext.PhanQuyens.FirstOrDefaultAsync(x => x.MaVaiTro == roleId && x.MaChucNang == functionId && x.MaHanhDong == actionId);
+
+            if (model != null)
+            {
+                _dataContext.PhanQuyens.Remove(model);
+            }
+            else
+            {
+                var permission = new PhanQuyen()
+                {
+                    MaVaiTro = roleId,
+                    MaChucNang = functionId,
+                    MaHanhDong = actionId,
+                };
+                await _dataContext.PhanQuyens.AddAsync(permission);
+            }
+
+            var result = await _dataContext.SaveChangesAsync();
+            return result > 0;
+        }
+
         public async Task<bool> UpdateAsync(RoleViewModel roleViewModel)
         {
             var role = await _roleManager.FindByIdAsync(roleViewModel.Id.ToString());
             role.Name = roleViewModel.Name;
             var result = await _roleManager.UpdateAsync(role);
-
-            if (roleViewModel.PhanQuyens.Count() > 0)
-            {
-                return await SavePermissionsAsync(role.Id, roleViewModel.PhanQuyens);
-            }
-
             return result.Succeeded;
-        }
-
-        private async Task<bool> SavePermissionsAsync(Guid? roleId, List<PhanQuyenViewModel> permissions)
-        {
-            var oldPermissions = _dataContext.PhanQuyens.Where(x => x.MaVaiTro == roleId).ToList();
-            if (oldPermissions.Count > 0)
-            {
-                _dataContext.PhanQuyens.RemoveRange(oldPermissions);
-            }
-
-            var newPermissions = _mapper.Map<List<PhanQuyen>>(permissions);
-            await _dataContext.PhanQuyens.AddRangeAsync(newPermissions);
-            var result = await _dataContext.SaveChangesAsync();
-            return result > 0;
         }
     }
 }

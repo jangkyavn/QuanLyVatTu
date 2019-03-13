@@ -20,5 +20,6 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> EditRolesByUserAsync(string userName, RoleEditViewModel roleEditViewModel);
         Task<bool> CheckNameExistsAsync(string name);
         Task<bool> CheckPermissionAsync(string functionId, string action, string[] roles);
+        Task<bool> SavePermission(Guid roleId, string functionId, string actionId);
     }
 }
