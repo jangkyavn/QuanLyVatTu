@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Absoft.Data;
-using Absoft.Extentions;
+﻿using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -36,14 +32,13 @@ namespace Absoft.Controllers
         [HttpDelete("{maPKK}")]
         public async Task<IActionResult> DeleteAsync(int MaPKK)
         {
+            var entity = await _IKiemKeVatTuRepository.GetById(MaPKK);
             var models = await _IKiemKeVatTuRepository.DeleteAsync(MaPKK);
             if (models == true)
             {
                 // goi ham khoa tat ca phieu nhap, xuat, thanh ly
-                var entity = await _IKiemKeVatTuRepository.GetById(MaPKK);
-                var rs = await _IKiemKeVatTuRepository.UnablePnPxPtl(entity.NgayKiemKe);
-                if (rs == true) return Ok(true);
-                else return Ok(false);
+                await _IKiemKeVatTuRepository.UnablePnPxPtl(entity.NgayKiemKe);
+                return Ok(true);
             }
             else return Ok(false);
             // return Ok(models);
@@ -56,9 +51,8 @@ namespace Absoft.Controllers
             if (models > 0)
             {
                 // goi ham khoa tat ca phieu nhap, xuat, thanh ly
-                var rs = await _IKiemKeVatTuRepository.DisablePnPxPtl(model.NgayKiemKe);
-                if (rs == true) return Ok(models);
-                else return Ok(-1);
+                await _IKiemKeVatTuRepository.DisablePnPxPtl(model.NgayKiemKe);
+                return Ok(models);
             }
             else return Ok(-1);
 
@@ -100,11 +94,12 @@ namespace Absoft.Controllers
             var result = await _IKiemKeChiTietRepository.CheckExistChiTiet(maPKK);
             return Ok(result); // neu ton tai chi tiet khong cho sua ngay
         }
-        [HttpGet("getListKho/{maKho}/{maPN}/{maVT}/{status}")]
-        public async Task<IActionResult> GetListKho(PagingParams parginparam, int? maKho, int? maPN, int? maVT, bool status)
+        [HttpGet("getListKho")]
+        public async Task<IActionResult> GetListKho([FromQuery]PagingParams parginparam, int? maKho, int? maPN, int? maVT, bool status)
         {
-            var result = await _IKiemKeVatTuRepository.GetListKho(parginparam, maKho.Value, maPN.Value, maVT.Value, status);
-            return Ok(result);
+            var paged = await _IKiemKeVatTuRepository.GetListKho(parginparam, maKho, maPN, maVT, status);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(paged.Items);
         }
     }
 }

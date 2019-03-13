@@ -237,7 +237,7 @@ namespace Absoft.Repositories.Implimentations
             return model;
         }
 
-        public async Task<List<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, bool status)
+        public async Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, bool status)
         {
             var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
@@ -254,7 +254,15 @@ namespace Absoft.Repositories.Implimentations
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
             if (maVT != null) query = query.Where(x => x.MaVatTu == maVT);
-            if (status == true) query = query.Where(x => x.SoLuongTon > 0);
+            if (status == true)
+            {
+                query = query.Where(x => x.SoLuongTon >= 0);
+            }
+            else
+            {
+                query = query.Where(x => x.SoLuongTon > 0);
+            }
+            
 
             string keyword = pagingParams.Keyword;
             if (!string.IsNullOrEmpty(keyword) && !keyword.Equals("null"))
@@ -328,7 +336,7 @@ namespace Absoft.Repositories.Implimentations
                                        }).FirstOrDefaultAsync();
 
             var listkkct = await (from ct in db.KiemKeChiTiets
-                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu                                                                  
+                                   join vt in db.VatTus on ct.MaVatTu equals vt.MaVatTu                            
                                    where ct.MaPhieuKiemKe == maPKK
                                    select new KiemKeChiTietViewModel
                                    {

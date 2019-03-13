@@ -18,7 +18,7 @@ namespace Absoft.Repositories.Interfaces
         Task<bool> DisablePnPxPtl(string ngayKiemKe);
         Task<bool> UnablePnPxPtl(string ngayKiemKe);
 
-        Task<List<KhoHangViewModel>> GetListKho(PagingParams parginparam, int? maKho, int? maPN, int? maVT, bool status);
+        Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams parginparam, int? maKho, int? maPN, int? maVT, bool status);
         Task<KiemKeVatTuParams> GetDetailAsync(int maPKK);
         //Task<List<int>> GetByMaKhoAsync(int maKho);
         //Task<List<VatTuViewModel>> GetListVatTuByMaKhoAsync(int maKho);
