@@ -264,7 +264,7 @@ namespace Absoft.Repositories.Implimentations
                             TenVatTu = vt.TenVT,
                             SoLuongTon = kh.SoLuongTon,
                             NgayNhap = nvt.NgayNhap,
-                            Inserted = CheckInserted(maKho.Value, maPKK.Value, maPN.Value, maVT.Value)
+                            Inserted = CheckInserted(kh.MaKho, maPKK.Value, kh.MaPhieuNhap, vt.MaVatTu)
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
             if (maVT != null) query = query.Where(x => x.MaVatTu == maVT);
