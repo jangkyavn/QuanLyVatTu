@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Absoft.Controllers
 {
     public class KiemKeVatTuController : BaseController
-    {       
+    {
         IKiemKeVatTuRepository _IKiemKeVatTuRepository;
         IKiemKeChiTietRepository _IKiemKeChiTietRepository;
         public KiemKeVatTuController(IKiemKeVatTuRepository IKiemKeVatTuRepository, IKiemKeChiTietRepository IKiemKeChiTietRepository)
@@ -30,14 +30,14 @@ namespace Absoft.Controllers
         [HttpGet("getDetailById/{maPKK}")]
         public async Task<IActionResult> GetAllPaging(int maPKK)
         {
-            var result = await _IKiemKeVatTuRepository.GetDetailAsync(maPKK);           
+            var result = await _IKiemKeVatTuRepository.GetDetailAsync(maPKK);
             return Ok(result);
         }
         [HttpDelete("{maPKK}")]
         public async Task<IActionResult> DeleteAsync(int MaPKK)
         {
             var models = await _IKiemKeVatTuRepository.DeleteAsync(MaPKK);
-            if (models ==true)
+            if (models == true)
             {
                 // goi ham khoa tat ca phieu nhap, xuat, thanh ly
                 var entity = await _IKiemKeVatTuRepository.GetById(MaPKK);
@@ -77,15 +77,15 @@ namespace Absoft.Controllers
             return Ok(models);
         }
         [HttpPost("inserKiemKeChiTietAsync")]
-        public async Task<IActionResult> InserKiemKeChiTietAsync(KiemKeChiTietViewModel model, int? maPKK, int? maKho)
+        public async Task<IActionResult> InserKiemKeChiTietAsync(KiemKeChiTietParams param)
         {
-            var models = await _IKiemKeChiTietRepository.InserKiemKeChiTietAsync(model, maPKK.Value, maKho.Value);
+            var models = await _IKiemKeChiTietRepository.InserKiemKeChiTietAsync(param.mkiemkechitiet, param.maPKK.Value, param.maKho.Value);
             return Ok(models);
         }
         [HttpPut("updateKiemKeChiTietAsync")]
-        public async Task<IActionResult> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int? maPKK, int? maKho)
+        public async Task<IActionResult> UpdateKiemKeChiTietAsync(KiemKeChiTietParams param)
         {
-            var models = await _IKiemKeChiTietRepository.UpdateKiemKeChiTietAsync(model, maPKK.Value, maKho.Value);
+            var models = await _IKiemKeChiTietRepository.UpdateKiemKeChiTietAsync(param.mkiemkechitiet, param.maPKK.Value, param.maKho.Value);
             return Ok(models);
         }
         [HttpGet("getSoLuongTheoDoi/{maKho}/{maPN}/{maVT}")]
@@ -101,7 +101,7 @@ namespace Absoft.Controllers
             return Ok(result); // neu ton tai chi tiet khong cho sua ngay
         }
         [HttpGet("getListKho/{maKho}/{maPN}/{maVT}/{status}")]
-        public async Task<IActionResult> GetListKho(PagingParams parginparam,int? maKho, int? maPN, int? maVT,bool status)
+        public async Task<IActionResult> GetListKho(PagingParams parginparam, int? maKho, int? maPN, int? maVT, bool status)
         {
             var result = await _IKiemKeVatTuRepository.GetListKho(parginparam, maKho.Value, maPN.Value, maVT.Value, status);
             return Ok(result);
