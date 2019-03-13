@@ -95,7 +95,7 @@ namespace Absoft.Controllers
             return Ok(result); // neu ton tai chi tiet khong cho sua ngay
         }
         [HttpGet("getListKho")]
-        public async Task<IActionResult> GetListKho([FromQuery]PagingParams parginparam, int? maKho, int? maPN, int? maVT,int? maPKK, bool status)
+        public async Task<IActionResult> GetListKho([FromQuery]PagingParams parginparam, int? maKho, int? maPN, int? maVT, int? maPKK, bool status)
         {
             var paged = await _IKiemKeVatTuRepository.GetListKho(parginparam, maKho, maPN, maVT, maPKK, status);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);

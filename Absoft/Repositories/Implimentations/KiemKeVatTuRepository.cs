@@ -237,19 +237,6 @@ namespace Absoft.Repositories.Implimentations
             return model;
         }
 
-        private bool CheckInserted(int maKho, int maPKK, int maPN, int maVT)
-        {
-            var query = (from kkct in db.KiemKeChiTiets
-                         join kkvt in db.KiemKeVatTus on kkct.MaPhieuKiemKe equals kkvt.MaPhieuKiemKe
-                         join kh in db.KhoHangs on kkvt.MaKho equals kh.MaKho
-                         where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == maPN && kkct.MaVatTu == maVT && kh.MaKho == maKho
-                         select new KiemKeChiTietViewModel
-                         {
-                             MaPhieuKiemKe = kkct.MaPhieuKiemKe
-                         }).ToList();
-            if (query != null) return true;
-            else return false;
-        }
         public async Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, int? maPKK, bool status)
         {
             var query = from kh in db.KhoHangs
@@ -264,7 +251,10 @@ namespace Absoft.Repositories.Implimentations
                             TenVatTu = vt.TenVT,
                             SoLuongTon = kh.SoLuongTon,
                             NgayNhap = nvt.NgayNhap,
-                            Inserted = CheckInserted(kh.MaKho, maPKK.Value, kh.MaPhieuNhap, vt.MaVatTu)
+                            Inserted = (from kkct in db.KiemKeChiTiets
+                                        join kkvt in db.KiemKeVatTus on kkct.MaPhieuKiemKe equals kkvt.MaPhieuKiemKe
+                                        where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == maPN && kkct.MaVatTu == maVT &&    kkvt.MaKho == maKho
+                                        select kkct).Any()
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
             if (maVT != null) query = query.Where(x => x.MaVatTu == maVT);
