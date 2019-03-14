@@ -54,7 +54,6 @@ namespace Absoft.Repositories.Implimentations
                     await SumSL(model, maPKK);
                     var kh = await db.KhoHangs.FirstOrDefaultAsync(x => x.MaKho == maKho && x.MaPhieuNhap == model.MaPhieuNhap && x.MaVatTu == model.MaVatTu);
                     kh.SoLuongTon = model.SoLuongThucTon;
-                    kh.Status = false;
 
                     transaction.Commit();
                     return await db.SaveChangesAsync() > 0;                   

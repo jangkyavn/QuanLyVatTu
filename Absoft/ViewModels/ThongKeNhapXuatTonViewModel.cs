@@ -13,6 +13,7 @@ namespace Absoft.ViewModels
         public int TongNhap { get; set; }
         public int TongXuat { get; set; }
         public int TongThanhLy { get; set; }
+        public int TongKiemKe { get; set; }
         public int TonKhoHienTai { get; set; }
         public int TonKhotoDatetoEnd { get; set; }
         public int TonCuoiKy { get; set; }

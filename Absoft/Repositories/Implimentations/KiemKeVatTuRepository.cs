@@ -253,7 +253,7 @@ namespace Absoft.Repositories.Implimentations
                             NgayNhap = nvt.NgayNhap,
                             Inserted = (from kkct in db.KiemKeChiTiets
                                         join kkvt in db.KiemKeVatTus on kkct.MaPhieuKiemKe equals kkvt.MaPhieuKiemKe
-                                        where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == maPN && kkct.MaVatTu == maVT &&    kkvt.MaKho == maKho
+                                        where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == kh.MaPhieuNhap && kkct.MaVatTu == vt.MaVatTu &&    kkvt.MaKho == maKho
                                         select kkct).Any()
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
