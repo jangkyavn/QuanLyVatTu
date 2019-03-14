@@ -43,10 +43,18 @@ namespace Absoft.Repositories.Implimentations
                             ViTri = cn.ViTri,
                             BieuTuong = cn.BieuTuong,
                             DuongDan = cn.DuongDan,
-                            HasRead = cn.HasRead,
-                            HasCreate = cn.HasCreate,
-                            HasUpdate = cn.HasUpdate,
-                            HasDelete = cn.HasDelete,
+                            HasRead = (from cnhd in _dataContext.ChucNangHanhDongs
+                                       where cnhd.MaChucNang == cn.MaChucNang && cnhd.MaHanhDong == "READ"
+                                       select cnhd).Any(),
+                            HasCreate = (from cnhd in _dataContext.ChucNangHanhDongs
+                                         where cnhd.MaChucNang == cn.MaChucNang && cnhd.MaHanhDong == "CREATE"
+                                         select cnhd).Any(),
+                            HasUpdate = (from cnhd in _dataContext.ChucNangHanhDongs
+                                         where cnhd.MaChucNang == cn.MaChucNang && cnhd.MaHanhDong == "UPDATE"
+                                         select cnhd).Any(),
+                            HasDelete = (from cnhd in _dataContext.ChucNangHanhDongs
+                                         where cnhd.MaChucNang == cn.MaChucNang && cnhd.MaHanhDong == "DELETE"
+                                         select cnhd).Any(),
                             Status = cn.Status
                         };
 
@@ -78,6 +86,11 @@ namespace Absoft.Repositories.Implimentations
             }
 
             return await PagedList<ChucNangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        private bool CheckHasAction(string functionId, string actionId)
+        {
+            return _dataContext.ChucNangHanhDongs.Where(x => x.MaChucNang == functionId && x.MaHanhDong == actionId).Any();
         }
     }
 }

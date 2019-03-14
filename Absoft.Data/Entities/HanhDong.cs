@@ -14,5 +14,6 @@ namespace Absoft.Data.Entities
         public bool Status { get; set; }
 
         public ICollection<PhanQuyen> PhanQuyens { get; set; }
+        public ICollection<ChucNangHanhDong> ChucNangHanhDongs { get; set; }
     }
 }
