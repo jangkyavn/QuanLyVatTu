@@ -17,6 +17,7 @@ namespace Absoft.Data.Entities
         public string NgayKiemKe { get; set; }
         public int? TongTheoDoi { get; set; }
         public int? TongThucTon { get; set; }
+        public int? TongKiemKe { get; set; }
         public bool Status { set; get; }
 
         public KhoVatTu KhoVatTu { get; set; }

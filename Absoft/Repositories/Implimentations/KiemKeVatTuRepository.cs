@@ -40,17 +40,15 @@ namespace Absoft.Repositories.Implimentations
                             return false;
                         }
                     }
-                    db.KiemKeVatTus.Remove(kkvt);
+                    db.KiemKeVatTus.Remove(kkvt);                    
                     transaction.Commit();
-                    await db.SaveChangesAsync();
-                    return true;
+                    return await db.SaveChangesAsync() > 0;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // TODO: Handle failure                         
+                    return false;
                 }
-            }
-            return false;
+            }                             
         }
         public async Task<bool> DisablePnPxPtl(string ngayKiemKe)
         {
@@ -239,10 +237,11 @@ namespace Absoft.Repositories.Implimentations
 
         public async Task<PagedList<KhoHangViewModel>> GetListKho(PagingParams pagingParams, int? maKho, int? maPN, int? maVT, int? maPKK, bool status)
         {
+            var entity = await db.KiemKeVatTus.FindAsync(maPKK.Value);
             var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
                         join nvt in db.NhapVatTus on kh.MaPhieuNhap equals nvt.MaPhieuNhap
-                        where (kh.MaKho == maKho.Value)
+                        where (kh.MaKho == maKho.Value) && (DateTime.Parse(nvt.NgayNhap) <= DateTime.Parse(entity.NgayKiemKe))
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,
@@ -253,7 +252,7 @@ namespace Absoft.Repositories.Implimentations
                             NgayNhap = nvt.NgayNhap,
                             Inserted = (from kkct in db.KiemKeChiTiets
                                         join kkvt in db.KiemKeVatTus on kkct.MaPhieuKiemKe equals kkvt.MaPhieuKiemKe
-                                        where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == kh.MaPhieuNhap && kkct.MaVatTu == vt.MaVatTu &&    kkvt.MaKho == maKho
+                                        where kkct.MaPhieuKiemKe == maPKK && kkct.MaPhieuNhap == kh.MaPhieuNhap && kkct.MaVatTu == vt.MaVatTu && kkvt.MaKho == maKho
                                         select kkct).Any()
                         };
             if (maPN != null) query = query.Where(x => x.MaPhieuNhap == maPN);
