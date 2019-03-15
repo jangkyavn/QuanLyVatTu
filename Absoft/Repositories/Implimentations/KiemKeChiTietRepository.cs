@@ -70,7 +70,7 @@ namespace Absoft.Repositories.Implimentations
 
 
         }
-        public async Task<bool> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
+        public async Task<int> UpdateKiemKeChiTietAsync(KiemKeChiTietViewModel model, int maPKK, int maKho)
         {
             using (var transaction = db.Database.BeginTransaction())
             {
@@ -78,15 +78,16 @@ namespace Absoft.Repositories.Implimentations
                 {
                     // delete 
                     var rsDelete = await DeleteKiemKeChiTietAsync(maPKK, model.MaPhieuNhap, model.MaVatTu, maKho);
+                    if (rsDelete == false) return -1;
                     //insert                    
                     var rsInsert = await InserKiemKeChiTietAsync(model, maPKK, maKho);
-                    if (rsDelete == false || rsInsert == false) return false;
+                    if (rsInsert == false) return -1;
                     transaction.Commit();
-                    return true;
+                    return 1;
                 }
                 catch (Exception ex)
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
