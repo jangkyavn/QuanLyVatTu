@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Absoft.Authorization;
 using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -15,11 +13,15 @@ namespace Absoft.Controllers
     {
         INhapVatTuRepository _INhapVatTuRepository;
         INhapChiTietRepository _INhapChiTietRepository;
+        private readonly IAuthorizationService _authorizationService;
 
-        public NhapVatTuController(INhapVatTuRepository INhapVatTuRepository, INhapChiTietRepository INhapChiTietRepository)
+        public NhapVatTuController(INhapVatTuRepository INhapVatTuRepository, 
+            INhapChiTietRepository INhapChiTietRepository,
+            IAuthorizationService authorizationService)
         {
             _INhapVatTuRepository = INhapVatTuRepository;
             _INhapChiTietRepository = INhapChiTietRepository;
+            _authorizationService = authorizationService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -31,6 +33,10 @@ namespace Absoft.Controllers
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NHAP_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _INhapVatTuRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -45,6 +51,10 @@ namespace Absoft.Controllers
         [HttpPost("insertNhapVatTu")]
         public async Task<IActionResult> InsertNhapVatTuAsync(NhapVatTuViewModel mnhapvattu)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NHAP_VAT_TU", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _INhapVatTuRepository.InsertNhapVatTuAsync(mnhapvattu);
             return Ok(result);
         }
@@ -67,6 +77,10 @@ namespace Absoft.Controllers
         [HttpPut("updateNhapVatTu")]
         public async Task<IActionResult> UpdateNhapVatTu(NhapVatTuViewModel nhapVatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NHAP_VAT_TU", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _INhapVatTuRepository.UpdateNhapVatTuAsync(nhapVatTuViewModel);
             return Ok(result);
         }
@@ -81,6 +95,10 @@ namespace Absoft.Controllers
         [HttpDelete("{maPN}")]
         public async Task<IActionResult> Delete(int maPN)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NHAP_VAT_TU", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _INhapVatTuRepository.DeleteAsync(maPN);
             return Ok(result);
         }
@@ -106,6 +124,10 @@ namespace Absoft.Controllers
         [HttpGet("{maPN}")]
         public async Task<IActionResult> GetDetailAsync(int maPN)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NHAP_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _INhapVatTuRepository.GetDetailAsync(maPN);
             return Ok(result);
         }

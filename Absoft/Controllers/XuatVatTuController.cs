@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Absoft.Authorization;
 using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -15,10 +13,15 @@ namespace Absoft.Controllers
     {
         IXuatVatTuRepository _IXuatVatTuRepository;
         IXuatChiTietRepository _IXuatChiTietRepository;
-        public XuatVatTuController(IXuatVatTuRepository IXuatVatTuRepository, IXuatChiTietRepository IXuatChiTietRepository)
+        private readonly IAuthorizationService _authorizationService;
+
+        public XuatVatTuController(IXuatVatTuRepository IXuatVatTuRepository, 
+            IXuatChiTietRepository IXuatChiTietRepository,
+            IAuthorizationService authorizationService)
         {
             _IXuatVatTuRepository = IXuatVatTuRepository;
             _IXuatChiTietRepository = IXuatChiTietRepository;
+            _authorizationService = authorizationService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -30,6 +33,10 @@ namespace Absoft.Controllers
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "XUAT_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _IXuatVatTuRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -44,6 +51,10 @@ namespace Absoft.Controllers
         [HttpGet("GetDetail/{maPX}")]
         public async Task<IActionResult> GetDetailAsync(int maPX)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "XUAT_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IXuatVatTuRepository.GetDetailAsync(maPX);
             return Ok(models);
         }
@@ -80,6 +91,10 @@ namespace Absoft.Controllers
         [HttpPost("insertXuatVatTu")]
         public async Task<IActionResult> InsertXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "XUAT_VAT_TU", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IXuatVatTuRepository.InsertXuatVatTu(xuatVatTuViewModel);
             return Ok(models);
         }
@@ -92,6 +107,10 @@ namespace Absoft.Controllers
         [HttpDelete("{maPX}")]
         public async Task<IActionResult> DeleteAsync(int maPX)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "XUAT_VAT_TU", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IXuatVatTuRepository.DeleteAsync(maPX);
             return Ok(models);
         }
@@ -131,6 +150,10 @@ namespace Absoft.Controllers
         [HttpPut("updateXuatVatTu")]
         public async Task<IActionResult> UpdateXuatVatTu(XuatVatTuViewModel xuatVatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "XUAT_VAT_TU", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IXuatVatTuRepository.UpdateXuatVatTuAsync(xuatVatTuViewModel);
             return Ok(models);
         }

@@ -49,7 +49,7 @@ namespace Absoft.Controllers
         [HttpGet("getAllPagingWithTongTon")]
         public async Task<IActionResult> GetAllPagingWithTongTonAsync([FromQuery]PagingParams pagingParams)
         {
-            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU", Operations.Read);
+            var auth = await _authorizationService.AuthorizeAsync(User, "TIM_KIEM_VAT_TU", Operations.Read);
             if (auth.Succeeded == false)
                 return Unauthorized();
 

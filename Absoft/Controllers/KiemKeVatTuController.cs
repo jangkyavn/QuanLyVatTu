@@ -1,7 +1,9 @@
-﻿using Absoft.Extentions;
+﻿using Absoft.Authorization;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,14 +13,23 @@ namespace Absoft.Controllers
     {
         IKiemKeVatTuRepository _IKiemKeVatTuRepository;
         IKiemKeChiTietRepository _IKiemKeChiTietRepository;
-        public KiemKeVatTuController(IKiemKeVatTuRepository IKiemKeVatTuRepository, IKiemKeChiTietRepository IKiemKeChiTietRepository)
+        private readonly IAuthorizationService _authorizationService;
+
+        public KiemKeVatTuController(IKiemKeVatTuRepository IKiemKeVatTuRepository, 
+            IKiemKeChiTietRepository IKiemKeChiTietRepository,
+            IAuthorizationService authorizationService)
         {
             _IKiemKeVatTuRepository = IKiemKeVatTuRepository;
             _IKiemKeChiTietRepository = IKiemKeChiTietRepository;
+            _authorizationService = authorizationService;
         }
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "PHIEU_KIEM_KE_KHO", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _IKiemKeVatTuRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -32,6 +43,10 @@ namespace Absoft.Controllers
         [HttpDelete("{maPKK}")]
         public async Task<IActionResult> DeleteAsync(int MaPKK)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "PHIEU_KIEM_KE_KHO", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var entity = await _IKiemKeVatTuRepository.GetById(MaPKK);
             var models = await _IKiemKeVatTuRepository.DeleteAsync(MaPKK);
             if (models == true)
@@ -46,6 +61,10 @@ namespace Absoft.Controllers
         [HttpPost("insertKiemKeVatTuAsync")]
         public async Task<IActionResult> InsertAsync(KiemKeVatTuViewModel model)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "PHIEU_KIEM_KE_KHO", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await _IKiemKeVatTuRepository.InsertAsync(model);
             // neu return models = MaPhieuKK moi tao
             if (models > 0)
@@ -60,6 +79,10 @@ namespace Absoft.Controllers
         [HttpPut("updateKiemKeVatTuAsync")]
         public async Task<IActionResult> UpdateAsync(KiemKeVatTuViewModel model)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "PHIEU_KIEM_KE_KHO", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             // _IKiemKeChiTietRepository.CheckExistChiTiet(maPKK); neu ton tai chi tiet khong cho sua ngaykiemke
             var models = await _IKiemKeVatTuRepository.UpdateAsync(model);
             return Ok(models);

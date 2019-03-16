@@ -57,7 +57,7 @@ namespace Absoft.Controllers
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginViewModel.Password, false);
-
+            
             if (result.Succeeded)
             {
                 var userModel = await _userManager.Users.FirstOrDefaultAsync(x => x.NormalizedUserName == loginViewModel.UserName.ToUpper());

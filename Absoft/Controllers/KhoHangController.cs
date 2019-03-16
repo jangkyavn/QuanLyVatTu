@@ -1,6 +1,8 @@
-﻿using Absoft.Extentions;
+﻿using Absoft.Authorization;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -10,10 +12,13 @@ namespace Absoft.Controllers
     {
 
         IKhoHangRepository _IKhoHangRepository;
+        private readonly IAuthorizationService _authorizationService;
 
-        public KhoHangController(IKhoHangRepository IKhoHangRepository)
+        public KhoHangController(IKhoHangRepository IKhoHangRepository,
+            IAuthorizationService authorizationService)
         {
             _IKhoHangRepository = IKhoHangRepository;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
@@ -26,6 +31,10 @@ namespace Absoft.Controllers
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "VAT_TU_TON_KHO", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _IKhoHangRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);

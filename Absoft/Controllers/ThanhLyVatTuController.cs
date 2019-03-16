@@ -1,7 +1,9 @@
-﻿using Absoft.Extentions;
+﻿using Absoft.Authorization;
+using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,14 +13,23 @@ namespace Absoft.Controllers
     {
         IThanhLyVatTuRepository __IThanhLyVatTuRepository;
         IThanhLyChiTietRepository _IThanhLyChiTietRepository;
-        public ThanhLyVatTuController(IThanhLyChiTietRepository IThanhLyChiTietRepository, IThanhLyVatTuRepository _IThanhLyVatTuRepository)
+        private readonly IAuthorizationService _authorizationService;
+
+        public ThanhLyVatTuController(IThanhLyChiTietRepository IThanhLyChiTietRepository, 
+            IThanhLyVatTuRepository _IThanhLyVatTuRepository,
+            IAuthorizationService authorizationService)
         {
             _IThanhLyChiTietRepository = IThanhLyChiTietRepository;
             __IThanhLyVatTuRepository = _IThanhLyVatTuRepository;
+            _authorizationService = authorizationService;
         }
         [HttpGet("getAllPaging")]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "THANH_LY_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await __IThanhLyVatTuRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -26,6 +37,10 @@ namespace Absoft.Controllers
         [HttpGet("GetDetail/{maPTL}")]
         public async Task<IActionResult> GetDetailAsync(int maPTL)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "THANH_LY_VAT_TU", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await __IThanhLyVatTuRepository.GetDetailAsync(maPTL);
             return Ok(models);
         }
@@ -62,6 +77,10 @@ namespace Absoft.Controllers
         [HttpPost("InserThanhLyVatTu")]
         public async Task<IActionResult> InserThanhLyVatTu(ThanhLyVatTuViewModel model)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "THANH_LY_VAT_TU", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await __IThanhLyVatTuRepository.InserThanhLyVatTu(model);
             return Ok(models);
         }
@@ -74,6 +93,10 @@ namespace Absoft.Controllers
         [HttpDelete("{maPTL}")]
         public async Task<IActionResult> DeleteAsync(int maPTL)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "THANH_LY_VAT_TU", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await __IThanhLyVatTuRepository.DeleteAsync(maPTL);
             return Ok(models);
         }
@@ -107,6 +130,10 @@ namespace Absoft.Controllers
         [HttpPut("updateThanhLyVatTuAsync")]
         public async Task<IActionResult> UpdateThanhLyVatTuAsync(ThanhLyVatTuViewModel thanhLyVatTuViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "THANH_LY_VAT_TU", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var models = await __IThanhLyVatTuRepository.UpdateThanhLyVatTuAsync(thanhLyVatTuViewModel);
             return Ok(models);
         }

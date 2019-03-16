@@ -1,4 +1,5 @@
-﻿using Absoft.Data.Entities;
+﻿using Absoft.Authorization;
+using Absoft.Data.Entities;
 using Absoft.Extentions;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
@@ -17,20 +18,27 @@ namespace Absoft.Controllers
         private readonly SignInManager<NguoiDung> _signInManager;
         private readonly UserManager<NguoiDung> _userManager;
         private readonly IUserRepository _userRepository;
+        private readonly IAuthorizationService _authorizationService;
 
         public UsersController(
             SignInManager<NguoiDung> signInManager,
             UserManager<NguoiDung> userManager,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IAuthorizationService authorizationService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userRepository = userRepository;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllPaging([FromQuery]PagingParams pagingParams)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NGUOI_DUNG", Operations.Read);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var paged = await _userRepository.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(paged.Items);
@@ -64,6 +72,10 @@ namespace Absoft.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(UserCreationViewModel userViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NGUOI_DUNG", Operations.Create);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _userRepository.AddAsync(userViewModel);
 
             if (result)
@@ -77,6 +89,10 @@ namespace Absoft.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(UserUpdationViewModel userViewModel)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NGUOI_DUNG", Operations.Update);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             var result = await _userRepository.UpdateAsync(userViewModel);
 
             if (result)
@@ -188,6 +204,10 @@ namespace Absoft.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
+            var auth = await _authorizationService.AuthorizeAsync(User, "NGUOI_DUNG", Operations.Delete);
+            if (auth.Succeeded == false)
+                return Unauthorized();
+
             if (id == null)
             {
                 return BadRequest();
