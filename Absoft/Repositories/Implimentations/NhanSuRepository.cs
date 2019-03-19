@@ -195,7 +195,17 @@ namespace Absoft.Repositories.Implimentations
                                         x.DanToc.ToUpper().Contains(keyword));
                 }
             }
-
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "hoTen")
+                    query = query.Where(x => x.HoTen == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ngaySinh")
+                    query = query.Where(x => x.NgaySinh == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "queQuan")
+                    query = query.Where(x => x.QueQuan == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "danToc")
+                    query = query.Where(x => x.DanToc == pagingParams.KeywordCol.Trim());
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)

@@ -96,6 +96,18 @@ namespace Absoft.Repositories.Implimentations
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayThanhLy) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(toDate));
             }
+
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tenNS")
+                    query = query.Where(x => x.TenNS == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ngayThanhLy")
+                    query = query.Where(x => x.NgayThanhLy == pagingParams.KeywordCol.Trim());             
+                if (pagingParams.ColName == "tongSoLuong")
+                    query = query.Where(x => x.TongSoLuong == int.Parse(pagingParams.KeywordCol.Trim()));             
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)

@@ -155,7 +155,13 @@ namespace Absoft.Repositories.Implimentations
                               GhiChu = hsx.GhiChu ?? string.Empty,
                               Status = hsx.Status
                           };
-
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenHang")
+                    query = query.Where(x => x.TenHang == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ghiChu")
+                    query = query.Where(x => x.GhiChu == pagingParams.KeywordCol.Trim());
+            }
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();

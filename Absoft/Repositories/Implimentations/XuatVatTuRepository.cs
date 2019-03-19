@@ -378,6 +378,24 @@ namespace Absoft.Repositories.Implimentations
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(toDate));
             }
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tenNS")
+                    query = query.Where(x => x.TenNS == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ngayNhap")
+                    query = query.Where(x => x.NgayNhap == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tongSoLuong")
+                    query = query.Where(x => x.TongSoLuong == int.Parse(pagingParams.KeywordCol.Trim()));
+
+                if (pagingParams.ColName == "tongSoTien")
+                    query = query.Where(x => x.TongSoTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
+               if (pagingParams.ColName == "chietKhau")
+                    query = query.Where(x => x.ChietKhau == decimal.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.ColName == "thanhTien")
+                    query = query.Where(x => x.ThanhTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
