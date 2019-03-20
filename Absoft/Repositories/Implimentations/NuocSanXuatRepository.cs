@@ -164,6 +164,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenNuoc.ToUpper().Contains(keyword));
             }
 
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenNuoc")
+                    query = query.Where(x => x.TenNuoc == pagingParams.KeywordCol.Trim());               
+              
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)

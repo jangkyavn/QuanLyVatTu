@@ -129,7 +129,23 @@ namespace Absoft.Repositories.Implimentations
                                         x.ThanhTien.ToString().Contains(keyword));
                 }
             }
-
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tenHM")
+                    query = query.Where(x => x.TenHM == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ngayNhap")
+                    query = query.Where(x => x.NgayNhap == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tongSoTien")
+                    query = query.Where(x => x.TongSoTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.ColName == "tongSoLuong")
+                    query = query.Where(x => x.TongSoLuong == int.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.ColName == "chietKhau")
+                    query = query.Where(x => x.ChietKhau == decimal.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.ColName == "thanhTien")
+                    query = query.Where(x => x.ThanhTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
+            }
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
                 var fromDate = pagingParams.fromDate;

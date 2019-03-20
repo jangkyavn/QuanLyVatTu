@@ -133,6 +133,19 @@ namespace Absoft.Repositories.Implimentations
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayKiemKe) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayKiemKe) <= DateTime.Parse(toDate));
             }
+            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            {
+                if (pagingParams.ColName == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tenNS")
+                    query = query.Where(x => x.TenNS == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "ngayKiemKe")
+                    query = query.Where(x => x.NgayKiemKe == pagingParams.KeywordCol.Trim());
+                if (pagingParams.ColName == "tongTheoDoi")
+                    query = query.Where(x => x.TongTheoDoi == int.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.ColName == "tongThucTon")
+                    query = query.Where(x => x.TongThucTon == int.Parse(pagingParams.KeywordCol.Trim()));
+            }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
