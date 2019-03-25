@@ -248,14 +248,15 @@ namespace Absoft.Repositories.Implimentations
         }
         public async Task<PagedList<VatTuViewModel>> GetAllPagingWithTongTonAsync(PagingParams pagingParams)
         {
-            var querytmp = from vt in db.VatTus
-                           join kh in db.KhoHangs on vt.MaVatTu equals kh.MaVatTu
-                           group kh by vt.MaVatTu into g
-                           select new
-                           {
-                               MaVatTu = g.Key,
-                               TongTon = g.Sum(x => x.SoLuongTon)
-                           };
+            var querytmp = (from vt in db.VatTus
+                            join kh in db.KhoHangs on vt.MaVatTu equals kh.MaVatTu
+                            group kh by vt.MaVatTu into g
+                            select new
+                            {
+                                MaVatTu = g.Key,
+                                TongTon = g.Sum(x => x.SoLuongTon)
+                            }).ToList();
+
             var query = from vt in db.VatTus
                         join lvt in db.LoaiVatTus on vt.MaLoaiVatTu equals lvt.MaLoaiVatTu
                         join dvt in db.DonViTinhs on vt.MaDVT equals dvt.MaDVT into tmpDonViTinhs
@@ -286,18 +287,21 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenDVT.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenDVT.ToUpper().Contains(keyword) ||
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                        x.GhiChu.ToUpper().Contains(keyword));
+                                        x.GhiChu.ToUpper().Contains(keyword) ||
+                                        x.TongTon.ToString().Contains(keyword));
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenVT")
-                    query = query.Where(x => x.TenVT == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenLoaiVatTu")
-                    query = query.Where(x => x.TenLoaiVatTu == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenDVT")
-                    query = query.Where(x => x.TenDVT == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "ghiChu")
-                    query = query.Where(x => x.GhiChu == (pagingParams.KeywordCol.Trim()));
+                if (pagingParams.SearchKey == "tenVT")
+                    query = query.Where(x => x.TenVT == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenLoaiVatTu")
+                    query = query.Where(x => x.TenLoaiVatTu == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenDVT")
+                    query = query.Where(x => x.TenDVT == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ghiChu")
+                    query = query.Where(x => x.GhiChu == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tongTon")
+                    query = query.Where(x => x.TongTon == int.Parse(pagingParams.SearchValue.Trim()));
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
@@ -343,6 +347,16 @@ namespace Absoft.Repositories.Implimentations
                             query = query.OrderByDescending(x => x.GhiChu);
                         }
                         break;
+                    case "tongTon":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongTon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongTon);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -381,16 +395,16 @@ namespace Absoft.Repositories.Implimentations
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.GhiChu.ToUpper().Contains(keyword));
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenVT")
-                    query = query.Where(x => x.TenVT == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenLoaiVatTu")
-                    query = query.Where(x => x.TenLoaiVatTu == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenDVT")
-                    query = query.Where(x => x.TenDVT == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "ghiChu")
-                    query = query.Where(x => x.GhiChu == (pagingParams.KeywordCol.Trim()));
+                if (pagingParams.SearchKey == "tenVT")
+                    query = query.Where(x => x.TenVT == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenLoaiVatTu")
+                    query = query.Where(x => x.TenLoaiVatTu == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenDVT")
+                    query = query.Where(x => x.TenDVT == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ghiChu")
+                    query = query.Where(x => x.GhiChu == (pagingParams.SearchValue.Trim()));
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
@@ -740,20 +754,14 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-                {
-                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == date.Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
-                }
-                else
-                {
-                    query = query.Where(x => x.MaPN.ToString().Contains(keyword) ||
+                query = query.Where(x => x.MaPN.ToString().Contains(keyword) ||
                                         x.SoLuong.ToString().Contains(keyword) ||
-                                        x.NgayNhap.Contains(keyword) ||
+                                        x.NgayNhap.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.DonGia.ToString().Contains(keyword) ||
                                         x.ChietKhau.ToString().Contains(keyword) ||
                                         x.ThanhTien.ToString().Contains(keyword));
-                }
             }
+
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
                 var fromDate = pagingParams.fromDate;
@@ -858,26 +866,21 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-                {
-                    query = query.Where(x => DateTime.Parse(x.NgayXuat).Day == date.Day && DateTime.Parse(x.NgayXuat).Month == date.Month && DateTime.Parse(x.NgayXuat).Year == date.Year);
-                }
-                else
-                {
-                    query = query.Where(x => x.MaPX.ToString().Contains(keyword) ||
+                query = query.Where(x => x.MaPX.ToString().Contains(keyword) ||
                                         x.SoLuong.ToString().Contains(keyword) ||
                                         x.DonGia.ToString().Contains(keyword) ||
-                                        x.NgayXuat.Contains(keyword) ||
+                                        x.NgayXuat.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.ChietKhau.ToString().Contains(keyword) ||
                                         x.ThanhTien.ToString().Contains(keyword));
-                }
             }
+
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
                 var fromDate = pagingParams.fromDate;
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayXuat) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayXuat) <= DateTime.Parse(toDate));
             }
+
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
@@ -1058,27 +1061,22 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-                {
-                    query = query.Where(x => DateTime.Parse(x.NgayThanhLy).Day == date.Day && DateTime.Parse(x.NgayThanhLy).Month == date.Month && DateTime.Parse(x.NgayThanhLy).Year == date.Year);
-                }
-                else
-                {
-                    query = query.Where(x => x.MaPTL.ToString().Contains(keyword) ||
+                query = query.Where(x => x.MaPTL.ToString().Contains(keyword) ||
                                         x.SoLuong.ToString().Contains(keyword) ||
-                                        x.NgayThanhLy.Contains(keyword) ||
+                                        x.NgayThanhLy.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.DienGiai.ToUpper().Contains(keyword) ||
                                         x.DienGiai.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.GhiChu.ToUpper().Contains(keyword) ||
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()));
-                }
             }
+
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
                 var fromDate = pagingParams.fromDate;
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayThanhLy) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayThanhLy) <= DateTime.Parse(toDate));
             }
+
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
@@ -1141,7 +1139,7 @@ namespace Absoft.Repositories.Implimentations
             return new PagedListParam
             {
                 pl = await PagedList<ThongKeVatTuParam>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize),
-                tongluong = query.Sum(x => x.SoLuong)               
+                tongluong = query.Sum(x => x.SoLuong)
             };
         }
     }

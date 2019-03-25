@@ -178,10 +178,10 @@ namespace Absoft.Repositories.Implimentations
                             TenDVT = dvt.TenDVT,
                             Status = dvt.Status
                         };
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenDVT")
-                    query = query.Where(x => x.TenDVT == pagingParams.KeywordCol.Trim());             
+                if (pagingParams.SearchKey == "tenDVT")
+                    query = query.Where(x => x.TenDVT == pagingParams.SearchValue.Trim());             
             }
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {

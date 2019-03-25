@@ -355,51 +355,58 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-                {
-                    query = query.Where(x => DateTime.Parse(x.NgayNhap).Day == date.Day && DateTime.Parse(x.NgayNhap).Month == date.Month && DateTime.Parse(x.NgayNhap).Year == date.Year);
-                }
-                else
-                {
-                    query = query.Where(x => x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                query = query.Where(x => x.MaPhieuXuat.ToString().Contains(keyword) || 
+                                        x.TenKho.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenKho.ToUpper().Contains(keyword) ||
                                         x.TenNS.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenNS.ToUpper().Contains(keyword) ||
-                                        x.NgayNhap.Contains(keyword) ||
+                                        x.NgayNhap.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.TongSoTien.ToString().Contains(keyword) ||
                                         x.TongSoLuong.ToString().Contains(keyword) ||
                                         x.ChietKhau.ToString().Contains(keyword) ||
                                         x.ThanhTien.ToString().Contains(keyword));
-                }
             }
+
             if (!string.IsNullOrEmpty(pagingParams.toDate) && !string.IsNullOrEmpty(pagingParams.fromDate))
             {
                 var fromDate = pagingParams.fromDate;
                 var toDate = pagingParams.toDate;
                 query = query.Where(x => DateTime.Parse(x.NgayNhap) >= DateTime.Parse(fromDate) && DateTime.Parse(x.NgayNhap) <= DateTime.Parse(toDate));
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
-            {
-                if (pagingParams.ColName == "tenKho")
-                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenNS")
-                    query = query.Where(x => x.TenNS == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "ngayNhap")
-                    query = query.Where(x => x.NgayNhap == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tongSoLuong")
-                    query = query.Where(x => x.TongSoLuong == int.Parse(pagingParams.KeywordCol.Trim()));
 
-                if (pagingParams.ColName == "tongSoTien")
-                    query = query.Where(x => x.TongSoTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
-               if (pagingParams.ColName == "chietKhau")
-                    query = query.Where(x => x.ChietKhau == decimal.Parse(pagingParams.KeywordCol.Trim()));
-                if (pagingParams.ColName == "thanhTien")
-                    query = query.Where(x => x.ThanhTien == decimal.Parse(pagingParams.KeywordCol.Trim()));
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
+            {
+                if (pagingParams.SearchKey == "maPhieuXuat")
+                    query = query.Where(x => x.MaPhieuXuat.ToString() == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenNS")
+                    query = query.Where(x => x.TenNS == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ngayNhap")
+                    query = query.Where(x => x.NgayNhap.ToConvertFullDateFormat() == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tongSoLuong")
+                    query = query.Where(x => x.TongSoLuong == int.Parse(pagingParams.SearchValue.Trim()));
+                if (pagingParams.SearchKey == "tongSoTien")
+                    query = query.Where(x => x.TongSoTien == decimal.Parse(pagingParams.SearchValue.Trim()));
+                if (pagingParams.SearchKey == "chietKhau")
+                    query = query.Where(x => x.ChietKhau == decimal.Parse(pagingParams.SearchValue.Trim()));
+                if (pagingParams.SearchKey == "thanhTien")
+                    query = query.Where(x => x.ThanhTien == decimal.Parse(pagingParams.SearchValue.Trim()));
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {
                 switch (pagingParams.SortKey)
                 {
+                    case "maPhieuXuat":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaPhieuXuat);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaPhieuXuat);
+                        }
+                        break;
                     case "tenKho":
                         if (pagingParams.SortValue == "ascend")
                         {
@@ -480,12 +487,13 @@ namespace Absoft.Repositories.Implimentations
 
 
         public async Task<PagedList<KhoHangViewModel>> GetListByMaKho(PagingParams pagingParams, int makho, string ngayxuat)
-        {           
+        {
 
             var query = from kh in db.KhoHangs
                         join vt in db.VatTus on kh.MaVatTu equals vt.MaVatTu
                         join nvt in db.NhapVatTus on kh.MaPhieuNhap equals nvt.MaPhieuNhap
                         where (kh.MaKho == makho && DateTime.Parse(nvt.NgayNhap) <= DateTime.Parse(ngayxuat))
+                        orderby nvt.NgayNhap descending
                         select new KhoHangViewModel
                         {
                             MaKho = kh.MaKho,
@@ -504,7 +512,20 @@ namespace Absoft.Repositories.Implimentations
                 query = query.Where(x => x.TenVatTu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.TenVatTu.ToUpper().Contains(keyword) ||
                                         x.MaPhieuNhap.ToString().Contains(keyword) ||
+                                        x.NgayNhap.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.SoLuongTon.ToString().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
+            {
+                if (pagingParams.SearchKey == "tenVatTu")
+                    query = query.Where(x => x.TenVatTu == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "maPhieuNhap")
+                    query = query.Where(x => x.MaPhieuNhap.ToString() == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ngayNhap")
+                    query = query.Where(x => x.NgayNhap.ToConvertFullDateFormat() == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "soLuongTon")
+                    query = query.Where(x => x.SoLuongTon.ToString() == pagingParams.SearchValue.Trim());
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
@@ -529,6 +550,16 @@ namespace Absoft.Repositories.Implimentations
                         else
                         {
                             query = query.OrderByDescending(x => x.MaPhieuNhap);
+                        }
+                        break;
+                    case "ngayNhap":
+                        if (pagingParams.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayNhap);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayNhap);
                         }
                         break;
                     case "soLuongTon":

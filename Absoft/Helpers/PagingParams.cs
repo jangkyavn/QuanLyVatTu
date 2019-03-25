@@ -9,7 +9,7 @@
         public string SortKey { get; set; }
         public string fromDate { get; set; }
         public string toDate { get; set; }
-        public string KeywordCol { get; set; }
-        public string ColName { get; set; }
+        public string SearchValue { get; set; }
+        public string SearchKey { get; set; }
     }
 }

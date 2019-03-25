@@ -164,10 +164,10 @@ namespace Absoft.Repositories.Implimentations
                                         x.TenNuoc.ToUpper().Contains(keyword));
             }
 
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenNuoc")
-                    query = query.Where(x => x.TenNuoc == pagingParams.KeywordCol.Trim());               
+                if (pagingParams.SearchKey == "tenNuoc")
+                    query = query.Where(x => x.TenNuoc == pagingParams.SearchValue.Trim());               
               
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

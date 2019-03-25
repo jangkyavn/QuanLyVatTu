@@ -161,12 +161,12 @@ namespace Absoft.Repositories.Implimentations
                                         x.GhiChu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.GhiChu.ToUpper().Contains(keyword));
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenHM")
-                    query = query.Where(x => x.TenHM == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "ghiChu")
-                    query = query.Where(x => x.GhiChu == pagingParams.KeywordCol.Trim());
+                if (pagingParams.SearchKey == "tenHM")
+                    query = query.Where(x => x.TenHM == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ghiChu")
+                    query = query.Where(x => x.GhiChu == pagingParams.SearchValue.Trim());
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {

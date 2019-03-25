@@ -159,16 +159,16 @@ namespace Absoft.Repositories.Implimentations
                                         x.MaPhieuNhap.ToString().Contains(keyword) ||
                                         x.SoLuongTon.ToString().Contains(keyword));
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "tenKho")
-                    query = query.Where(x => x.TenKho == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "tenVatTu")
-                    query = query.Where(x => x.TenVatTu == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "maPhieuNhap")
-                    query = query.Where(x => x.MaPhieuNhap == int.Parse(pagingParams.KeywordCol.Trim()));
-                if (pagingParams.ColName == "soLuongTon")
-                    query = query.Where(x => x.MaPhieuNhap == int.Parse(pagingParams.KeywordCol.Trim()));
+                if (pagingParams.SearchKey == "tenKho")
+                    query = query.Where(x => x.TenKho == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "tenVatTu")
+                    query = query.Where(x => x.TenVatTu == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "maPhieuNhap")
+                    query = query.Where(x => x.MaPhieuNhap == int.Parse(pagingParams.SearchValue.Trim()));
+                if (pagingParams.SearchKey == "soLuongTon")
+                    query = query.Where(x => x.SoLuongTon == int.Parse(pagingParams.SearchValue.Trim()));
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {

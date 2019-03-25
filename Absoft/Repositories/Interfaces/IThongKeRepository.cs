@@ -1,16 +1,15 @@
-﻿using Absoft.ViewModels;
-using System;
+﻿using Absoft.Helpers;
+using Absoft.ViewModels;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Absoft.Repositories.Interfaces
 {
     public interface IThongKeRepository
     {
-        Task<IEnumerable<ThongKeNhapViewModel>> ThongKeNhap(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
-        Task<IEnumerable<ThongKeXuatViewModel>> ThongKeXuat(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
-        Task<IEnumerable<ThongKeThanhLyViewModel>> ThongKeThanhLy(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho);
-        Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(string fromDate, string toDate, int? maLoaiVT, int? maHM, int? maKho, int? maVatTu);
+        Task<IEnumerable<ThongKeNhapViewModel>> ThongKeNhap(ThongKeParams thongKeParams);
+        Task<IEnumerable<ThongKeXuatViewModel>> ThongKeXuat(ThongKeParams thongKeParams);
+        Task<IEnumerable<ThongKeThanhLyViewModel>> ThongKeThanhLy(ThongKeParams thongKeParams);
+        Task<IEnumerable<ThongKeNhapXuatTonViewModel>> ThongKeNhapXuatTon(ThongKeParams thongKeParams);
     }
 }

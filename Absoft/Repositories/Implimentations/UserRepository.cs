@@ -94,7 +94,19 @@ namespace Absoft.Repositories.Implimentations
                     x.FullName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                     x.FullName.ToUpper().Contains(keyword) ||
                     x.Email.ToUpper().Contains(keyword) || 
-                    x.Roles.Any(y => y.ToUpper().Equals(keyword)));
+                    x.Roles.Any(y => y.ToUpper().Contains(keyword)));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
+            {
+                if (pagingParams.SearchKey == "userName")
+                    usersQuery = usersQuery.Where(x => x.UserName == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "fullName")
+                    usersQuery = usersQuery.Where(x => x.FullName == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "email")
+                    usersQuery = usersQuery.Where(x => x.Email == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "roles")
+                    usersQuery = usersQuery.Where(x => x.Roles.Any(y => y.Equals(pagingParams.SearchValue.Trim())));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))

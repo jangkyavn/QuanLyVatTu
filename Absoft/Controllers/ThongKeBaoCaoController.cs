@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Absoft.Helpers;
+﻿using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Absoft.Controllers
 {
@@ -20,25 +16,25 @@ namespace Absoft.Controllers
         [HttpGet("ThongKeNhap")]
         public async Task<IActionResult> ThongKeNhap([FromQuery]ThongKeParams thongKeParams)
         {
-            var models = await _IThongKeRepository.ThongKeNhap(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho);
+            var models = await _IThongKeRepository.ThongKeNhap(thongKeParams);
             return Ok(models);
         }
         [HttpGet("ThongKeXuat")]
         public async Task<IActionResult> ThongKeXuat([FromQuery]ThongKeParams thongKeParams)
         {
-            var models = await _IThongKeRepository.ThongKeXuat(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho);
+            var models = await _IThongKeRepository.ThongKeXuat(thongKeParams);
             return Ok(models);
         }
         [HttpGet("ThongKeThanhLy")]
         public async Task<IActionResult> ThongKeThanhLy([FromQuery]ThongKeParams thongKeParams)
         {
-            var models = await _IThongKeRepository.ThongKeThanhLy(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho);
+            var models = await _IThongKeRepository.ThongKeThanhLy(thongKeParams);
             return Ok(models);
         }
         [HttpGet("ThongKeNhapXuatTon")]
         public async Task<IActionResult> ThongKeNhapXuatTon([FromQuery]ThongKeParams thongKeParams)
         {
-            var models = await _IThongKeRepository.ThongKeNhapXuatTon(thongKeParams.fromDate, thongKeParams.toDate, thongKeParams.maLoaiVT, thongKeParams.maHM, thongKeParams.maKho, thongKeParams.maVatTu);
+            var models = await _IThongKeRepository.ThongKeNhapXuatTon(thongKeParams);
             return Ok(models);
         }
     }

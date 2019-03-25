@@ -180,31 +180,24 @@ namespace Absoft.Repositories.Implimentations
             {
                 var keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                if (DateTime.TryParseExact(keyword, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-                {
-                    query = query.Where(x => DateTime.Parse(x.NgaySinh).Day == date.Day && DateTime.Parse(x.NgaySinh).Month == date.Month && DateTime.Parse(x.NgaySinh).Year == date.Year);
-                }
-                else
-                {
-                    query = query.Where(x => x.HoTen.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                query = query.Where(x => x.HoTen.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.HoTen.ToUpper().Contains(keyword) ||
                                         x.NgaySinh.ToConvertFullDateFormat().Contains(keyword) ||
                                         x.QueQuan.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.QueQuan.ToUpper().Contains(keyword) ||
                                         x.DanToc.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                         x.DanToc.ToUpper().Contains(keyword));
-                }
             }
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
+            if (!string.IsNullOrEmpty(pagingParams.SearchValue))
             {
-                if (pagingParams.ColName == "hoTen")
-                    query = query.Where(x => x.HoTen == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "ngaySinh")
-                    query = query.Where(x => x.NgaySinh == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "queQuan")
-                    query = query.Where(x => x.QueQuan == pagingParams.KeywordCol.Trim());
-                if (pagingParams.ColName == "danToc")
-                    query = query.Where(x => x.DanToc == pagingParams.KeywordCol.Trim());
+                if (pagingParams.SearchKey == "hoTen")
+                    query = query.Where(x => x.HoTen == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "ngaySinh")
+                    query = query.Where(x => x.NgaySinh.ToConvertFullDateFormat() == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "queQuan")
+                    query = query.Where(x => x.QueQuan == pagingParams.SearchValue.Trim());
+                if (pagingParams.SearchKey == "danToc")
+                    query = query.Where(x => x.DanToc == pagingParams.SearchValue.Trim());
             }
             if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
             {

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -56,9 +58,8 @@ namespace Absoft.Helpers
                 return string.Empty;
             }
 
-            var arr = value.Split("-");
-
-            return $"{arr[2]}/{arr[1]}/{arr[0]}";
+            DateTime dt = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            return dt.ToString("dd/MM/yyyy");
         }
     }
 }
