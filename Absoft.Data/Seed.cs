@@ -270,6 +270,14 @@ namespace Absoft.Data
                    new ChucNangHanhDong() { MaChucNang = "PHIEU_KIEM_KE_KHO", MaHanhDong = "DELETE" },
 
                    new ChucNangHanhDong() { MaChucNang = "TIM_KIEM_VAT_TU", MaHanhDong = "READ" },
+
+                   new ChucNangHanhDong() { MaChucNang = "THONG_KE_NHAP", MaHanhDong = "READ" },
+
+                   new ChucNangHanhDong() { MaChucNang = "THONG_KE_XUAT", MaHanhDong = "READ" },
+
+                   new ChucNangHanhDong() { MaChucNang = "THONG_KE_THANH_LY", MaHanhDong = "READ" },
+
+                   new ChucNangHanhDong() { MaChucNang = "THONG_KE_NHAP_XUAT_TON", MaHanhDong = "READ" },
                };
 
                 _dataContext.ChucNangHanhDongs.AddRange(models);
