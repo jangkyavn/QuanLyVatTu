@@ -52,6 +52,32 @@ namespace Absoft.Controllers
             return Ok(models);
         }
 
+        [HttpGet("getListPermissionByRoles")]
+        public async Task<IActionResult> GetListPermissionByRoles()
+        {
+            var rolesClaim = User.FindAll(ClaimTypes.Role);
+            List<string> roles = new List<string>();
+            foreach (var item in rolesClaim)
+            {
+                roles.Add(item.Value);
+            }
+
+            if (roles.Count > 0)
+            {
+                var result = await _roleRepository.GetListPermissionByRolesAsync(roles.ToArray());
+                return Ok(new
+                {
+                    status = true,
+                    data = result
+                });
+            }
+
+            return Ok(new
+            {
+                status = false
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid? id)
         {

@@ -182,6 +182,21 @@ namespace Absoft.Repositories.Implimentations
             return await query.ToListAsync();
         }
 
+        public async Task<List<PhanQuyenViewModel>> GetListPermissionByRolesAsync(string[] roles)
+        {
+            var query = from cn in _dataContext.ChucNangs
+                        join pq in _dataContext.PhanQuyens on cn.MaChucNang equals pq.MaChucNang
+                        join vt in _roleManager.Roles on pq.MaVaiTro equals vt.Id
+                        where roles.Contains(vt.Name) && 
+                        pq.MaHanhDong == nameof(Operations.Read).ToUpper() ||
+                        pq.MaHanhDong == nameof(Operations.Create).ToUpper()
+                        select pq;
+
+            return await query.Distinct()
+                .ProjectTo<PhanQuyenViewModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+
         public async Task<List<PhanQuyenViewModel>> GetListPermissionByUserAsync(Guid? id)
         {
             var query = from cn in _dataContext.ChucNangs

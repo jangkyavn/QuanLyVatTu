@@ -2,6 +2,8 @@
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Absoft.Controllers

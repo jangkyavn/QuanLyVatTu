@@ -11,6 +11,7 @@ namespace Absoft.Repositories.Interfaces
         Task<List<RoleViewModel>> GetAllAsync();
         Task<PagedList<RoleViewModel>> GetAllPagingAsync(PagingParams pagingParams);
         Task<List<PhanQuyenViewModel>> GetListPermissionByRoleAsync(Guid roleId);
+        Task<List<PhanQuyenViewModel>> GetListPermissionByRolesAsync(string[] roles);
         Task<List<PhanQuyenViewModel>> GetListPermissionByUserAsync(Guid? id);
         Task<RoleViewModel> GetByIdAsync(Guid? id);
         Task<RoleViewModel> GetByNameAsync(string name);

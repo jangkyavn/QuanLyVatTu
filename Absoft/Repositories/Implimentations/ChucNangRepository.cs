@@ -1,9 +1,11 @@
 ﻿using Absoft.Data;
+using Absoft.Data.Entities;
 using Absoft.Helpers;
 using Absoft.Repositories.Interfaces;
 using Absoft.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,15 @@ namespace Absoft.Repositories.Implimentations
     public class ChucNangRepository : IChucNangRepository
     {
         private readonly DataContext _dataContext;
+        private readonly RoleManager<VaiTro> _roleManager;
         private readonly IMapper _mapper;
 
         public ChucNangRepository(DataContext dataContext,
+            RoleManager<VaiTro> roleManager,
             IMapper mapper)
         {
             _dataContext = dataContext;
+            _roleManager = roleManager;
             _mapper = mapper;
         }
 
@@ -86,11 +91,6 @@ namespace Absoft.Repositories.Implimentations
             }
 
             return await PagedList<ChucNangViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
-        }
-
-        private bool CheckHasAction(string functionId, string actionId)
-        {
-            return _dataContext.ChucNangHanhDongs.Where(x => x.MaChucNang == functionId && x.MaHanhDong == actionId).Any();
         }
     }
 }
